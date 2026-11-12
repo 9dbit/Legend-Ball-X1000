@@ -78,6 +78,9 @@ window.SkygateReels = class {
     const info = `${this.label[symbol.kind] || symbol.kind}${symbol.multiplier ? ' x' + symbol.multiplier : ''}`;
     if(cell.info!==info){tile.setAttribute('aria-label', info);tile.title = info;cell.info=info;}
     tile.classList.toggle('win', win);
+    // Visual-only energy treatment: the underlying scatter/orb symbol is unchanged.
+    tile.classList.toggle('legend-energy-ball',symbol.kind==='scatter'||symbol.kind==='orb');
+    tile.dataset.energyKind=symbol.kind==='orb'?'orb':symbol.kind==='scatter'?'scatter':'';
     tile.classList.toggle('orb', this.legacyOrb && symbol.kind === 'orb');
     multiplier.hidden = !symbol.multiplier;
     if(cell.multiplierValue!==symbol.multiplier){multiplier.textContent = symbol.multiplier ? symbol.multiplier + '×' : '';cell.multiplierValue=symbol.multiplier;}
@@ -172,6 +175,7 @@ window.SkygateReels = class {
       if (generation !== this.generation) return;
       clear();
       this.root.dataset.fxPhase = 'burst';
+      window.LegendCinematics?.energyBlast(selected,this.root);
       const duration = turbo ? 500 : quick ? 850 : 1300;
       const fireworks=this.sparkAnimations(selected,duration,play);
       await Promise.all([...fireworks,...selected.flatMap(i => {
