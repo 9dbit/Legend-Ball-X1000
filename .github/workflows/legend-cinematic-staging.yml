@@ -1,0 +1,67 @@
+name: Verify live Legend Ball V3 staging orange hero
+on:
+  push:
+    branches: [feat/cinematic-energy-scenes-20261113]
+    paths:
+      - '.github/workflows/legend-cinematic-staging.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 1d2a0ddeaf7163c15c9c24d63fa6e576a3204dc5
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify HTTP, binary asset integrity, and Studio fail-closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE='https://legend-ball-web-staging.up.railway.app'
+          for i in $(seq 1 60); do
+            if curl -fsS --max-time 8 "$BASE/health" > /tmp/legend-cinematic-health.json; then break; fi
+            sleep 2
+          done
+          cat /tmp/legend-cinematic-health.json
+          curl -fLsS -o /tmp/legend-cinematic-index.html "$BASE/play/?v=cinematic3"
+          grep -q 'cinematics.js?v=cinematic1' /tmp/legend-cinematic-index.html
+          curl -fLsS -o /tmp/legend-cinematic.js "$BASE/play/legend/cinematics.js?v=cinematic1"
+          grep -q 'legend-world-stack' /tmp/legend-cinematic.js
+          curl -fLsS -o /tmp/legend-cinematic.css "$BASE/play/legend/cinematics.css?v=cinematic1"
+          grep -q 'legend-lightning-flash' /tmp/legend-cinematic.css
+          for name in ember-warrior crimson-dragon celestial-temple; do
+            curl -fLsS -o "/tmp/$name.webp" "$BASE/play/assets/legend-cinematics/scene-$name.webp"
+          done
+          python3 - <<'PY'
+          import json, pathlib, hashlib
+          manifest=json.loads(pathlib.Path('play/assets/legend-cinematics/manifest.json').read_text())
+          for item in manifest['scenes']:
+              b=pathlib.Path('/tmp/'+item['id']+'.webp').read_bytes()
+              assert b[:4]==b'RIFF' and b[8:12]==b'WEBP',item['id']
+              assert hashlib.sha256(b).hexdigest()==item['sha256'],item['id']
+          print('PASS: all three deployed WebP assets byte-match source manifest')
+          PY
+          code=$(curl -sS -o /tmp/legend-studio-forbidden.html -w '%{http_code}' --max-time 10 "$BASE/studio/")
+          if test "$code" != '503' && test "$code" != '401'; then
+            echo "Studio protection failed: expected HTTP 503/401, found $code"
+            exit 1
+          fi
+          echo "PASS: game live; Studio not public (HTTP $code)"
+      - name: Install Chromium for public-live QA
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Real staging mobile Spin and lightning transition QA
+        run: LEGEND_URL=https://legend-ball-web-staging.up.railway.app/play/?v=cinematic3 node scripts/tests/cinematic-mobile-browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: legend-cinematic-v3-live-proof
+          path: qa-artifacts/cinematic-v3/
+          retention-days: 14
+          if-no-files-found: ignore

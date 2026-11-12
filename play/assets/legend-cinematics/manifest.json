@@ -1,0 +1,38 @@
+{
+  "schema": "legend-ball-cinematic-scenes/v1",
+  "status": "reference-only / not cleared for production",
+  "source": "User-supplied visual references, 2026-11-13",
+  "engineImpact": "none",
+  "scenes": [
+    {
+      "id": "ember-warrior",
+      "name": "Ember Warrior",
+      "path": "scene-ember-warrior.webp",
+      "sha256": "e355cf3a013eada678d70ae5be053dca51bda5e5b8c736c317061e925e16badb",
+      "width": 720,
+      "height": 1280,
+      "stagingOnly": true,
+      "rightsReviewRequired": true
+    },
+    {
+      "id": "crimson-dragon",
+      "name": "Crimson Dragon",
+      "path": "scene-crimson-dragon.webp",
+      "sha256": "0a66d1d8701cf7f5f9f9becd482f1f2897005452fcad38646ab00cda14b72ef9",
+      "width": 720,
+      "height": 1280,
+      "stagingOnly": true,
+      "rightsReviewRequired": true
+    },
+    {
+      "id": "celestial-temple",
+      "name": "Celestial Temple",
+      "path": "scene-celestial-temple.webp",
+      "sha256": "57a447d0695025b87a376e91d1e9fbab85cb7f7cebc2b9d75a01a751197e289c",
+      "width": 720,
+      "height": 1280,
+      "stagingOnly": true,
+      "rightsReviewRequired": true
+    }
+  ]
+}
