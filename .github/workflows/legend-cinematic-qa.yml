@@ -1,4 +1,5 @@
 name: Legend Ball 3-scene cinematic upgrade QA
+# Validate corrected Studio-safe footer geometry.
 on:
   push:
     branches: [feat/cinematic-energy-scenes-20261113]
