@@ -1,0 +1,283 @@
+{
+  "schema": "legend/master-ui-locked-v5",
+  "source": "User-approved LEGEND BALL X1000 splash JPEG and gameplay JPEG, 2026-11-13",
+  "splashSha256": "36506b8ec5a8f51dab0ceb6b94a95d6cb44ae6131941ce1cfa869c2b0eab46c6",
+  "gameplaySha256": "9288db54b3b331d3b7f580ecc19ebad94fa9eb1d2fcf780970f07f7d0f1db492",
+  "layoutStatus": "LOCKED; no unapproved compositional changes",
+  "mathChanges": false,
+  "stagingOnly": true,
+  "rightsReviewRequired": true,
+  "notes": "Exact splash raster preserved. Gameplay: exact approved header, authentic carved ornamental art, independent 6x5 interactive reels and DOM controls. Artwork resembling third-party anime remains for reference and must be replaced or licensed before commercial production.",
+  "assets": [
+    {
+      "path": "gameplay-backdrop.webp",
+      "sha256": "9dc6d3e9103baa43d9c6243f769fd033eb302acf77e2ed3fe57dc88b47f0b629",
+      "bytes": 221146,
+      "size": [
+        1080,
+        1920
+      ]
+    },
+    {
+      "path": "reel-frame.png",
+      "sha256": "ae161a460a20334b4eda198d87152109aeeb82c00e5f2d753ee4c642f110a4e2",
+      "bytes": 229242,
+      "size": [
+        921,
+        510
+      ]
+    },
+    {
+      "path": "win-panel.png",
+      "sha256": "f6934875e9dd18c9e88df89468cb32eb371ccf6f17fb41077a6e63b215786f61",
+      "bytes": 109335,
+      "size": [
+        571,
+        117
+      ]
+    },
+    {
+      "path": "buy-panel.png",
+      "sha256": "53cdd4fddb8c23d428db108441a332c8b7248d13515d7bc78359d64214eabcb5",
+      "bytes": 65799,
+      "size": [
+        428,
+        123
+      ]
+    },
+    {
+      "path": "bonus-panel.png",
+      "sha256": "eb31ebcac9f97bf6bf21cc75007461fbae565eb2bbb7169271092b7323cee00c",
+      "bytes": 69476,
+      "size": [
+        480,
+        123
+      ]
+    },
+    {
+      "path": "credit-panel.png",
+      "sha256": "6ccb98a97a91edfce85f4c1f7bf1636d072054209aeb41f3facec1147014e95e",
+      "bytes": 37406,
+      "size": [
+        377,
+        97
+      ]
+    },
+    {
+      "path": "bet-panel.png",
+      "sha256": "f94ed15865ed4cb0e88122fbc3a8321873062234fe2ea416cee45c54553215ab",
+      "bytes": 59447,
+      "size": [
+        490,
+        97
+      ]
+    },
+    {
+      "path": "spin.png",
+      "sha256": "e9bb958dc4feabae0a8e90d7a6e76c4836b816f742fd9ec3bf172e757d134f7a",
+      "bytes": 229110,
+      "size": [
+        307,
+        306
+      ]
+    },
+    {
+      "path": "auto.png",
+      "sha256": "7fc1df65d6ecd71f5866b31a71a8db068cea528c8f7fa36a734088c2758462a8",
+      "bytes": 33095,
+      "size": [
+        125,
+        131
+      ]
+    },
+    {
+      "path": "turbo.png",
+      "sha256": "afe48e3248d2317339b19d07ad78cc57ef4865b0274eb74c5faa63aaae9ea578",
+      "bytes": 36122,
+      "size": [
+        127,
+        131
+      ]
+    },
+    {
+      "path": "menu.png",
+      "sha256": "001a6a7c4bd0356f96c542f69a1f1631c4846e32e2b8d9b5b8221ca5b8d12b31",
+      "bytes": 29107,
+      "size": [
+        118,
+        127
+      ]
+    },
+    {
+      "path": "rules.png",
+      "sha256": "80c6445b8423f008046ccf5cb1f4aa3203db872895786ba782d65fda572c8894",
+      "bytes": 36837,
+      "size": [
+        141,
+        127
+      ]
+    },
+    {
+      "path": "symbol-crown.png",
+      "sha256": "3f5e2bf6e15efb8a06191d3aa555c6f9fddf412a6ac322d268bfa810cfa5c1c4",
+      "bytes": 25688,
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "path": "symbol-hourglass.png",
+      "sha256": "825b21fd0321fd58334cd591fcf24625da47b71440dec841957a041c447829c1",
+      "bytes": 26173,
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "path": "symbol-ring.png",
+      "sha256": "8c5d0a6a3ba04065512d0190e0c087f940964faf0b6b7b29bb1fd8f21e33ccb3",
+      "bytes": 22122,
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "path": "symbol-chalice.png",
+      "sha256": "908c0cba4edc28ac91c9be1ed00712033399f1ebed83c4eb37358066b6b085e3",
+      "bytes": 22182,
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "path": "symbol-ruby.png",
+      "sha256": "f4a84803f8c354c3858a185da2e5d8cd38d6add41070b336a6b0fd3d1b66327e",
+      "bytes": 25678,
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "path": "symbol-amethyst.png",
+      "sha256": "2f5cfe5268d7c0beaf9426c2c4879d8236821932b20e6fe40dbdd71510b3409a",
+      "bytes": 25554,
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "path": "symbol-topaz.png",
+      "sha256": "b921c951e5d28dd2b4dbf095419aaa6093f5ad04587d96512abc99a520b5aa15",
+      "bytes": 25429,
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "path": "symbol-emerald.png",
+      "sha256": "14bd6e37b3f823734ad47bc664216bd773e9d4d8f1f7b5deca4bd1bedefee4d7",
+      "bytes": 23519,
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "path": "symbol-sapphire.png",
+      "sha256": "7e3cd3d365e6830db5ddf921d250e79bcd12b80afc75cf47c65623fb6792400e",
+      "bytes": 20186,
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "path": "symbol-amber.png",
+      "sha256": "c9a67e071234ad87c9c6f362391a2f71933c56b75d3686a4ef5ed7b561d310e8",
+      "bytes": 22287,
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "path": "symbol-pearl.png",
+      "sha256": "39fb34573bf19ed6a8e6aacb70f9fb5e213a6d3c4218ea01dca6172e8ad54d83",
+      "bytes": 26042,
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "path": "multiplier.png",
+      "sha256": "b673099ac1830fdab5e0087e6bfde16b80875a7a0fa4539b5a5e779ea85f7702",
+      "bytes": 24524,
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "path": "scatter-1.png",
+      "sha256": "9bc8b5f0c2ed8c8f6320fbe574887c898ac84c8fb7e538535443eb4e6d116c77",
+      "bytes": 25201,
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "path": "scatter-2.png",
+      "sha256": "2108bf4c0a1a4576022e2def55e8e20e64b318572de573d760e0d736c6224660",
+      "bytes": 20629,
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "path": "scatter-3.png",
+      "sha256": "9bc8b5f0c2ed8c8f6320fbe574887c898ac84c8fb7e538535443eb4e6d116c77",
+      "bytes": 25201,
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "path": "scatter-4.png",
+      "sha256": "2108bf4c0a1a4576022e2def55e8e20e64b318572de573d760e0d736c6224660",
+      "bytes": 20629,
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "path": "scatter-5.png",
+      "sha256": "9bc8b5f0c2ed8c8f6320fbe574887c898ac84c8fb7e538535443eb4e6d116c77",
+      "bytes": 25201,
+      "size": [
+        96,
+        96
+      ]
+    },
+    {
+      "path": "scatter-6.png",
+      "sha256": "2108bf4c0a1a4576022e2def55e8e20e64b318572de573d760e0d736c6224660",
+      "bytes": 20629,
+      "size": [
+        96,
+        96
+      ]
+    }
+  ]
+}
