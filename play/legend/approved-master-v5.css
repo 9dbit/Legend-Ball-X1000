@@ -248,7 +248,7 @@ html[data-boot=error] #bootSplash #bootStatus {display:block!important;}
 .legend-scene .legend-art[data-layer=creditpanel]::after,
 .legend-scene .legend-art[data-layer=betpanel]::after{
   content:'';position:absolute;z-index:1;left:10%;right:9%;
-  top:24%;bottom:11%;pointer-events:none;border-radius:4px;
+  top:10%;bottom:1%;pointer-events:none;border-radius:4px;
   background:linear-gradient(90deg,#2b0d29,#1a0a2a 50%,#210924);
 }
 .legend-scene .feature:before{
