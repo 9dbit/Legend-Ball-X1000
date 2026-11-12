@@ -59,18 +59,19 @@ jobs:
             sleep .2
           done
           TEST_STUDIO=1 node scripts/tests/raster-mobile-browser.mjs
+          cp /tmp/legend-raster-server.log qa-artifacts/raster-v2/server.log
       - name: Record and commit verified isolated restoration
         shell: bash
         run: |
           set -euo pipefail
           cat > design/RASTER_RESTORATION_CHECKPOINT.md <<'NOTE'
           # LEGEND BALL X1000: approved raster restoration
-          
+
           Source: design/references/approved-celestial-concept.png.
           27 separate PNG layers are reproducible crop/mask derivatives, not recovered layered masters.
           Play, Studio draft and validated snapshots use one legend-raster-v2 scene.
           Engine and playable math source files remain unchanged from the locked Skygate source.
-          
+
           Verified: 115 source regressions, five PNG/source checks, Chromium 320/390/430 and desktop,
           real Spin settlement, 30 cells, no broken visible images, and Studio uploaded-asset overrides.
           Physical iOS/Android hardware QA is not claimed. Music is still inherited source audio.
@@ -78,7 +79,12 @@ jobs:
           NOTE
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add -A -- . ':!qa-artifacts' ':!node_modules' ':!package-lock.json'
+          printf '\n/qa-artifacts/\n/package-lock.json\n' >> .git/info/exclude
+          git add -A
+          if git diff --cached --name-only | grep -E '(^|/)(node_modules|qa-artifacts|\.env)(/|$)|(^|/)package-lock\.json$'; then
+            echo 'Refusing to commit runtime dependencies, private environment or QA artifacts'
+            exit 1
+          fi
           git -c core.whitespace=-blank-at-eol diff --cached --check
           if ! git diff --cached --quiet; then
             git commit -m 'fix: restore approved PNG artwork across game and Studio with verified engine parity'
@@ -93,7 +99,6 @@ jobs:
           path: |
             qa-artifacts/raster-v2/
             design/raster-contact-sheet.jpg
-            /tmp/legend-raster-server.log
           if-no-files-found: ignore
           retention-days: 14
       - uses: actions/upload-artifact@v4
