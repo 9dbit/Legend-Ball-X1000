@@ -1,4 +1,5 @@
 name: LEGEND BALL approved master UI V5 QA
+# Visual regression: ensure source-true hero backdrop stays visible with V3 lightning controller.
 on:
   push:
     branches: [feat/approved-master-ui-v5-20261113]
