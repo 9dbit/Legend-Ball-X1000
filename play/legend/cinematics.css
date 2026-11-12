@@ -157,3 +157,25 @@
   .legend-scene .legend-blast-ring{animation:none!important;transition:none!important}
   .legend-scene .reels.rolling .tile .symbol{filter:none!important}
 }
+
+/* Keep the orange-clad original Legend Ball hero visible above each cinematic world.
+   The approved independently addressable PNG remains Studio-editable. */
+.legend-scene.legend-world-ready .legend-art[data-layer=guardian]{
+  opacity:.96!important;z-index:4!important;
+  filter:drop-shadow(0 5px 5px #09051f) drop-shadow(0 0 11px #ffba6b88)!important;
+}
+.legend-scene.legend-world-ready .legend-art[data-layer=guardian] img{
+  animation:legendHeroAlive 7s ease-in-out infinite alternate;
+}
+@keyframes legendHeroAlive{
+  from{transform:translate3d(0,0,0) scale(1)}
+  to{transform:translate3d(0,-1.2%,0) scale(1.018)}
+}
+/* Elevated cinematic title, with highlights stronger on lightning strikes. */
+.legend-scene .legend-art[data-layer=logo]{
+  z-index:10!important;
+  filter:drop-shadow(0 3px 2px #110626) drop-shadow(0 0 10px #ffc85f91);
+}
+@media(prefers-reduced-motion:reduce){
+  .legend-scene.legend-world-ready .legend-art[data-layer=guardian] img{animation:none!important}
+}
