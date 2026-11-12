@@ -14,6 +14,7 @@ function startSkygate() {
   const asset=path=>window.SKY_PREVIEW_ASSETS?.['assets/'+path] || (release?.overrides?.['asset:'+path]? (window.SkygatePreview?'/studio/api/media/':'/play/media/')+release.overrides['asset:'+path].file:'/play/assets/'+path);
   const layoutProject=published || window.LEGEND_DEFAULT_PROJECT;
   if(layoutProject)window.SkygateApplyLayout(layoutProject,asset);
+  window.LegendCinematics?.mount();
   window.SkygateSyncChrome?.(layoutProject,asset);
   const art = {ruby:'ruby', sapphire:'sapphire', emerald:'emerald', amethyst:'amethyst', topaz:'topaz', amber:'ring', pearl:'chalice', scatter:'crown', orb:'orb'};
   Object.assign(art,{ring:'ring',crown:'crown',hourglass:'hourglass',chalice:'chalice'});
@@ -115,7 +116,10 @@ function startSkygate() {
     state.orbTotal=0;
     status(context==='base'?'BASE SPIN · Seeking 8+ symbols':'FREE SPIN · Multiplier bank growing on qualifying orb wins',context==='base'?'Cari 8+ simbol yang sama':`${state.bonusRemaining} free spins tersisa`);
     refresh();
-    await reels.spin(spin.initial,motionOptions());displayGrid=spin.initial;
+    window.LegendCinematics?.spinStart();
+    try {await reels.spin(spin.initial,motionOptions());}
+    finally {window.LegendCinematics?.spinStop();}
+    displayGrid=spin.initial;
     for(const tumble of spin.cascades) {
       state.cascade++;
       render(tumble.before,tumble.removedPositions,[]);
@@ -132,7 +136,7 @@ function startSkygate() {
     status(spin.symbolWinX>0
       ?`${context==='bonus'?'FREE SPIN':'SPIN'} · Symbol win ×${spin.symbolWinX.toFixed(3)} · applied orb ×${spin.appliedMultiplierX}`
       :`${context==='bonus'?'FREE SPIN':'SPIN'} · No symbol combination`,spin.symbolWinX>0?`Kemenangan simbol${spin.appliedMultiplierX>1?' · pengali ×'+spin.appliedMultiplierX:''}`:'Belum ada kombinasi kemenangan');
-    if(spin.symbolWinX>0 && spin.appliedMultiplierX>1){sound('orb');celebrate('MULTIPLIER','×'+spin.appliedMultiplierX,'multiplier');}
+    if(spin.symbolWinX>0 && spin.appliedMultiplierX>1){sound('orb');window.LegendCinematics?.multiplier(spin.appliedMultiplierX);celebrate('MULTIPLIER','×'+spin.appliedMultiplierX,'multiplier');}
     refresh();
     await delay(220);
   }
@@ -144,6 +148,7 @@ function startSkygate() {
     if (round.bonus.triggered && !round.base.capHit) {
       state.bonusRemaining=cfg.bonus_start_spins;
       status(`BONUS TRIGGER · ${cfg.bonus_start_spins} FREE SPINS (virtual)`,`${cfg.bonus_start_spins} free spins dimulai`);
+      window.LegendCinematics?.bonus();
       celebrate('HADIAH FREE SPINS',`${cfg.bonus_start_spins} PUTARAN`, 'bonus');
       sound('bonus');refresh();await featureScreen('HADIAH FREE SPINS',cfg.bonus_start_spins+' PUTARAN','Multiplier dikumpulkan selama bonus.');
       for(const spin of round.bonus.spins) {
@@ -185,14 +190,14 @@ function startSkygate() {
     refresh();
     try {
       await animateRound(round,bet);
-      if(round.jackpot?.hit){sound('jackpot');celebrate(round.jackpot.tier.toUpperCase()+' JACKPOT',credit(round.jackpot.awardX*bet),'jackpot');}
-      else if(round.winX>=thresholds.bigX){const big=round.winX>=thresholds.superX?'SUPER WIN':round.winX>=thresholds.megaX?'MEGA WIN':'BIG WIN';sound(round.winX>=thresholds.megaX?'mega':'big');celebrate(big,credit(round.winX*bet),'win');}
+      if(round.jackpot?.hit){sound('jackpot');window.LegendCinematics?.bigWin();celebrate(round.jackpot.tier.toUpperCase()+' JACKPOT',credit(round.jackpot.awardX*bet),'jackpot');}
+      else if(round.winX>=thresholds.bigX){const big=round.winX>=thresholds.superX?'SUPER WIN':round.winX>=thresholds.megaX?'MEGA WIN':'BIG WIN';sound(round.winX>=thresholds.megaX?'mega':'big');window.LegendCinematics?.bigWin();celebrate(big,credit(round.winX*bet),'win');}
       status(`${replay?'REPLAY (tanpa debit)':'ROUND '+state.rounds} · ${credit(round.winX*bet)} kredit virtual · ${round.totalTumbles} tumbles · seed ${state.seed}`,replay?'Replay selesai · saldo tetap':round.winX>0?`+${credit(round.winX*bet)} kredit virtual`:'Ronde selesai · coba spin lagi');
     } catch(e) {console.error(e);status(`Error saat render: ${String(e.message||e)}`,'Animasi terhenti · hasil tersimpan di menu');}
     finally {
       if(!replay){const award=Settings.money(round.winX*bet);state.credits=Settings.money(state.credits+award);state.paid=Settings.money(state.paid+award);if(award>0)state.hits++;
         state.history.unshift({round:state.rounds,baseBet:bet,cost,award,bonus:round.bonus.triggered,buy:buyBonus,ante:state.ante,time:new Date().toLocaleTimeString('id-ID')});state.history.length=Math.min(100,state.history.length);}
-      reels.cancel();state.busy=false;refresh();
+      reels.cancel();window.LegendCinematics?.spinStop();state.busy=false;refresh();
       if(window.SkygatePreview)window.parent.postMessage({type:'skygate-preview-round'},location.origin);
     }
   }
