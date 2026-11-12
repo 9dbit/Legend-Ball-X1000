@@ -1,0 +1,152 @@
+/* LEGEND BALL X1000 V4 | interactive presentation only.
+   Original controllable UI layers are still sourced from studio/project.json.
+   Skygate reel results, RNG, bets and wallet/credit logic remain unmodified. */
+
+/* Spin: independent lightning sprites orbit the existing PNG button. */
+.legend-scene .published-layer[data-layer="spinbutton"] {
+  overflow:visible!important; isolation:isolate;
+  filter:none!important; pointer-events:auto;
+}
+.legend-scene .published-layer[data-layer="spinbutton"]::before,
+.legend-scene .published-layer[data-layer="spinbutton"]::after {
+  content:'';position:absolute;pointer-events:none;display:block;
+  border-radius:50%;transform-origin:center;will-change:transform,opacity;
+}
+.legend-scene .published-layer[data-layer="spinbutton"]::before {
+  inset:-19%;z-index:0;
+  background:conic-gradient(from 0deg,
+    transparent 0deg,#64eaff 32deg,#e5ffff 43deg,transparent 72deg,
+    #ffb340 112deg,#fff5b5 123deg,transparent 158deg,
+    #439aff 223deg,#94f9ff 241deg,transparent 271deg,
+    #ff721c 317deg,transparent 357deg);
+  -webkit-mask:radial-gradient(closest-side,transparent 62%,#000 66%,#000 70%,transparent 76%);
+  mask:radial-gradient(closest-side,transparent 62%,#000 66%,#000 70%,transparent 76%);
+  filter:drop-shadow(0 0 10px #69eaff) drop-shadow(0 0 16px #ffb83f);
+  animation:legendSpinConduit 5.8s linear infinite,legendSpinAurora 1.8s ease-in-out infinite alternate;
+}
+.legend-scene .published-layer[data-layer="spinbutton"]::after {
+  inset:-19%;z-index:2;
+  background: url('/play/legend/spin-lightning.svg') center/contain no-repeat;
+  opacity:.96;
+  filter:drop-shadow(0 0 8px #74e5ff) drop-shadow(0 0 13px #ff8a38);
+  animation:legendSpinConduitReverse 4.4s linear infinite,legendSpinFlash 1.6s ease-in-out infinite alternate;
+}
+.legend-scene .published-layer[data-layer="spinbutton"] #spin {
+  position:relative!important;z-index:3;
+  filter:drop-shadow(0 0 8px #ffa844ba) drop-shadow(0 0 19px #f36c21aa)!important;
+  touch-action:manipulation;
+}
+.legend-scene .published-layer[data-layer="spinbutton"] #spin .spin-frame {
+  filter:saturate(1.14) brightness(1.06);
+}
+.legend-scene .published-layer[data-layer="spinbutton"]:has(#spin.busy)::before {
+  animation-duration:1.6s,.55s;
+}
+.legend-scene .published-layer[data-layer="spinbutton"]:has(#spin.busy)::after {
+  animation-duration:1.0s,.55s;
+  filter:drop-shadow(0 0 16px #dbffff) drop-shadow(0 0 24px #fba226);
+}
+.legend-scene .published-layer[data-layer="spinbutton"] #spin:active {
+  transform:scale(.965);filter:brightness(1.25) drop-shadow(0 0 18px #fff4c4)!important;
+}
+@keyframes legendSpinConduit {
+  from{transform:rotate(0)}
+  to{transform:rotate(360deg)}
+}
+@keyframes legendSpinConduitReverse {
+  from{transform:rotate(360deg) scale(1)}
+  50%{transform:rotate(180deg) scale(1.04)}
+  to{transform:rotate(0deg) scale(1)}
+}
+@keyframes legendSpinAurora {
+  from{opacity:.62}
+  to{opacity:1}
+}
+@keyframes legendSpinFlash {
+  from{opacity:.68}
+  60%{opacity:1}
+  to{opacity:.83}
+}
+
+/* Controls remain separate real buttons. Turbo always on the immediate right
+   of Spin, Auto to the left, and both fully touch accessible. */
+.legend-scene .published-layer[data-layer="autobtn"],
+.legend-scene .published-layer[data-layer="turbobtn"]{
+  isolation:isolate;overflow:visible!important;
+  filter:drop-shadow(0 0 11px #ff9f4e7f);
+}
+.legend-scene .published-layer[data-layer="turbobtn"] .round {
+  background:radial-gradient(circle at 38% 25%,#285894,#18133c 56%,#1b0825);
+  border:2px solid #ffd07c;
+  box-shadow:inset 0 0 2px #fff3c4,0 0 11px #4dbbff70,0 0 4px #fca14e;
+}
+.legend-scene .published-layer[data-layer="turbobtn"] .round.selected{
+  box-shadow:0 0 16px #7befff,0 0 26px #feaf44,inset 0 0 12px #4fdfff;
+}
+.legend-scene .published-layer[data-layer="autobtn"] .round {
+  background:radial-gradient(circle at 32% 20%,#50366e,#271038 62%,#160821);
+  border:2px solid #e9af66;
+  box-shadow:0 0 12px #ffc57442,inset 0 0 4px #e5adff69;
+}
+/* Menu absorbs every sound control; no extra Volume button on the game canvas. */
+.legend-scene .published-layer[data-layer="soundbtn"],
+.game #sound {display:none!important;visibility:hidden!important;pointer-events:none!important}
+.legend-scene .published-layer[data-layer="menubtn"]{
+  display:block!important;top:auto!important;bottom:5px!important;
+  left:6%!important;width:44px!important;height:44px!important;min-height:44px;
+}
+.legend-scene .published-layer[data-layer="infobtn"]{
+  display:block!important;top:auto!important;bottom:5px!important;
+  left:auto!important;right:6%!important;width:44px!important;height:44px!important;min-height:44px;
+}
+.legend-scene .legend-copy[data-layer="provider"] {
+  left:27%!important;right:auto!important;top:auto!important;bottom:12px!important;
+  width:46%!important;height:22px!important;
+  font-size:clamp(8px,2cqw,11px)!important;
+  text-align:center!important;white-space:nowrap!important;
+  letter-spacing:.09em!important;
+}
+
+/* Native volume slider inside Menu: functional on iOS, pointer and keyboard. */
+#menuDialog .legend-volume-control {
+  border:1px solid #efba755c;border-radius:17px;
+  background:linear-gradient(145deg,#351b4deb,#14132c);
+  padding:14px 16px;margin:12px 0 18px;
+  box-shadow:inset 0 1px #ffe0ae33;
+}
+#menuDialog .legend-volume-header {
+  display:flex;justify-content:space-between;align-items:center;gap:10px;
+  font-weight:800;letter-spacing:.05em;color:#ffe0a9;
+}
+#menuDialog .legend-volume-header output {
+  min-width:52px;text-align:right;font-variant-numeric:tabular-nums;
+  color:#8ae7ff;
+}
+#menuDialog #volumeRange {
+  display:block;width:100%;height:34px;margin:8px 0 0;
+  background:transparent;accent-color:#ffae42;cursor:pointer;touch-action:pan-x;
+}
+#menuDialog .legend-volume-help{
+  color:#cbbce3;font:500 12px/1.4 system-ui;display:block;
+}
+#menuDialog #volumeRange:focus-visible{
+  outline:2px solid #88dfff;outline-offset:2px;border-radius:8px;
+}
+
+/* Battery saver and OS Reduce Motion remove continuous flashes. */
+@media(prefers-reduced-motion:reduce){
+  .legend-scene .published-layer[data-layer="spinbutton"]::before,
+  .legend-scene .published-layer[data-layer="spinbutton"]::after{
+    animation:none!important;will-change:auto!important;
+    opacity:.55!important;
+  }
+}
+.legend-scene .published-layer[data-layer="spinbutton"]:has(#spin.battery-saver)::before,
+.legend-scene .published-layer[data-layer="spinbutton"]:has(#spin.battery-saver)::after {
+  animation:none!important;will-change:auto!important;opacity:.48!important;
+}
+@media(max-width:360px){
+  .legend-scene .published-layer[data-layer="spinbutton"]::before,
+  .legend-scene .published-layer[data-layer="spinbutton"]::after{inset:-16%}
+  #menuDialog .legend-volume-control{padding:12px}
+}

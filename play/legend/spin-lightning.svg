@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" role="img" aria-label="Legend Ball original electric-energy orbit for Spin button">
+  <defs>
+    <linearGradient id="blue" x1="0" y1=".95" x2=".98" y2=".1">
+      <stop stop-color="#2962ff"/><stop offset=".36" stop-color="#42e9ff"/><stop offset=".72" stop-color="#d7ffff"/><stop offset="1" stop-color="#2571ef"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#fff5b9"/><stop offset=".36" stop-color="#ffb31e"/><stop offset=".74" stop-color="#f95617"/><stop offset="1" stop-color="#ffec96"/>
+    </linearGradient>
+    <filter id="neon" x="-35%" y="-35%" width="170%" height="170%">
+      <feGaussianBlur stdDeviation="6" result="glow"/>
+      <feMerge><feMergeNode in="glow"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <circle cx="200" cy="200" r="163" fill="none" stroke="#1e66ff" stroke-opacity=".2" stroke-width="8"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#neon)">
+    <path d="M58 116 A163 163 0 0 1 316 84" stroke="url(#blue)" stroke-width="8"/>
+    <path d="M343 127 A163 163 0 0 1 289 334" stroke="url(#gold)" stroke-width="9"/>
+    <path d="M257 350 A163 163 0 0 1 66 123" stroke="url(#blue)" stroke-width="6"/>
+    <path d="M116 56 96 82 114 90 80 123 117 109 95 153" stroke="#dcffff" stroke-width="5"/>
+    <path d="M336 99 309 116 338 127 304 148 326 164 304 185" stroke="#ffecc7" stroke-width="5"/>
+    <path d="M321 311 296 318 304 341 269 335 262 358 250 342" stroke="#fcb339" stroke-width="6"/>
+    <path d="M76 269 95 284 71 301 105 300 89 325 118 310" stroke="#d9ffff" stroke-width="5"/>
+    <path d="M206 36 216 66 236 56 221 91" stroke="#c6fcff" stroke-width="4"/>
+    <path d="M190 362 176 335 150 349 164 317" stroke="#fff2c0" stroke-width="5"/>
+  </g>
+  <g fill="#f8fdff" opacity=".95"><circle cx="55" cy="146" r="4"/><circle cx="344" cy="257" r="5"/><circle cx="232" cy="41" r="3"/><circle cx="142" cy="346" r="4"/></g>
+</svg>
