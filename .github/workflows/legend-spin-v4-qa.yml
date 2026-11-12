@@ -1,4 +1,5 @@
 name: Legend Ball V4 Spin UI and Audio Menu QA
+# Regenerated original chrome PNG logo now verified alongside interactive controls.
 on:
   push:
     branches: [feat/spin-ui-energy-v4-20261113]
