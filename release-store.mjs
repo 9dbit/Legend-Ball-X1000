@@ -8,8 +8,43 @@ export const symbols = ['ruby','sapphire','emerald','amethyst','topaz','amber','
 export const defaultSpinMotion = Object.freeze({normalMs:1800,quickMs:1150,turboMs:650});
 export const tracks = ['bgm_celestial_loop','spin_start','reel_stop','tumble','symbol_win','multiplier','bonus_intro','free_spin_start','big_win','mega_win','jackpot','ui_click','ambient_thunder'];
 export const legendRasterAssets = ["legend-raster/hero.png", "legend-raster/dragon.png", "legend-raster/background.png", "legend-raster/reel-frame.png", "legend-raster/panel.png", "legend-raster/symbol-crown.png", "legend-raster/symbol-hourglass.png", "legend-raster/symbol-ring.png", "legend-raster/symbol-chalice.png", "legend-raster/symbol-ruby.png", "legend-raster/symbol-amethyst.png", "legend-raster/symbol-topaz.png", "legend-raster/symbol-emerald.png", "legend-raster/symbol-sapphire.png", "legend-raster/symbol-amber.png", "legend-raster/symbol-pearl.png", "legend-raster/scatter-1.png", "legend-raster/scatter-2.png", "legend-raster/scatter-3.png", "legend-raster/scatter-4.png", "legend-raster/scatter-5.png", "legend-raster/scatter-6.png", "legend-raster/multiplier.png", "legend-raster/spin.png", "legend-raster/logo.png", "legend-raster/app-icon.png", "legend-raster/open-graph.png"];
+export const legendMasterUiAssets = [
+  "legend-master/splash-master.jpg",
+  "legend-master/gameplay-approved-reference.jpg",
+  "legend-master/gameplay-backdrop.webp",
+  "legend-master/reel-frame.png",
+  "legend-master/win-panel.png",
+  "legend-master/buy-panel.png",
+  "legend-master/bonus-panel.png",
+  "legend-master/credit-panel.png",
+  "legend-master/bet-panel.png",
+  "legend-master/spin.png",
+  "legend-master/auto.png",
+  "legend-master/turbo.png",
+  "legend-master/menu.png",
+  "legend-master/rules.png",
+  "legend-master/symbol-crown.png",
+  "legend-master/symbol-hourglass.png",
+  "legend-master/symbol-ring.png",
+  "legend-master/symbol-chalice.png",
+  "legend-master/symbol-ruby.png",
+  "legend-master/symbol-amethyst.png",
+  "legend-master/symbol-topaz.png",
+  "legend-master/symbol-emerald.png",
+  "legend-master/symbol-sapphire.png",
+  "legend-master/symbol-amber.png",
+  "legend-master/symbol-pearl.png",
+  "legend-master/scatter-1.png",
+  "legend-master/scatter-2.png",
+  "legend-master/scatter-3.png",
+  "legend-master/scatter-4.png",
+  "legend-master/scatter-5.png",
+  "legend-master/scatter-6.png",
+  "legend-master/multiplier.png"
+];
 export const shippedAssets = [
   ...legendRasterAssets,
+  ...legendMasterUiAssets,
   ...symbols.map(x=>`symbols/${x}.png`),
   ...['sky_background.jpg','hero_composite_reference.jpg','guardian.png','logo.png','column_left.png','column_right.png'].map(x=>`scene/${x}`),
   ...['gold_banner','blue_button','spin_button','spin_button_clean','reel_frame','jackpot_mini','jackpot_minor','jackpot_major','jackpot_grand'].map(x=>`ui/${x}.svg`),
