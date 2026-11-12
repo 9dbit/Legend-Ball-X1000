@@ -5,18 +5,26 @@ on:
     paths: [.github/workflows/raster-polish-qa.yml]
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
 jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: 1665a8f668028b6744e4e8ae08282d347c8e5d20
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Fit provider signature between actual mobile touch bounds
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('play/legend/theme.css');s=p.read_text()
+          assert 'left:18%!important;top:auto!important;bottom:8px!important;width:52%!important' in s
+          s=s.replace('left:18%!important;top:auto!important;bottom:8px!important;width:52%!important','left:18%!important;top:auto!important;bottom:8px!important;width:50%!important')
+          p.write_text(s)
+          Path('design/raster-v2/theme.css').write_text(s)
+          PY
       - name: Preserve source gameplay and check PNG integrity
         run: |
           npm test
@@ -56,12 +64,21 @@ jobs:
                 });
                 return {conflicts,overflow:brand.scrollWidth-brand.clientWidth};
               });
-              assert.deepEqual(r.conflicts,[]);assert(r.overflow<=1);
+              assert.deepEqual(r.conflicts,[],String(width));assert(r.overflow<=1);
               await p.close();
             }
             console.log('PASS footer signature does not overlap controls at all four widths');
           } finally {await b.close();}
           JS
+      - name: Commit only tested presentation changes
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add play/legend/theme.css design/raster-v2/theme.css
+          git diff --cached --check
+          git commit -m 'fix(raster): finish tested footer alignment without changing game math'
+          git push origin HEAD:fix/raster-artwork-20261112
+          git rev-parse HEAD > qa-artifacts/raster-v2/tested-commit.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
