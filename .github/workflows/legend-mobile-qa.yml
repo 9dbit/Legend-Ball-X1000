@@ -61,8 +61,10 @@ jobs:
             sleep 2
           done
           cat /tmp/legend-health.json
-          curl -fsS --max-time 15 "$BASE/play/" | grep -q 'LEGEND BALL X1000'
-          curl -fsS --max-time 15 "$BASE/play/legend/ball-6.svg" | grep -q '<svg'
+          curl -fsS --max-time 15 -o /tmp/legend-game.html "$BASE/play/"
+          grep -q 'LEGEND BALL X1000' /tmp/legend-game.html
+          curl -fsS --max-time 15 -o /tmp/legend-ball-6.svg "$BASE/play/legend/ball-6.svg"
+          grep -q '<svg' /tmp/legend-ball-6.svg
           curl -fsS --max-time 15 -o /tmp/legend-icon.png "$BASE/play/icons/legend-touch-180.png"
           python3 - <<'PY'
           with open('/tmp/legend-icon.png','rb') as f: b=f.read(24)
