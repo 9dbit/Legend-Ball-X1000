@@ -231,3 +231,33 @@ html[data-boot=error] #bootSplash #bootStatus {display:block!important;}
     animation:none!important;opacity:.48!important;
   }
 }
+
+/* Visual regression correction: original cinematic controller marks 'world-ready',
+   which used to set the background to opacity zero. The LOCKED artwork is now
+   authoritative and must always remain visible behind live game layers. */
+.legend-scene.legend-world-ready .legend-art[data-layer=sky],
+.legend-scene.legend-awakened .legend-art[data-layer=sky]{
+  opacity:1!important;display:flex!important;visibility:visible!important;
+}
+.legend-scene.legend-world-ready .legend-art[data-layer=sky] img{
+  opacity:1!important;visibility:visible!important;
+}
+/* Approved carved panel ornaments contain legacy painted numbers. Mask ONLY
+   their interior text area, leaving gold perimeter untouched, then paint live
+   dynamic values above. This prevents stale 200.00/99,997.10 ghost values. */
+.legend-scene .legend-art[data-layer=creditpanel]::after,
+.legend-scene .legend-art[data-layer=betpanel]::after{
+  content:'';position:absolute;z-index:1;left:10%;right:9%;
+  top:24%;bottom:11%;pointer-events:none;border-radius:4px;
+  background:linear-gradient(90deg,#2b0d29,#1a0a2a 50%,#210924);
+}
+.legend-scene .feature:before{
+  content:'';position:absolute;z-index:1;left:15%;right:14%;
+  top:23%;bottom:12%;border-radius:6px;pointer-events:none;
+  background:linear-gradient(90deg,#3a1024,#200b2c 58%,#33152e);
+}
+.legend-scene .feature-ante:before{
+  background:linear-gradient(90deg,#122144,#16213d 64%,#121a38);
+}
+.legend-scene .feature>span{position:relative;z-index:3!important}
+.legend-scene .feature:after{z-index:0!important}
