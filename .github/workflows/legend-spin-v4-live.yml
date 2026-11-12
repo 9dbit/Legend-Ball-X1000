@@ -1,0 +1,55 @@
+name: Verify Legend Ball V4 live staging
+on:
+  push:
+    branches: [feat/spin-ui-energy-v4-20261113]
+    paths:
+      - '.github/workflows/legend-spin-v4-live.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-staging:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: c8d600d5efda51cba3b443e3a888388719a9c862
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check live deployed assets, UI and private Studio
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE='https://legend-ball-web-staging.up.railway.app'
+          for i in $(seq 1 60); do
+            if curl -fsS --max-time 8 "$BASE/health" > /tmp/legend-v4-health.json; then break; fi
+            sleep 2
+          done
+          cat /tmp/legend-v4-health.json
+          curl -fLsS -o /tmp/legend-v4.html "$BASE/play/?v=spin-v4"
+          grep -q 'spin-controls.css?v=spin-v4' /tmp/legend-v4.html
+          grep -q 'id="volumeRange"' /tmp/legend-v4.html
+          curl -fLsS -o /tmp/legend-v4.css "$BASE/play/legend/spin-controls.css?v=spin-v4"
+          grep -q 'legendSpinConduitReverse' /tmp/legend-v4.css
+          curl -fLsS -o /tmp/legend-v4.svg "$BASE/play/legend/spin-lightning.svg"
+          grep -q '<svg' /tmp/legend-v4.svg
+          code=$(curl -sS -o /tmp/legend-studio-response.html -w '%{http_code}' --max-time 10 "$BASE/studio/")
+          if test "$code" != '503' && test "$code" != '401'; then
+            echo "Private Studio should fail closed but got $code";exit 1
+          fi
+          echo "PASS: V4 live assets and protected Studio HTTP $code"
+      - name: Install Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Verify real live 6x5 Spin, volume menu, electric animation, and credit consistency
+        run: LEGEND_URL=https://legend-ball-web-staging.up.railway.app/play/?v=spin-v4 node scripts/tests/spin-v4-mobile-browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: legend-ball-v4-live-evidence
+          path: qa-artifacts/spin-v4/
+          if-no-files-found: ignore
+          retention-days: 14
