@@ -6,19 +6,19 @@ function startSkygate() {
   const cfg = published?.math || window.SlotGameConfig;
   const MathEngine = window.SlotGameMath;
   const Settings=window.SkygateSettings;
-  let saved={};try{saved=JSON.parse(window.localStorage?.getItem('skygate-settings-v1')||'{}');}catch{}
+  let saved={};try{saved=JSON.parse(window.localStorage?.getItem('legend-ball-settings-v1')||'{}');}catch{}
   const preferences=Settings.normalize(saved);
-  const savePreferences=()=>{try{window.localStorage?.setItem('skygate-settings-v1',JSON.stringify(preferences));}catch{}};
+  const savePreferences=()=>{try{window.localStorage?.setItem('legend-ball-settings-v1',JSON.stringify(preferences));}catch{}};
   if (!cfg || !MathEngine) throw new Error('Missing research math engine / browser config');
   const E = id => document.getElementById(id);
-  const asset=path=>window.SKY_PREVIEW_ASSETS?.['assets/'+path] || (release?.overrides?.['asset:'+path]? (window.SkygatePreview?'/studio/api/media/':'/play/media/')+release.overrides['asset:'+path].file:'assets/'+path);
+  const asset=path=>window.SKY_PREVIEW_ASSETS?.['assets/'+path] || (release?.overrides?.['asset:'+path]? (window.SkygatePreview?'/studio/api/media/':'/play/media/')+release.overrides['asset:'+path].file:(path==='scene/logo.png'?'/play/legend/logo.svg':path==='scene/hero_composite_reference.jpg'?'/play/legend/scene.svg':'assets/'+path));
   if(published)window.SkygateApplyLayout(published,asset);
   window.SkygateSyncChrome?.(published,asset);
   const art = {ruby:'ruby', sapphire:'sapphire', emerald:'emerald', amethyst:'amethyst', topaz:'topaz', amber:'ring', pearl:'chalice', scatter:'crown', orb:'orb'};
   Object.assign(art,{ring:'ring',crown:'crown',hourglass:'hourglass',chalice:'chalice'});
   if(published)Object.assign(art,{amber:'amber',pearl:'pearl',scatter:'scatter'});
-  const label = {ruby:'Ruby', sapphire:'Sapphire', emerald:'Emerald', amethyst:'Amethyst', topaz:'Topaz', amber:'Ring', pearl:'Chalice', scatter:'Scatter Crown', orb:'Multiplier Orb'};
-  Object.assign(label,{ring:'Ring',crown:'Crown',hourglass:'Hourglass',chalice:'Chalice'});
+  const label = {ruby:'Flame Shard', sapphire:'Ocean Crest', emerald:'Verdant Core', amethyst:'Void Prism', topaz:'Solar Edge', amber:'Rift Ring', pearl:'Moon Vessel', scatter:'Legend Ball', orb:'Rune Multiplier'};
+  Object.assign(label,{ring:'Rift Ring',crown:'Legend Crest',hourglass:'Time Relic',chalice:'Rune Vessel'});
   if(published)Object.assign(label,{amber:'Amber',pearl:'Pearl'});
   const reels=new window.SkygateReels(E('reels'),{asset,art,label,legacyOrb:!published,motion:published?.spinMotion});
   const initialSeed = published?.seed || 20261027;
@@ -220,7 +220,7 @@ function startSkygate() {
     const obj={...state.last.round,virtualBet:state.last.bet,exportedFor:'local synthetic research only'};
     const blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'});
     const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');a.href=url;a.download=`skygate_seed-${state.seed}_round-${obj.paidIndex}.json`;
+    const a=document.createElement('a');a.href=url;a.download=`legend-ball_seed-${state.seed}_round-${obj.paidIndex}.json`;
     document.body.appendChild(a);a.click();a.remove();
     setTimeout(()=>URL.revokeObjectURL(url),1000);
   }
@@ -232,7 +232,7 @@ function startSkygate() {
   let paytableKey='';
   function refreshPaytable(){
     const key=state.bet+':'+state.coin+':'+preferences.coinsView;if(key===paytableKey)return;paytableKey=key;
-    E('paytable').innerHTML=Object.entries(cfg.paytable).map(([kind,values])=>`<tr><td><img src="${asset('symbols/'+art[kind]+'.png')}" alt="">${label[kind]}</td>${values.map(n=>`<td>${displayMoney(n*state.bet)}</td>`).join('')}</tr>`).join('');
+    E('paytable').innerHTML=Object.entries(cfg.paytable).map(([kind,values])=>`<tr><td><img src="${window.LegendBallArt?.sprite(kind,0) || asset('symbols/'+art[kind]+'.png')}" alt="">${label[kind]}</td>${values.map(n=>`<td>${displayMoney(n*state.bet)}</td>`).join('')}</tr>`).join('');
     if(cfg.scatter_paytable)E('paytable').innerHTML+=`<tr><td>SCATTER</td><td colspan="3">${[4,5,6].map(n=>n+(n===6?'+':'')+' = '+displayMoney(cfg.scatter_paytable[n]*state.bet)).join(' · ')}</td></tr>`;
   }
   let finishFeature=null;
@@ -268,7 +268,7 @@ function startSkygate() {
     if(preferences.skipScreens&&!manual){await delay(1200,450);E('featureDialog').close();return;}
     await new Promise(resolve=>{finishFeature=()=>{E('featureDialog').close();finishFeature=null;resolve();};});
   }
-  async function showHome(){E('menuDialog').close();await featureScreen('SKYGATE 5000','WIN UP TO 1000×','8+ simbol membayar di mana saja. 4+ SCATTER memberi 15 Free Spins. Batas kemenangan aktual mengikuti Game Rules. Semua nilai adalah kredit virtual.',true);}
+  async function showHome(){E('menuDialog').close();await featureScreen('LEGEND BALL X1000','WIN UP TO 1000×','8+ simbol membayar di mana saja. 4+ SCATTER memberi 15 Free Spins. Batas kemenangan aktual mengikuti Game Rules. Semua nilai adalah kredit virtual.',true);}
   function setupSettings(){
     for(const [button,dialog] of [['closeAuto','autoDialog'],['closeBet','betDialog'],['closeBuy','buyDialog'],['cancelBuy','buyDialog'],['closeHistory','historyDialog']])E(button).addEventListener('click',()=>E(dialog).close());
     E('featureContinue').addEventListener('click',()=>finishFeature?.());
@@ -344,17 +344,17 @@ function startSkygate() {
     if(state.sound&&!document.hidden&&(!mixer.isReady()||!mixer.isPlaying('bgm_celestial_loop'))){void mixer.unlock().then(ready=>{if(ready&&state.sound&&!document.hidden)void mixer.play('bgm_celestial_loop');});}
   });
   setupSettings();
-  E('paytable').innerHTML=Object.entries(cfg.paytable).map(([kind,values])=>`<tr><td><img src="${asset('symbols/'+art[kind]+'.png')}" alt="">${label[kind]}</td>${values.map(n=>`<td>${n}×</td>`).join('')}</tr>`).join('');
+  E('paytable').innerHTML=Object.entries(cfg.paytable).map(([kind,values])=>`<tr><td><img src="${window.LegendBallArt?.sprite(kind,0) || asset('symbols/'+art[kind]+'.png')}" alt="">${label[kind]}</td>${values.map(n=>`<td>${n}×</td>`).join('')}</tr>`).join('');
   E('bonusRulesText').textContent=`Hadiah ${cfg.bonus_start_spins} free spins diperoleh dari hasil spin dengan ${cfg.bonus_trigger_scatters}+ SCATTER dan berjalan otomatis. Di dalam bonus, ${cfg.bonus_retrigger_scatters}+ SCATTER memberi tambahan ${cfg.bonus_retrigger_add_spins} putaran. Orb mengalikan kemenangan simbol; pengalinya terkumpul selama bonus hanya pada putaran menang dengan orb baru. Pengali tersimpan diterapkan lagi jika putaran menang juga memunculkan orb baru. Bonus memakai bobot simbol terpisah.`;
   E('orbRules').textContent='Nilai orb: '+cfg.multiplier_values.map(n=>n+'×').join(', ')+'.';
   E('anteRulesNote').textContent=(cfg.ante_scatter_weight_multiplier>1?'Bonus Booster memakai bobot SCATTER lebih tinggi untuk putaran dasar. ':'Profil SCATTER Bonus Booster mengikuti pengaturan Studio. ')+'Biaya naik 25%; ini tidak menjamin bonus atau kemenangan. Contoh: base bet 2,00 menjadi 2,50 per spin. Matikan Bonus Booster untuk menggunakan BUY SPIN.';
   if(cfg.scatter_paytable)E('paytable').innerHTML+=`<tr><td>SCATTER</td><td colspan="3">4 = 3× · 5 = 5× · 6+ = 100×</td></tr>`;
   E('capText').textContent=`Maksimum ${cfg.round_max_win_x.toLocaleString('id-ID')}× base bet per ronde. Saat batas tercapai, ronde langsung berakhir dan sisa fitur dibatalkan. Total bet 0,20–300,00 kredit virtual. Gangguan perhitungan membatalkan ronde; gangguan animasi tetap membayar hasil yang telah dihitung. Kecepatan dan autoplay tidak mengubah peluang. Tidak ada deposit atau penarikan.`;
-  E('releaseInfo').textContent=release?`Versi ${release.id.slice(0,8)} · ${new Date(release.createdAt).toLocaleDateString('id-ID')}`:'SKYGATE · Original celestial artwork';
+  E('releaseInfo').textContent=release?`Versi ${release.id.slice(0,8)} · ${new Date(release.createdAt).toLocaleDateString('id-ID')}`:'LEGEND BALL X1000 · Original cosmic rune artwork';
   E('previewBadge').hidden=!window.SkygatePreview;
   E('seedInput').value=String(state.seed);
   resetGame(initialSeed);
-  if(!window.SkygateBoot && preferences.intro && !window.SkygatePreview){let seen=false;try{seen=window.sessionStorage?.getItem('skygate-intro-seen');window.sessionStorage?.setItem('skygate-intro-seen','1');}catch{}if(!seen)void showHome();}
+  if(!window.SkygateBoot && preferences.intro && !window.SkygatePreview){let seen=false;try{seen=window.sessionStorage?.getItem('legend-ball-intro-seen');window.sessionStorage?.setItem('legend-ball-intro-seen','1');}catch{}if(!seen)void showHome();}
   if(window.SkygateBoot){
     const scene=document.querySelector('.published-scene') || document.querySelector('.game');
     // The reel renderer pre-decodes each unique symbol texture separately.
