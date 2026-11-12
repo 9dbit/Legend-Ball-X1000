@@ -1,4 +1,5 @@
 import { shippedAssets } from '../release-store.mjs';
+import { generateLegendIcons } from './legend-icons.mjs';
 // Publish only shipped game art/audio, never Studio settings or uploaded assets.
 import { mkdir, copyFile, access } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
@@ -17,4 +18,5 @@ for (const file of files) {
 }
 await copyFile(resolve(root,'studio/audio_engine.js'),resolve(root,'play/audio_engine.js'));
 await copyFile(resolve(root,'studio/math/studio_math.js'),resolve(root,'play/studio_math.js'));
-console.log(`Prepared ${files.length} public game assets and audio mixer.`);
+await generateLegendIcons(root);
+console.log(`Prepared ${files.length} original Skygate-source game assets plus Legend Ball PWA icons and mixer.`);
