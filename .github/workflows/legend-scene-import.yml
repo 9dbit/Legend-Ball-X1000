@@ -1,0 +1,73 @@
+name: Import three user-supplied cinematic backgrounds
+on:
+  push:
+    branches: [feat/cinematic-energy-scenes-20261113]
+    paths:
+      - '.github/workflows/legend-scene-import.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  import-scenes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install Pillow==11.1.0
+      - name: Fetch only approved user-supplied images and verify exact bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/legend-scenes play/assets/legend-cinematics
+          curl -fL --retry 3 --retry-delay 2 -o /tmp/legend-scenes/warrior.jpg 'https://d2ol7oe51mr4n9.cloudfront.net/user_3IjqYUczuG9elCX3y0j3snqLYXf/974151cc-d0a5-4d64-ba8a-f677bf170464.jpg'
+          curl -fL --retry 3 --retry-delay 2 -o /tmp/legend-scenes/crimson.jpg 'https://d2ol7oe51mr4n9.cloudfront.net/user_3IjqYUczuG9elCX3y0j3snqLYXf/68c70994-9bb5-47e7-b9d8-ad6005f6b30e.jpg'
+          curl -fL --retry 3 --retry-delay 2 -o /tmp/legend-scenes/temple.jpg 'https://d2ol7oe51mr4n9.cloudfront.net/user_3IjqYUczuG9elCX3y0j3snqLYXf/8c5caf36-b4a9-4da0-9a9c-837c381969a3.jpg'
+          printf '462819687cd2ea09cf580eebe9e3b1439e70ddc9a8635869918967eea01f2bdf  /tmp/legend-scenes/warrior.jpg\n4612dec7f5bccf9d9b2088c5528053c997df64bcccb5be40becb92b2027b563b  /tmp/legend-scenes/crimson.jpg\nb67fea23badc57c246619e3cb01d1570c78a25e1dc9b41374a52e8d2f752a99b  /tmp/legend-scenes/temple.jpg\n' | sha256sum -c -
+      - name: Make optimized user-image previews, remove reference franchise lettering
+        shell: bash
+        run: |
+          python - <<'PY'
+          from PIL import Image, ImageOps
+          from pathlib import Path
+          from hashlib import sha256
+          import json
+          folder=Path('play/assets/legend-cinematics')
+          sources=[
+            ('warrior.jpg','scene-ember-warrior.webp','Ember Warrior',False),
+            ('crimson.jpg','scene-crimson-dragon.webp','Crimson Dragon',False),
+            ('temple.jpg','scene-celestial-temple.webp','Celestial Temple',True)
+          ]
+          manifest=[]
+          for src,out,title,remove_reference_title in sources:
+              im=Image.open(Path('/tmp/legend-scenes')/src).convert('RGB')
+              if remove_reference_title:
+                  # Last reference includes somebody else's franchise wording near the foot.
+                  # Crop it entirely. This reference is still NOT an original licensed asset.
+                  im=im.crop((0,0,im.width,round(im.height*.73)))
+              im=ImageOps.fit(im,(720,1280),method=Image.Resampling.LANCZOS,centering=(.5,.22))
+              dest=folder/out
+              im.save(dest,'WEBP',quality=82,method=6)
+              content=dest.read_bytes()
+              assert len(content)>18_000 and im.size==(720,1280)
+              manifest.append({'id':out.replace('scene-','').replace('.webp',''),'name':title,'path':out,'sha256':sha256(content).hexdigest(),'width':720,'height':1280,'stagingOnly':True,'rightsReviewRequired':True})
+          (folder/'manifest.json').write_text(json.dumps({'schema':'legend-ball-cinematic-scenes/v1','status':'reference-only / not cleared for production','source':'User-supplied visual references, 2026-11-13','engineImpact':'none','scenes':manifest},indent=2)+'\n')
+          print('Imported optimized backgrounds:',[(m['path'],(folder/m['path']).stat().st_size) for m in manifest])
+          PY
+      - name: Commit local binary assets to isolated development branch only
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add play/assets/legend-cinematics
+          if git diff --cached --quiet; then
+            echo "No binary changes"
+          else
+            git commit -m 'assets(legend): embed 3 user-supplied staged cinematic backgrounds'
+            git push origin HEAD:feat/cinematic-energy-scenes-20261113
+          fi
