@@ -1,0 +1,32 @@
+{
+  "id": "/play/",
+  "name": "SKYGATE 5000",
+  "short_name": "SKYGATE",
+  "description": "Skygate 5000 celestial cascades · virtual credits",
+  "start_url": "/play/",
+  "scope": "/play/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#060b10",
+  "theme_color": "#060b10",
+  "icons": [
+    {
+      "src": "icons/skygate-touch-192-v0139.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/skygate-touch-512-v0139.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/skygate-touch-maskable-512-v0139.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

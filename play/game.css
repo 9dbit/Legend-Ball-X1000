@@ -1,0 +1,664 @@
+:root{color-scheme:dark;font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#f1e9da;background:#0c0d18;--gold:#d9bd80;--muted:#9b94aa;--line:#c6a96a35}
+*{box-sizing:border-box}
+body{margin:0;min-height:100svh;display:flex;align-items:center;justify-content:center;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px);background:radial-gradient(ellipse at 50% 15%,#29213e,#0c0d18 70%);overscroll-behavior-y:contain}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+button:focus-visible,summary:focus-visible{outline:2px solid #fff1bc;outline-offset:4px}
+button:disabled{opacity:.45;cursor:default}
+button:active:not(:disabled){filter:brightness(1.18);transform:translateY(1px)}
+button svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+[hidden]{display:none!important}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.game{position:relative;container-type:inline-size;width:min(100%,calc((100svh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))*.5625));max-width:600px;aspect-ratio:9/16;overflow:clip;isolation:isolate;background:radial-gradient(ellipse at 50% 28%,#33233f,#141322 64%,#11121e);box-shadow:0 32px 120px #0007}
+.game:before{content:'';position:absolute;inset:0;pointer-events:none;z-index:-1;opacity:.45;background-image:radial-gradient(circle at 8% 47%,#fce6ab 0 .5px,transparent 1px),radial-gradient(circle at 94% 77%,#fce6ab 0 .5px,transparent 1px),radial-gradient(circle at 8% 93%,#c6b6e9 0 .5px,transparent 1px)}
+/* Hero artwork remains recognizable while the lower UI becomes quiet and clear. */
+.hero{position:absolute;inset:0 0 auto;height:23.5%;overflow:hidden;mask-image:linear-gradient(#000 72%,transparent 100%)}
+.hero img{display:block;width:100%;height:auto;filter:saturate(.86)}
+.hero:after{content:'';position:absolute;inset:0;background:linear-gradient(transparent 47%,#171322d9);pointer-events:none}
+.hero-caption{position:absolute;z-index:1;left:5.5%;bottom:12%;font-size:1.8cqw;font-weight:600;letter-spacing:.25em;color:#f3dfb4;text-shadow:0 2px 6px #000}
+/* Win display */
+.win-banner{position:absolute;top:21.3%;left:5%;width:90%;height:7.2%;z-index:4;display:flex;align-items:center;gap:3.2cqw;padding:1.4cqw 4cqw;border:1px solid #d7b87a6b;border-radius:2.2cqw;background:linear-gradient(100deg,#30243ded,#251f34f5);box-shadow:0 12px 28px #09091255,inset 0 1px #fff3}
+.win-star{font:5.8cqw Georgia;color:#efd396;filter:drop-shadow(0 0 9px #e8c27455)}
+.win-value{flex:1;min-width:0}
+.win-value>span{display:block;color:#c6b5d1;font-size:2cqw;letter-spacing:.16em;font-weight:600;line-height:1.4}
+.win-value strong{display:block;font:500 6.4cqw/1.15 Georgia,serif;color:#fff0c2;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.win-unit{font-size:1.7cqw;font-weight:600;letter-spacing:.15em;line-height:1.55;color:#bcb0c8;text-align:right}
+/* The board uses a fine metal edge and generous symbol spacing. */
+.board{position:absolute;left:4%;top:30%;width:92%;height:39.8%;padding:1.3%;border:1px solid #dbbb78a6;border-radius:2.7cqw;background:linear-gradient(145deg,#211b30,#151422 65%,#241a2c);box-shadow:0 0 0 3px #d4b56a10,inset 0 0 0 4px #0c0b1480,0 12px 28px #07070c66}
+.board:before,.board:after{content:'';position:absolute;pointer-events:none;left:8%;right:8%;height:1px;background:linear-gradient(90deg,transparent,#ffe7a5a6,transparent)}
+.board:before{top:0}.board:after{bottom:0;opacity:.4}
+.reels{display:grid;width:100%;height:100%;grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:minmax(0,1fr);overflow:hidden;border-radius:1.8cqw}
+.tile{position:relative;min-width:0;min-height:0;display:grid;place-items:center;border-right:1px solid #b4a1d414;border-bottom:1px solid #b4a1d414;background:radial-gradient(ellipse at 50% 70%,#5a33521f,transparent 75%)}
+.reel-column:last-child .tile{border-right:0}.tile:nth-child(5n){border-bottom:0}
+.symbol{width:85%;height:85%;object-fit:contain;filter:drop-shadow(0 3px 3px #0006);user-select:none;-webkit-user-drag:none}
+.tile.win{background:radial-gradient(ellipse,#ffe19a3d,#e1c48108);box-shadow:inset 0 0 0 1px #e5c68e}
+.tile.win .symbol-motion{animation:none}
+
+.tile.orb .symbol{opacity:0}
+.orb-num{position:absolute;left:19%;top:26%;width:62%;height:43%;border-radius:50%;display:grid;place-items:center;color:#fff18e;font:bold 5.6cqw Georgia;text-shadow:0 2px #63340d;background:radial-gradient(ellipse,#154dbe 25%,#182c86 65%,#286edb);box-shadow:0 0 7px #1f70e5}
+.tile.orb .orb-num{width:auto;height:auto;position:absolute;inset:12% 9%;border-radius:50%;display:grid;place-items:center;color:#fff5ce;font:600 5.1cqw Georgia,serif;background:radial-gradient(circle at 32% 23%,#c9e4ff9c,transparent 22%),radial-gradient(circle at 40% 25%,#548bed,#214395 48%,#112553 76%);border:1px solid #f3d994;box-shadow:inset 0 0 0 2px #112751,inset 0 -3px 7px #061944,0 0 13px #4876d947;text-shadow:0 2px 3px #10254f}
+.tile.orb .orb-num:after{content:'';position:absolute;inset:6%;border-radius:50%;border:1px solid #c7ddff3b;border-top-color:#f2e4b98c;transform:rotate(-30deg)}
+.scatter-label{position:absolute;bottom:3%;font:700 1.65cqw system-ui;color:#f6dfad;text-shadow:0 1px 3px #120d1e;letter-spacing:.08em}
+.bonus-ribbon{position:absolute;left:14%;right:14%;top:-3%;z-index:5;text-align:center;border:1px solid #e2be71;border-radius:30px;background:#35244e;font:600 2.5cqw system-ui;padding:1.2%;box-shadow:0 4px 16px #0006}
+/* Secondary actions */
+.feature-row{position:absolute;left:5%;right:5%;top:71.2%;height:5.4%;display:flex;gap:3%}
+.feature{display:flex;align-items:center;gap:2.3cqw;width:50%;border:1px solid var(--line);border-radius:2.3cqw;padding:1.8cqw 2.3cqw;background:linear-gradient(115deg,#2e2540aa,#211e30aa);text-align:left;line-height:1.2}
+.feature>svg{width:4.4cqw;height:4.4cqw;color:#d8be85;stroke-width:1.5}
+.feature>span{flex:1;font-size:3.1cqw;font-weight:600;white-space:nowrap}
+.feature small{display:block;margin-top:.8cqw;color:#a89bb6;font-size:2.1cqw;letter-spacing:.04em;font-weight:500}
+.feature>b{font-size:4cqw;font-weight:300;color:#aa96bd}
+.play-hint{position:absolute;left:5%;right:5%;top:77.25%;height:1.9%;display:flex;align-items:center;justify-content:center;text-align:center;font-size:2.1cqw;color:#a99bb6;letter-spacing:.015em;overflow:hidden;white-space:nowrap}
+/* Wallet and a symmetric control dock */
+.deck{position:absolute;top:79.7%;left:5%;width:90%;height:14.6%;border-top:1px solid #d7b77d26}
+.wallet{position:absolute;inset:0 0 auto;display:flex;align-items:center;justify-content:space-between;height:30%;padding-top:1.2cqw}
+.credit-line{min-width:0;display:flex;flex-direction:column;gap:.4cqw}
+.wallet label{font-size:2.1cqw;line-height:1.2;font-weight:600;letter-spacing:.13em;color:#998fa9}
+.credit-line strong{font-size:3.8cqw;line-height:1.2;font-weight:600;color:#f4e8ce;letter-spacing:-.025em;font-variant-numeric:tabular-nums}
+.bet-line{display:flex;align-items:center;gap:2.1cqw}
+.bet-line>div{display:flex;flex-direction:column;gap:.4cqw;align-items:center;min-width:8cqw}
+.bet-line strong{font-size:3.8cqw;line-height:1.2;font-weight:600;font-variant-numeric:tabular-nums}
+.round{position:relative;flex-shrink:0;border:1px solid #bb9e6b3d;border-radius:50%;background:#282236;color:#d7c9e3;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0;box-shadow:inset 0 1px #ffffff0b}
+.round.small{width:7.7cqw;height:7.7cqw;background:#242131}
+.round.small svg{width:3.6cqw;height:3.6cqw;stroke-width:1.7}
+.round.small:before{content:'';position:absolute;inset:-3px}
+.spin-row{position:absolute;top:32%;left:15%;right:15%;bottom:0;display:flex;align-items:center;justify-content:space-between;gap:3cqw}
+.spin{position:relative;width:21cqw;height:21cqw;flex-shrink:0;border:0;background:none;padding:0;filter:drop-shadow(0 4px 10px #9061be33)}
+.spin img{width:100%;height:100%;display:block}
+.spin-caption{position:absolute;bottom:16%;left:0;right:0;text-align:center;color:#f9e8c6;font-size:2.1cqw;font-weight:650;letter-spacing:.2em;line-height:1}
+.spin-frame{mask-image:radial-gradient(circle closest-side,transparent 48%,#000 49%);-webkit-mask-image:radial-gradient(circle closest-side,transparent 48%,#000 49%)}.spin-rotor{position:absolute;inset:0;clip-path:circle(24.5% at 50% 50%);pointer-events:none}.spin.busy .spin-rotor{animation:rotate 1.8s linear infinite;will-change:transform}.spin.battery-saver.busy .spin-rotor{animation:none;will-change:auto}.spin.busy .spin-caption{opacity:0}.spin:disabled{opacity:.8}
+.mode-control{border-radius:2.8cqw;width:13.5cqw;height:13.5cqw;background:#211d2e;gap:1cqw}
+.mode-control svg{width:5.1cqw;height:5.1cqw;stroke-width:1.6}.mode-control .play-mark{fill:currentColor;stroke:none}
+.mode-control small{font-size:2.1cqw;font-weight:600;letter-spacing:.12em;color:#ac9fbc}
+.round.selected{border-color:#c9a96f9c;background:#3c2b51;color:#ffe7b3;box-shadow:inset 0 1px #ead79f19,0 0 14px #c69c6320}
+.round.selected small{color:#ebd3a7}
+.footer{position:absolute;top:95.1%;left:5%;right:5%;height:4.3%;display:flex;align-items:center;gap:2.8cqw}
+.utility{width:8.5cqw;height:8.5cqw;border:0;background:transparent;box-shadow:none;color:#92899f}
+.utility:before{content:'';position:absolute;inset:-5px}.utility svg{width:4.5cqw;height:4.5cqw;stroke-width:1.5}
+.demo-label{flex:1;font-size:1.7cqw;font-weight:550;letter-spacing:.16em;color:#8f829e;display:flex;align-items:center;gap:1.5cqw}
+.demo-label>i{width:1cqw;height:1cqw;border-radius:50%;background:#bba875;box-shadow:0 0 8px #cdb47744}
+.demo-label small{display:none}
+#muteMark{position:absolute;width:4.5cqw;height:1px;background:#bcaac7;transform:rotate(-45deg);box-shadow:0 0 2px #20192c}
+/* Transient round feedback */
+.win-toast{position:absolute;z-index:150;left:13%;right:13%;top:41%;padding:5% 3%;border:1px solid #e5cb8c;border-radius:3.5cqw;background:radial-gradient(ellipse at top,#503768f5,#21182ef5);box-shadow:0 0 40px #c19b6240,0 12px 35px #000b;text-align:center;pointer-events:none;animation:celebrate .32s ease-out}
+.win-toast small{display:block;font-size:2.7cqw;font-weight:650;letter-spacing:.18em;color:#dbc492}.win-toast strong{display:block;font:500 8cqw Georgia;color:#fff0c7;margin-top:1.4cqw}
+.win-toast[data-kind=multiplier]{left:29%;right:29%;padding:3%;background:#172c57ed}.win-toast[data-kind=jackpot]{background:radial-gradient(ellipse at top,#68304e,#25182e)}
+.preview-badge{position:absolute;left:0;right:0;top:0;z-index:180;background:#111b;font:700 10px system-ui;text-align:center;padding:5px;letter-spacing:.16em}
+@keyframes rotate{to{transform:rotate(360deg)}}
+@keyframes drop{from{transform:translateY(-25%);opacity:.25}to{transform:translateY(0);opacity:1}}
+@keyframes glow{to{opacity:.8;transform:scale(1.04)}}
+@keyframes celebrate{from{transform:scale(.87);opacity:0}to{transform:scale(1);opacity:1}}
+dialog{position:fixed;margin:auto;width:min(92vw,500px);max-height:85svh;border:1px solid #b78b47;border-radius:20px;padding:0;color:#f7e8cb;background:linear-gradient(150deg,#351942,#150e28);box-shadow:0 20px 80px #000b;font:14px/1.55 system-ui}dialog::backdrop{background:#10051bc9;backdrop-filter:blur(5px)}.dialog-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;padding:14px 20px;background:#2c183a;border-bottom:1px solid #dabd6944}.dialog-head h2{margin:0;font:700 23px Georgia;color:#ffe3a3}.close{border:1px solid #8f6b6f;border-radius:50%;background:#432347;width:36px;height:36px;font:24px system-ui}.dialog-body{padding:8px 20px 22px}.dialog-body h3{color:#ffd982;margin-bottom:4px}.dialog-body button:not(.close){border:1px solid #b08a4b;border-radius:9px;background:#432447;padding:11px 12px;font:600 13px system-ui}.muted{font-size:12px;color:#c8b6cb}.paytable-wrap{overflow:auto}table{width:100%;border-collapse:collapse;text-align:center;font-size:13px}th,td{border-bottom:1px solid #b58f582b;padding:7px 4px}td:first-child{text-align:left;display:flex;align-items:center;gap:7px}td img{width:36px;height:36px;object-fit:contain}.menu-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:16px 0}.session-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:14px 0;font-size:11px;color:#baa5bd}.session-stats b{display:block;color:#fff0c5;font-size:16px}summary{cursor:pointer;color:#e6c285;padding:10px 0}input{min-width:0;width:100%;padding:10px;background:#140b22;border:1px solid #806082;border-radius:8px;color:#fff;font:16px system-ui}.seed-row{display:flex;gap:8px;margin:6px 0}.seed-row button{flex-shrink:0}.published-scene{position:absolute;inset:0;pointer-events:none}.published-layer{position:absolute;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.1;pointer-events:none;white-space:pre-wrap}.published-layer>img{width:100%;height:100%;object-fit:contain}.published-layer button{pointer-events:auto}.published-layer .spin,.published-layer .round{position:relative;left:auto;top:auto;width:100%;height:100%;max-width:none;aspect-ratio:auto;font-size:inherit}.published-layer .spin{border:0;background:none}.published-layer .round{border-width:.6cqw}.published-layer .round small{font-size:2.3cqw}.published-layer .round b{font-size:4cqw}.published-layer .round:before{content:'';position:absolute;inset:-3px}.published-layer .round.selected{box-shadow:0 0 12px #ffc858}.published-layer.text-layer{gap:.7cqw;font-weight:bold;text-shadow:0 2px 2px #210a21}.published-layer strong{font-size:inherit}.published-layer.panel-layer{border:.65cqw solid #e6ab56;border-radius:6cqw 6cqw 3cqw 3cqw;background:linear-gradient(135deg,#250e35e8,#3b1646f4,#210f33e0);box-shadow:inset 0 2px 14px #ffb14b44}.published-layer.circle-layer:not(:has(button)){border:.65cqw solid #ffd48b;border-radius:50%;background:radial-gradient(ellipse at 33% 20%,#642d69,#1b0b2b);font-weight:900}.published-layer.live-grid{background:linear-gradient(#2d071de8,#4a0727f0)}.published-feature{width:100%;height:100%;color:transparent;background-color:transparent;background-size:100% 100%;border:0}.published-feature small{display:none}.published-identity{position:absolute;bottom:2%;left:25%;right:25%;font:700 1.7cqw system-ui;text-align:center;letter-spacing:.08em}.published-status{z-index:130}.has-published-scene:before{display:none}.has-published-scene>.hero,.has-published-scene>.board,.has-published-scene>.win-banner,.has-published-scene>.feature-row,.has-published-scene>.deck,.has-published-scene>.footer{display:none}.published-bet-controls{display:flex;gap:16px;margin-top:16px;align-items:center}.published-bet-controls:before{content:'Ubah bet';margin-right:auto}.published-bet-controls .round.small{width:44px;height:44px;font-size:24px}.feature-label{pointer-events:none}
+/* Sheet typography and legacy Studio layout bindings. */
+dialog{border-color:#8f765344;border-radius:24px;background:linear-gradient(150deg,#282036,#141320);box-shadow:0 25px 100px #000a;max-height:calc(100svh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 32px);overscroll-behavior:contain}.dialog-head{background:#241d30;border-bottom-color:#b69b6326}.dialog-head h2{font:600 21px system-ui}.dialog-head .close{min-width:44px;min-height:44px;border-color:#9980a440;background:#30263d;color:#e5d8ee}.dialog-body{padding-bottom:max(22px,env(safe-area-inset-bottom,0px))}.dialog-body button:not(.close){background:#32273f;border-color:#9c7f5c55;min-height:44px}.dialog-body h3{font-size:15px;color:#e3c994}.activity-status{font-size:12px;color:#bdaac9;padding:12px;border:1px solid #a28eaf33;border-radius:10px;overflow-wrap:anywhere}summary{color:#c8b3d7}th{font-size:11px;color:#ab98ba}input{background:#171320;border-color:#77608177}.session-stats{border-bottom:1px solid #d4b0751c}.session-stats b{font-size:17px}.published-layer .spin-caption{display:none}.published-layer .spin,.published-layer .round{max-width:none;max-height:none}.published-layer .mode-control{border-radius:50%;gap:1cqw}.published-layer .utility{background:#2c213b;border:1px solid #c2a36a66}.published-layer .utility svg{width:55%;height:55%}.published-layer .mode-control svg{width:40%;height:40%}.published-layer .spin img{object-fit:contain}.has-published-scene .play-hint{z-index:130}.has-published-scene .win-value{display:contents}.published-bet-controls .small svg{width:20px;height:20px}
+@media(min-width:700px) and (min-height:700px){.game{border-radius:20px;outline:1px solid #c8ab7e17}}
+@media(max-height:460px) and (orientation:landscape){body{align-items:flex-start}.game{width:min(100%,420px)}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;scroll-behavior:auto!important}.tile.win .symbol{transform:none}}
+/* Imported Studio skins keep artwork and live controls independently editable. */
+.published-layer.image-crop,.published-feature{overflow:hidden}
+.published-feature{position:relative;padding:0}
+.feature-skin,.control-skin{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
+.published-feature>svg,.published-feature>span,.published-feature>b{visibility:hidden}
+.published-layer .skinned-control{background:transparent;border:0;box-shadow:none;overflow:hidden;color:#ffe7a0}
+.skinned-control>svg,.skinned-control>small,.skinned-control>#muteMark{position:relative;z-index:1}
+.skinned-control.selected{filter:brightness(1.3);outline:2px solid #fff2b8;outline-offset:-3px}
+.olympus-gold{font-family:Georgia,'Times New Roman',serif;background:#080c0f}
+.olympus-gold .published-layer.text-layer{text-shadow:0 2px 3px #000;color:#ffedaf}
+.olympus-gold .published-layer.live-grid{background:linear-gradient(100deg,#040c12f5,#091016f5,#03080cf5);border-radius:0}
+.olympus-gold .reels{border-radius:0}
+.olympus-gold .tile{background:none;border-color:#c3984c65}
+.olympus-gold .symbol{width:96%;height:96%;filter:drop-shadow(0 2px 3px #000b)}
+.olympus-gold .orb-num{background:none;box-shadow:none;left:10%;top:25%;width:80%;height:50%;font-size:4.8cqw;color:#fff1a4;text-shadow:0 2px 3px #001345}
+.olympus-gold .tile.win{background:radial-gradient(ellipse,#ffd25b4a,transparent)}
+.olympus-gold .play-hint{display:none}
+.olympus-gold .published-layer[data-layer=credits] .text-content,.olympus-gold .published-layer[data-layer=betlabel] .text-content{flex-direction:column;gap:.4cqw;line-height:1}
+.olympus-gold .published-layer[data-layer=credits] .text-content>span,.olympus-gold .published-layer[data-layer=betlabel] .text-content>span{font:500 1.9cqw system-ui;letter-spacing:.22em;color:#fff8db}
+.olympus-gold .published-identity{bottom:2.1%;left:28%;right:28%;white-space:pre-line;font:500 1.45cqw/2.1 system-ui;letter-spacing:.22em;color:#e5e8e6;text-shadow:0 2px #000}
+.olympus-gold .published-layer .round svg{width:38%;height:38%;stroke-width:1.8}
+.olympus-gold .published-layer .round.selected{box-shadow:none}
+.olympus-gold .published-layer [id=autoStatus],.olympus-gold .published-layer [id=turboStatus]{font:inherit;letter-spacing:.1em}
+.olympus-gold .bonus-ribbon{background:#071117;border-color:#d9ad57;color:#fff0b4}
+
+/* Clip reel motion at the board, keeping six short-lived compositing tracks. */
+.reel-column{position:relative;min-width:0;height:100%;overflow:hidden;contain:strict}
+.reel-track{height:200%;display:grid;grid-template-rows:repeat(10,minmax(0,1fr));transform:translate3d(0,-50%,0)}
+.reels.rolling .reel-track{will-change:transform;backface-visibility:hidden}.reels.rolling .symbol{filter:none}
+.symbol-motion{position:relative;width:100%;height:100%;min-width:0;min-height:0;display:grid;place-items:center}
+.published-layer.text-layer{overflow:hidden;gap:0;line-height:1.05}
+.text-content{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;width:max-content;max-width:none;white-space:pre;line-height:inherit;gap:.5cqw;transform-origin:center}
+.text-content>*{line-height:inherit;flex-shrink:0}
+.text-content strong{font-variant-numeric:tabular-nums;white-space:nowrap}
+.published-layer[data-layer=winamount] .text-content{letter-spacing:.015em}
+.olympus-gold .published-layer[data-layer=credits] .text-content>strong,.olympus-gold .published-layer[data-layer=betlabel] .text-content>strong{line-height:1}
+.olympus-gold .spin{filter:none}
+@media(prefers-reduced-motion:reduce){.reels.rolling .reel-track{will-change:auto}.tile.win .symbol-motion{transform:none;opacity:1}}
+
+.published-identity{z-index:50;pointer-events:none}
+
+/* Win effects use three shared SVG textures and pooled nodes per visible cell. */
+.cascade-fx{position:absolute;display:block;opacity:0;pointer-events:none;user-select:none;transform-origin:center;object-fit:fill;z-index:4}
+.fx-edge{inset:0;width:100%;height:100%}
+.fx-burst{left:-25%;top:-25%;width:150%;height:150%}
+.fx-spiral{left:-5%;top:-5%;width:110%;height:110%}
+.reels[data-fx-phase=charge] .tile.win,.reels[data-fx-phase=burst] .tile.win{z-index:2}
+.win-banner .win-value{text-align:center}.win-banner .win-value strong{font-size:7.8cqw}
+.feature-row{justify-content:center}.feature-row .feature{width:66%}
+.win-toast[data-kind=bonus]{background:radial-gradient(ellipse at top,#5d4217f5,#131416fa 75%);border-color:#ffe49b;box-shadow:0 0 28px #ffd46555,0 12px 35px #000b}
+.win-toast[data-kind=bonus]:before{content:'✦';display:block;color:#ffe9a0;font:7cqw Georgia;line-height:1;margin-bottom:1.5cqw}
+.win-toast[data-kind=bonus] strong{font-size:6.8cqw}
+@media(prefers-reduced-motion:reduce){.cascade-fx{display:none}}
+/* Reference controls: readable live text, touch targets, scrollable sheets. */
+.feature-row #payInfo{display:none}.feature-row .feature{width:48%;font-family:system-ui}.feature strong{display:block;font-size:4cqw;color:#ffe28a}.feature-ante small{font-size:1.7cqw}.live-feature{color:#fff0c4;border:0;background:#090b10;padding:.8cqw;font:700 2.7cqw/1.15 system-ui}.live-feature>span{visibility:visible;position:relative;z-index:1;display:block}.live-feature small{display:block;font-size:1.55cqw;margin-top:.6cqw}.live-feature strong{font-size:3.7cqw;display:block}.live-feature.selected{outline:2px solid #d9ad57;outline-offset:-5px}.live-feature:disabled{opacity:.48}.published-layer [role=button]{pointer-events:auto;cursor:pointer}.bet-menu{position:absolute;z-index:60;left:16%;bottom:1.6%;width:9%;height:5.1%;font:3.4cqw system-ui;min-width:32px;min-height:32px}.bet-menu:before{content:'';position:absolute;inset:-6px}.promo-badge{position:absolute;z-index:55;top:31%;left:26%;width:48%;padding:.45cqw;background:#071014e8;border:1px solid #bd9851;border-radius:2cqw;color:#fce4a2;font:600 1.6cqw system-ui;letter-spacing:.08em}.promo-badge[hidden]{display:none}.spin{touch-action:none}.spin.battery-saver.busy{animation:none}.win-toast[data-kind=speed] strong{font-size:4cqw}
+dialog{width:min(94vw,520px);max-height:90dvh;background:#08090ef5;border:1px solid #bd985166;border-radius:16px;color:#fff;line-height:1.5}dialog::backdrop{background:#0008;backdrop-filter:none}.dialog-head{background:#08090ef5;padding:16px 20px}.dialog-head h2{color:#f2c259;font:750 clamp(18px,5vw,24px)/1.2 system-ui;letter-spacing:.015em}.dialog-head .close{border:0;background:transparent;font-size:32px}.dialog-body{padding:12px 24px 24px}.dialog-body h3{color:#f2c259;font-weight:750;font-size:17px}.dialog-body p{font-size:14px}.dialog-body button:not(.close){background:#202126;border-color:#ffffff38;color:#fff}.dialog-body .primary-action{display:block;width:100%;background:#151a20!important;border:0!important;color:white;font-size:18px!important;margin-top:24px;padding:17px!important;font-weight:800!important}.settings-links{display:grid;grid-template-columns:1fr;gap:0}.settings-links button{text-align:left;border:0!important;border-bottom:1px solid #ffffff29!important;border-radius:0!important;background:transparent!important;font-size:18px!important;padding:18px 0!important}.setting-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 0}.setting-row span{font-weight:750;font-size:15px}.setting-row small{display:block;font-size:11px;font-weight:500;color:#b6b9bf;margin-top:3px}.setting-row input{appearance:none;width:58px;height:34px;flex:0 0 58px;border:0;padding:0;background:#42454c;border-radius:8px;position:relative;cursor:pointer}.setting-row input:before{content:'';position:absolute;top:3px;left:3px;width:28px;height:28px;border-radius:6px;background:#ddd;transition:transform .15s}.setting-row input:checked{background:#80642d}.setting-row input:checked:before{transform:translateX(24px);background:#f2d286}.auto-options{display:flex;gap:12px;justify-content:space-between;margin:20px 0 55px}.auto-options label{display:flex;gap:8px;align-items:center;font-size:12px;font-weight:750;max-width:33%}.auto-options input,.intro-choice input{width:28px;height:28px;flex:0 0 28px;accent-color:#d9ad57}.autospin-label{display:block;text-align:center;font-weight:bold;font-size:15px}.range-row{display:flex;align-items:center;gap:22px;margin:26px 0 44px}.range-row input{accent-color:#d9ad57;padding:0}.range-row output{min-width:45px;font-size:25px;font-weight:bold}.bet-fields>label,#buyDialog label{display:block;text-align:center;font-weight:750;margin:17px 0 9px}.stepper{display:grid;grid-template-columns:50px minmax(0,1fr) 50px;gap:20px;align-items:center;margin-bottom:24px}.dialog-body .stepper button{width:50px;height:50px;padding:0;border:0;border-radius:50%;font:400 36px/1 system-ui;background:#80642d}.stepper button:first-child{background:#e6e8e8;color:#252629}.stepper output{background:#22242a;border:2px solid #ffffff29;border-radius:12px;min-height:66px;display:grid;place-items:center;font-size:25px;font-weight:750;font-variant-numeric:tabular-nums}.dialog-body button:disabled{opacity:.35;cursor:not-allowed}.purchase-panel{background:url('assets/ui/confirmation-panel-v1.png') center/100% 100% no-repeat;padding:28px 24px 26px;text-align:center;min-height:240px;display:flex;flex-direction:column;justify-content:center}.purchase-panel h3{font-size:24px;line-height:1.1;margin:0;color:#9ce5ff}.purchase-panel>strong{font:bold 42px Georgia;color:#ffe36a;line-height:1.2;margin:8px 0}.purchase-panel>small{font-size:10px}.confirm-actions{display:flex;justify-content:center;gap:42px;margin:18px 0 0}.dialog-body .confirm-actions button{font-size:29px;background:#057ae2;border:2px solid #ffdb74;border-radius:12px;min-width:56px;min-height:50px}.confirm-actions button:first-child{color:#ff3030}.confirm-actions button:last-child{color:#ffe6a9}.history-entry{padding:16px 0;border-bottom:1px solid #ffffff26;display:grid;gap:5px;font-size:14px}.history-entry small{color:#bcbfc7}.history-entry span{color:#ffe6ac}#featureDialog{text-align:center}#featureDialog .dialog-head{justify-content:center}#featureAmount{font:750 36px/1.3 Georgia;color:#ffe08a;display:block;padding:20px 0}.intro-choice{display:flex;align-items:center;gap:10px}#buyMessage{text-align:center;color:#ffc787;min-height:20px}#modal .dialog-body section{margin-bottom:28px}#modal .dialog-body h3{margin-top:26px}#credits,#betText{cursor:pointer}#credits:focus-visible,#betText:focus-visible{outline:2px solid #fff}
+@media(max-width:360px){.dialog-body{padding:10px 16px 20px}.stepper{gap:12px}.auto-options{gap:7px}.auto-options label{font-size:11px}.auto-options input{width:24px;height:24px;flex-basis:24px}.dialog-head{padding:12px 16px}.purchase-panel>strong{font-size:34px}}
+
+.published-layer .live-feature{display:grid;place-items:center;text-align:center;padding:1cqw 3cqw;min-height:40px}.live-feature>span{width:100%;text-align:center;line-height:1.15}.promo-badge{top:22.5%;left:6%;width:40%;font-size:1.5cqw}.olympus-gold .bet-menu{background:radial-gradient(ellipse at 35% 20%,#4d4326,#090d11 70%);border:2px solid #d6aa52;color:#ffe9ab;box-shadow:inset 0 0 0 2px #51401e,0 2px 5px #000}.bet-menu svg{width:58%;height:58%;fill:none;stroke:currentColor;stroke-width:1.8}
+
+/* Skygate 5000: one obsidian / antique-gold / sapphire design system. */
+:root{--sg-panel:#091017;--sg-gold:#d7af62;--sg-cream:#f5e5bc;--sg-sapphire:#247be0;--sg-line:#bb954c66}
+.game:after{content:'';position:absolute;inset:auto 0 0;height:38%;background:linear-gradient(to bottom,transparent,rgba(0,0,0,.3));z-index:2;pointer-events:none}
+.brand-logo.image-crop{overflow:visible}.brand-top{position:absolute;inset:0 0 25%;overflow:hidden}.brand-top>img{width:100%;height:100%;object-fit:contain}
+.brand-number{position:absolute;bottom:-1%;left:0;width:100%;font:900 clamp(24px,8.4cqw,42px)/1 Georgia,serif;letter-spacing:.045em;color:#2588ff!important;background:linear-gradient(#b1e7ff 5%,#388ffa 35%,#0648a4 70%,#72c4ff);background-clip:text;-webkit-background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 1px 0 #051b3e) drop-shadow(0 2px 2px #000);-webkit-text-stroke:.4px #6cb9ff}
+.hero-caption{color:#469cff;font:900 7cqw Georgia;letter-spacing:.05em}
+/* Four independent 44+ px targets; decorations never intercept a tap. */
+.published-layer[data-layer=menubtn],.published-layer[data-layer=soundbtn],.published-layer[data-layer=infobtn]{top:auto!important;bottom:6px!important;width:44px!important;height:46px!important;z-index:65!important}
+.published-layer[data-layer=menubtn]{left:calc(8% - 22px)!important}.published-layer[data-layer=soundbtn]{left:calc(76% - 22px)!important}.published-layer[data-layer=infobtn]{left:calc(92% - 22px)!important}
+.game .bet-menu{left:calc(24% - 22px);bottom:6px;width:44px;height:46px;z-index:65;padding:5px 2px;border-radius:12px;display:flex;flex-direction:column;justify-content:center;gap:2px}
+.published-layer .utility.skinned-control,.game .bet-menu{background:linear-gradient(145deg,#303021,#0b121a 55%,#060b10);border:1px solid var(--sg-gold);box-shadow:inset 0 0 0 2px #0a0e12,inset 0 0 0 3px #97794255,0 3px 8px #0008;border-radius:12px;color:var(--sg-cream);display:flex;flex-direction:column;gap:2px;padding:5px 2px}
+.published-layer .utility .control-skin{display:none}.published-layer .utility svg,.game .bet-menu svg{width:22px;height:22px;flex:0 0 22px;stroke-width:1.7}
+#menu:after,#sound:after,#help:after,#betMenu:after{display:block;font:650 8px/1.1 system-ui;letter-spacing:.035em;color:#ead7a6}
+#menu:after{content:'MENU'}#sound:after{content:'VOLUME'}#help:after{content:'RULES'}#betMenu:after{content:'BET'}
+.olympus-gold .published-identity{bottom:1.5%;left:33%;right:33%;font-size:1.3cqw}
+/* Every modal uses the same frame, typography and action hierarchy. */
+dialog{width:min(calc(100vw - 24px),480px);max-height:calc(100dvh - 24px);padding:0;border:1px solid var(--sg-gold);border-radius:18px;background:radial-gradient(ellipse at 0 0,#29302666,transparent 50%),linear-gradient(155deg,#111d27,#060b10 70%);color:#e8edf1;box-shadow:inset 0 0 0 3px #080d13,inset 0 0 0 4px #a9813e55,0 24px 80px #000b;font:14px/1.6 system-ui;overflow:auto;scrollbar-width:thin;scrollbar-color:#94743f #0a1017}
+dialog::backdrop{background:#02060bbd;backdrop-filter:blur(5px)}
+.dialog-head{padding:17px 20px;background:linear-gradient(125deg,#1d2830,#0a1017);border-bottom:1px solid var(--sg-line);gap:12px}
+.dialog-head h2{font:700 clamp(18px,4.8vw,23px)/1.2 Georgia,serif;letter-spacing:.035em;color:var(--sg-cream);text-shadow:0 2px 2px #000}
+.dialog-head h2:before{content:'SKYGATE 5000';display:block;font:650 9px/1.4 system-ui;letter-spacing:.22em;color:#81b9f4;margin-bottom:6px}
+.dialog-head .close{width:44px;height:44px;min-width:44px;min-height:44px;border-radius:12px;border:1px solid var(--sg-line);background:#111c26;font-size:26px;color:var(--sg-cream)}
+.dialog-body{padding:16px 20px 24px}.dialog-body h3{font:700 17px Georgia;color:var(--sg-cream);letter-spacing:.025em}.dialog-body p{font-size:14px;color:#c9d2db;line-height:1.7}
+.dialog-body button:not(.close){min-height:48px;background:linear-gradient(#1c2b39,#0b141e);border:1px solid var(--sg-line);border-radius:12px;color:var(--sg-cream);font:650 14px/1.3 system-ui}
+.dialog-body .primary-action{background:linear-gradient(#3488dd,#104b8d)!important;border:1px solid #9fc9f3!important;border-radius:12px;color:#fff;font:750 15px/1.3 system-ui!important;padding:16px!important;box-shadow:inset 0 1px #d9edff44,0 4px 14px #0005;margin-top:20px;letter-spacing:.03em}
+.settings-links{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px}.settings-links button{padding:14px 10px!important;text-align:center;background:linear-gradient(#233343,#101a25)!important;border:1px solid var(--sg-line)!important;border-radius:12px!important;font-size:13px!important}
+.setting-row{border-bottom:1px solid #c19b5226;padding:14px 0;min-height:66px}.setting-row span{font-size:13px;letter-spacing:.035em}.setting-row small{color:#9faebe;font-size:12px;font-weight:400;letter-spacing:0}
+.setting-row input{height:34px;border:1px solid #857044;border-radius:20px;background:#202b36}.setting-row input:before{border-radius:50%;background:#a1adba;width:26px;height:26px}.setting-row input:checked{background:#155a9f}.setting-row input:checked:before{background:#b9ddff}
+.auto-options{display:grid;grid-template-columns:1fr;gap:10px;margin:8px 0 24px}.auto-options label{max-width:none;min-height:48px;padding:10px 12px;background:#111e2a;border:1px solid var(--sg-line);border-radius:12px;font-size:13px;letter-spacing:.025em}.auto-options input,.intro-choice input{width:24px;height:24px;flex:0 0 24px;accent-color:#338eea}.intro-choice{min-height:48px}
+.range-row{margin:18px 0 24px;gap:14px}.range-row input{accent-color:#338eea;min-height:44px}.range-row output{font-size:24px;color:var(--sg-cream)}
+.stepper{grid-template-columns:48px minmax(0,1fr) 48px;gap:12px;margin-bottom:20px}.dialog-body .stepper button,.dialog-body .stepper button:first-child{width:48px;height:48px;border-radius:12px;background:linear-gradient(#263a4e,#102033);border:1px solid #9a7a41;color:var(--sg-cream);font:400 28px/1 system-ui}
+.stepper output{min-height:56px;border:1px solid #b38b494d;background:#050c13;color:#f4e7c8;border-radius:12px;font:700 23px Georgia;box-shadow:inset 0 2px 8px #0007}
+.bet-fields>label,#buyDialog label{font-size:11px;letter-spacing:.15em;color:#a8bacb;margin:18px 0 8px}
+.purchase-panel{background:radial-gradient(ellipse at top,#1e3d5c,#080f18 75%);border:1px solid var(--sg-gold);border-radius:14px;box-shadow:inset 0 0 0 3px #050a10,inset 0 0 0 4px #b18a4344;padding:24px 14px;min-height:220px}
+.purchase-panel h3{font:700 19px Georgia;color:var(--sg-cream)}.purchase-panel>strong{font-size:40px;color:#85bdff}.purchase-panel>small{color:#afbfce;letter-spacing:.05em}
+.confirm-actions{gap:12px;display:grid;grid-template-columns:1fr 1fr;width:100%}.dialog-body .confirm-actions button{min-height:50px;border-radius:12px;font:650 12px system-ui;padding:10px 6px;min-width:0;background:#122335;color:#f5e5bc;border:1px solid var(--sg-gold)}.dialog-body .confirm-actions button:last-child{background:linear-gradient(#2e84da,#104a89);color:white}
+.history-entry{padding:16px;border:1px solid var(--sg-line);border-radius:12px;background:#101d29;margin-bottom:12px}.history-entry b{font-size:12px;color:var(--sg-cream)}.history-entry small{color:#a7b9ca}.history-entry span{color:#87bfff}
+#featureAmount{color:#8cc6ff;font-size:32px}th{color:#dbc395;letter-spacing:.025em}td{color:#e2eaf3}td,th{border-bottom-color:#b3955433}tr:nth-child(even){background:#ffffff03}input{background:#0b1723;border-color:#9c7c454d}summary{min-height:44px;color:#d4b67b}.session-stats{color:#a2b5c7}.session-stats b{color:var(--sg-cream)}.activity-status{background:#0b1823;border-color:var(--sg-line);color:#b8c8d7}
+button:focus-visible,input:focus-visible{outline:2px solid #8ecbff;outline-offset:3px}.fx-edge{inset:0;width:100%;height:100%;object-fit:fill;transform:none}
+@media(max-width:360px){.dialog-head{padding:14px}.dialog-body{padding:14px}.stepper{gap:8px}.menu-actions{grid-template-columns:1fr}.purchase-panel>strong{font-size:34px}.dialog-head h2{font-size:18px}}
+
+/* First paint belongs to the splash, never to the legacy fallback layout. */
+.boot-splash{isolation:isolate;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:space-between;min-height:100svh;padding:calc(env(safe-area-inset-top,0px) + 30px) 24px calc(env(safe-area-inset-bottom,0px) + 24px);text-align:center}
+.splash-art{position:absolute;inset:0;z-index:-3;max-width:680px;margin:auto;overflow:hidden}
+.splash-background,.splash-lightning{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
+.splash-lightning{stroke:#ffdf8a;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 5px #ffc54a);opacity:0;animation:splash-storm 7s ease-in-out infinite}
+.bolt-branch{stroke-width:1;opacity:.6}
+.splash-shade{position:absolute;inset:0;z-index:-1;background:linear-gradient(#03091088,transparent 24%,#03091018 48%,#030910bc 73%,#030910 100%)}
+.splash-title span{font:600 9px/1.4 system-ui;letter-spacing:.33em;color:#e0d1b0}
+.splash-title h1{margin:8px 0 0;font:700 clamp(27px,7vw,40px)/1.05 Georgia,serif;letter-spacing:.09em;text-shadow:0 2px 12px #000}
+.splash-title strong{display:block;color:#6aafff;font-size:.65em;letter-spacing:.2em;margin-top:5px}
+.splash-footer{width:min(100%,320px);display:flex;flex-direction:column;align-items:center;margin-top:auto}
+.splash-logo{width:190px;height:auto;max-height:145px;object-fit:contain;animation:soft-tech-breathe 4s ease-in-out infinite;filter:drop-shadow(0 0 14px #338aff33)}
+#bootStatus{margin:4px 0 14px;min-height:20px;font:400 12px/1.5 system-ui;color:#c1ceda}
+.boot-progress{height:2px;width:120px;overflow:hidden;background:#bda26433;margin:0 0 18px;border-radius:2px}
+.boot-progress span{display:block;width:45%;height:100%;background:#e6c479;animation:splash-loading 1.8s ease-in-out infinite}
+.splash-play,.splash-retry{width:100%;min-height:56px;border:1px solid #dfbf7c;border-radius:14px;background:linear-gradient(135deg,#354148,#10202d 55%,#07121d);color:#f8e7bc;box-shadow:inset 0 0 0 3px #060c15,inset 0 0 0 4px #c3a16044,0 6px 28px #0007;font:750 16px/1 system-ui;letter-spacing:.2em;display:flex;align-items:center;justify-content:center;gap:14px}
+.splash-play:not(:disabled){background:linear-gradient(130deg,#2866a0,#102b4a 60%,#091827)}
+.splash-play:disabled{opacity:.45}.splash-footer>small{margin-top:18px;color:#80909e;font:500 8px/1.4 system-ui;letter-spacing:.17em}
+@keyframes splash-storm{0%,30%,70%,100%{opacity:0}40%{opacity:.7}51%{opacity:.12}58%{opacity:.45}}
+@keyframes soft-tech-breathe{0%,100%{transform:scale(.96)}50%{transform:scale(1.04)}}
+@keyframes splash-loading{0%{transform:translateX(-110%)}100%{transform:translateX(330%)}}
+@media(max-height:600px){.boot-splash{padding-top:18px;padding-bottom:16px}.splash-logo{width:142px;max-height:104px}.splash-title span{font-size:8px}.splash-footer>small{margin-top:12px}}
+@media(max-height:420px) and (orientation:landscape){.splash-title{align-self:flex-start}.splash-footer{align-self:flex-end;width:240px;margin-top:-100px}.splash-logo{width:120px;max-height:85px}}
+@media(prefers-reduced-motion:reduce){.splash-lightning,.splash-logo,.boot-progress span{animation:none}.splash-lightning{opacity:.2}.boot-progress span{width:100%}}
+
+/* v0.10.2: sculpted gold chrome shared by splash and every popup. */
+:root{--sg-action-image:url('assets/ui/confirmation-panel-v1.png')}
+.splash-title{width:min(82vw,340px);display:flex;flex-direction:column;align-items:center;gap:10px}
+.shared-brand{position:relative;aspect-ratio:572/337;width:100%;container-type:inline-size}
+.shared-brand .brand-top{inset:0 0 18%}.shared-brand .brand-number{bottom:0;font-size:10cqw}
+.published-layer.brand-logo .brand-number{font-size:clamp(22px,7.5cqw,40px)}
+.splash-title .brand-number{margin:0;letter-spacing:.045em}
+.splash-title>span{font-size:8px;letter-spacing:.3em}
+.splash-play,.splash-play:not(:disabled),.splash-retry,dialog .dialog-body .primary-action,dialog .confirm-actions button:last-child{
+ background-color:transparent!important;background-image:var(--sg-action-image)!important;background-size:101.35% 177%!important;background-position:50% 47.6%!important;background-repeat:no-repeat!important;
+ border:0!important;border-radius:0;box-shadow:none!important;color:#fff0be!important;text-shadow:0 2px 3px #000;font-family:Georgia,serif!important;font-weight:700!important;letter-spacing:.08em;padding:18px 22px!important;min-height:60px;
+}
+.splash-play{font-size:21px}.splash-retry{font-size:16px}
+dialog{border:2px solid #bb9145;border-radius:10px;background:radial-gradient(ellipse at 50% 0,#28291e70,transparent 48%),linear-gradient(145deg,#10191e,#050a0e 65%);box-shadow:inset 0 0 0 3px #050a0c,inset 0 0 0 5px #98723866,0 22px 70px #000d}
+.dialog-head{background:linear-gradient(120deg,#242b2b,#0b1117 65%);border-bottom:1px solid #a17c3c;padding:18px 20px}
+.dialog-head h2{color:#f8df99;font-family:Georgia,serif;text-shadow:0 2px 3px #000;letter-spacing:.05em}
+.dialog-head h2:before{color:#be9b56;letter-spacing:.2em}
+.dialog-head .close{border:1px solid #ba934b;background:radial-gradient(ellipse at 35% 15%,#4b4531,#0b1218 65%);box-shadow:inset 0 0 0 2px #090e11,inset 0 0 0 3px #6f552d;border-radius:50%;color:#f6d88d}
+.dialog-body{padding:20px 20px 24px}.dialog-body p{color:#d2d5d5}
+dialog .dialog-body button:not(.primary-action),.settings-links button{background:linear-gradient(140deg,#3b3b2b,#10191e 56%,#080e13)!important;border:1px solid #ac8845!important;color:#f5e3ae!important;box-shadow:inset 0 0 0 2px #080d11,inset 0 0 0 3px #8b6e3433;border-radius:8px}
+dialog .dialog-body .primary-action{font-size:17px!important;margin-top:22px}
+dialog .dialog-body .confirm-actions button{font:700 11px Georgia!important;padding:14px 8px!important;letter-spacing:.02em}
+.setting-row input:checked{background:#81632a}.setting-row input:checked:before{background:#f5d68f}
+.auto-options input,.range-row input{accent-color:#d7af62}.auto-options label,.history-entry{background:#10191e;border-color:#95733c}
+.stepper output{background:#060b10;color:#f2db9f;border-color:#8f6c34}.purchase-panel{background:radial-gradient(ellipse at top,#343322,#080e13 75%);border-color:#b59048;border-radius:8px}
+.purchase-panel>strong,#featureAmount{color:#f6db8e;text-shadow:0 2px 4px #000}
+#featureDialog .dialog-head{padding:20px}#featureDialog .dialog-body{padding:24px 22px}
+#featureAmount{font:700 clamp(30px,8vw,46px)/1.25 Georgia;padding:20px 6px 24px;letter-spacing:.025em}
+#featureDescription{max-width:36ch;margin:10px auto 24px;font-size:15px}
+.win-toast,.win-toast[data-kind=bonus],.win-toast[data-kind=jackpot],.win-toast[data-kind=multiplier]{background:radial-gradient(ellipse at top,#373321f5,#080e13fa 75%);border:2px solid #c19a4b;border-radius:8px;box-shadow:inset 0 0 0 3px #050a0c,inset 0 0 0 4px #97783d66,0 12px 30px #000b}
+/* Winning artwork has no highlight contour: electricity is a sibling at the cell perimeter. */
+.tile.win,.olympus-gold .tile.win{background:none;box-shadow:none}
+.tile.win .symbol,.olympus-gold .tile.win .symbol{filter:none;outline:0;box-shadow:none}
+.reels[data-fx-phase=charge] .fx-burst{opacity:0!important}
+@media(max-height:600px){.splash-title{width:min(65vw,230px);gap:6px}.splash-title>span{font-size:7px}.splash-play,.splash-retry{min-height:54px}}
+@media(max-height:420px) and (orientation:landscape){.splash-title{width:220px}.splash-footer{margin-top:-155px}}
+
+/* Sparks are pooled over the whole board, with no sprite-shaped lightning. */
+.reels{position:relative}.fireworks-layer{position:absolute;inset:0;z-index:30;pointer-events:none;overflow:hidden}
+.firework-spark{position:absolute;z-index:2;display:block;width:5px;height:5px;background:#fff9dc;border-radius:50%;opacity:0;box-shadow:0 0 7px #ffca4f;pointer-events:none}
+.spark-1{width:12px;height:2px;background:linear-gradient(90deg,#ff9b2200,#ffd55c,#fff)}.spark-2{width:9px;height:3px;background:linear-gradient(90deg,#ff7d0000,#ffac32,#fff8bd)}.spark-3{width:4px;height:4px;background:#fff;box-shadow:0 0 7px #98d6ff}.firework-flare{position:absolute;z-index:1;opacity:0;pointer-events:none;object-fit:contain;transform-origin:center}
+@media(prefers-reduced-motion:reduce){.fireworks-layer{display:none}}
+
+/* Bonus Booster stays readable on the narrow 9:16 published control panel. */
+#anteFeature>span{font-size:2.52cqw;letter-spacing:-.012em;line-height:1.12}
+#anteFeature #antePrice{font-size:3.05cqw;white-space:nowrap}
+#anteFeature small{font-size:1.55cqw;letter-spacing:0}
+
+/* Logo-only v0.13.1. Keep previous logo hidden until the approved asset is selected. */
+.splash-brand.brand-complete .brand-top{inset:0;overflow:visible}
+.splash-brand.brand-complete .brand-top>img{position:static;width:100%;height:100%;object-fit:contain}
+.splash-brand.brand-complete .brand-number{display:none!important}
+
+
+/* Zeus Lightning v0.13.4: visible through the transparent guardian cutout, never on top of Zeus. */
+.zeus-lightning-fx{position:absolute;overflow:visible;pointer-events:none;transform-origin:center;isolation:isolate;opacity:.92}
+.zeus-lightning-fx::before{content:"";position:absolute;inset:-18%;
+  background:radial-gradient(ellipse at 52% 44%,#b8eaff70 0%,#3594ff32 26%,#145aa712 44%,transparent 64%);
+  animation:zeus-sky-pulse 5.4s ease-in-out infinite}
+.zeus-lightning-fx svg{position:relative;display:block;width:100%;height:100%;overflow:visible}
+.zeus-bolt{opacity:0;will-change:opacity}
+.zeus-bolt-glow,.zeus-bolt-core,.zeus-bolt-branch{fill:none;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.zeus-bolt-glow{stroke:#48b7ff;stroke-width:13;opacity:.56}
+.zeus-bolt-core{stroke:#f8fdff;stroke-width:3.7;opacity:.98}
+.zeus-bolt-branch{stroke:#9adeff;stroke-width:2.4;opacity:.9}
+.zeus-bolt-one{animation:zeus-strike-one 5.4s linear infinite}
+.zeus-bolt-two{animation:zeus-strike-two 6.8s linear infinite}
+.zeus-bolt-three{animation:zeus-strike-three 7.1s linear infinite}
+@keyframes zeus-strike-one{
+  0%,17%,24%,57%,61%,100%{opacity:0}
+  18%,20%,22%,58%,60%{opacity:1}
+  19%,21%,59%{opacity:.15}
+  23%{opacity:.4}
+}
+@keyframes zeus-strike-two{
+  0%,34%,41%,78%,83%,100%{opacity:0}
+  35%,37%,40%,79%,82%{opacity:.85}
+  36%,38%,80%{opacity:.08}
+}
+@keyframes zeus-strike-three{
+  0%,53%,59%,100%{opacity:0}
+  54%,56%,58%{opacity:.82}
+  55%,57%{opacity:.2}
+}
+@keyframes zeus-sky-pulse{
+  0%,16%,25%,57%,62%,100%{opacity:.1}
+  18%,22%,58%,60%{opacity:.92}
+  20%,59%{opacity:.32}
+}
+@media(prefers-reduced-motion:reduce){.zeus-lightning-fx{display:none!important}}
+.game:has(#spin.battery-saver) .zeus-lightning-fx{display:none}
+
+
+/* Skygate v0.13.5 cloud + idle: GPU-friendly presentation layers. The whole
+   guardian stays in front of these clouds; static gradients never affect art. */
+.zeus-cloud-back,.zeus-cloud-front,.zeus-cloud-flash{
+  position:absolute;display:block;pointer-events:none;transform-origin:center;
+  border-radius:50%;mix-blend-mode:screen
+}
+.zeus-cloud-back{
+  z-index:0;inset:-20% -31% -12%;
+  background:
+    radial-gradient(ellipse 38% 28% at 28% 37%,#28669e98 0%,#16457060 54%,transparent 100%),
+    radial-gradient(ellipse 52% 34% at 67% 32%,#4081c4a0 0%,#17396665 56%,transparent 100%),
+    radial-gradient(ellipse 44% 36% at 50% 62%,#384b897c 0%,#101d4a75 57%,transparent 100%),
+    radial-gradient(ellipse 45% 46% at 49% 48%,#091c3fdd 0%,transparent 100%);
+  opacity:.65;animation:zeus-cloud-drift 19s ease-in-out infinite alternate
+}
+.zeus-cloud-front{
+  z-index:1;inset:-5% -25% -20%;
+  background:
+    radial-gradient(ellipse 40% 22% at 26% 57%,#80bbf36b 0%,#285b9854 47%,transparent 100%),
+    radial-gradient(ellipse 35% 27% at 71% 50%,#bdc9ff57 0%,#3c60a450 48%,transparent 100%),
+    radial-gradient(ellipse 46% 23% at 56% 69%,#3f60a46b 0%,#111d4b45 56%,transparent 100%);
+  opacity:.46;animation:zeus-cloud-breathe 8.2s ease-in-out infinite
+}
+.zeus-cloud-flash{
+  z-index:2;inset:-18% -22%;
+  background:radial-gradient(ellipse at 53% 43%,#edf9ffdc 0%,#71ccff80 22%,#2865ca3e 43%,transparent 68%);
+  opacity:0;animation:zeus-cloud-flash 5.4s linear infinite
+}
+.zeus-lightning-fx svg{z-index:3}
+@keyframes zeus-cloud-drift{
+  0%{transform:translate3d(-2%,1%,0) scale(.98)}
+  100%{transform:translate3d(2%,-1%,0) scale(1.04)}
+}
+@keyframes zeus-cloud-breathe{
+  0%,100%{opacity:.35;transform:translate3d(-1%,0,0)}
+  50%{opacity:.65;transform:translate3d(1%,1%,0)}
+}
+@keyframes zeus-cloud-flash{
+  0%,17%,24%,57%,62%,100%{opacity:0}
+  18%,22%,58%,60%{opacity:.74}
+  19%,21%,59%,61%{opacity:.16}
+  20%,23%{opacity:.45}
+}
+/* Two independent metal capsules align with the editable CREDIT and BET
+   bindings. The old shared panel stays in the DOM for editor geometry only. */
+.olympus-gold .split-wallet-panel{
+  position:absolute;display:block;pointer-events:none;box-sizing:border-box;
+  border:.32cqw solid #b99758;border-radius:2.8cqw;
+  background:
+    radial-gradient(ellipse at 29% 0%,#65707640,transparent 54%),
+    linear-gradient(155deg,#303335eF 0%,#131d23f2 44%,#060d14f5 100%);
+  box-shadow:inset 0 0 0 .35cqw #070e13,
+    inset 0 .7cqw .9cqw #e8c9871e,0 .75cqw 2.5cqw #000b
+}
+.olympus-gold .split-wallet-panel::after{
+  content:"";position:absolute;inset:.85cqw .9cqw auto;
+  height:1px;background:linear-gradient(90deg,transparent,#dfc17b90,transparent);
+  pointer-events:none
+}
+.olympus-gold .split-bet-panel{
+  border-color:#c4a565;
+  background:radial-gradient(ellipse at 68% 0%,#73859935,transparent 48%),
+    linear-gradient(145deg,#313635f3 0%,#111e26f4 44%,#080e15fa 100%)
+}
+/* A quiet static gold frame, with ONLY the central rotor moving. */
+.olympus-gold .published-layer[data-layer="spinbutton"] #spin{
+  overflow:hidden;border-radius:50%;border:.38cqw solid #cfad69;
+  background:radial-gradient(circle at 46% 39%,#1a3546 0%,#0a1a29 38%,#0b1016 63%,#070c11 100%);
+  box-shadow:inset 0 0 0 .8cqw #080e14,
+    inset 0 0 0 1.05cqw #ad905b8c,
+    inset 0 1.2cqw 2.1cqw #fff7c014,
+    0 .8cqw 2.2cqw #000c
+}
+.olympus-gold .published-layer[data-layer="spinbutton"] #spin::before{
+  content:"";position:absolute;inset:5%;border-radius:50%;
+  border:.2cqw solid #e5ca8057;
+  box-shadow:inset 0 0 0 .2cqw #060c14,0 0 .8cqw #d7b3622e;
+  pointer-events:none
+}
+.olympus-gold .published-layer[data-layer="spinbutton"] #spin .spin-frame{display:none}
+.spin:not(.busy):not(.battery-saver) .spin-rotor{
+  animation:skygate-rotor-idle 17s linear infinite;will-change:transform
+}
+.spin.busy:not(.battery-saver) .spin-rotor{
+  animation:skygate-rotor-active 1.8s linear infinite;will-change:transform
+}
+.spin.battery-saver .spin-rotor{
+  animation:none!important;transform:none!important;will-change:auto
+}
+@keyframes skygate-rotor-idle{to{transform:rotate(360deg)}}
+@keyframes skygate-rotor-active{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){
+  .spin .spin-rotor{animation:none!important;transform:none!important;will-change:auto}
+}
+
+/* SKYGATE v0.13.6 approved iPhone preview: reusable feature art, centered
+   sapphire-gold 1000x pill, and compact stationary-metal spin button.
+   Both public Game and Studio Live/Draft preview load this stylesheet. */
+
+/* Text remains live and accessible; the illustrated feature frame stays a
+   separate non-interactive layer beneath CREDIT, BET and both bet steppers. */
+.olympus-gold .split-wallet-panel,
+.olympus-gold .split-bet-panel{
+  border:0;border-radius:0;background:none;box-shadow:none;
+  overflow:hidden;isolation:isolate
+}
+.olympus-gold .split-wallet-panel::after{display:none}
+.olympus-gold .split-wallet-panel .wallet-skin{
+  position:absolute;display:block;inset:0;width:100%;height:100%;
+  pointer-events:none;object-fit:contain
+}
+
+/* The promo chip is centered at x=540 in the 1080px design coordinate system.
+   It clears the WIN banner and Zeus without covering any reel or control. */
+.olympus-gold .promo-badge{
+  top:20.8%;left:24%;width:52%;height:3.2%;min-height:0;
+  padding:.25cqw 2.6cqw;
+  display:flex;align-items:center;justify-content:center;gap:1.05cqw;
+  border:.26cqw solid #d6a754;border-radius:999px;
+  background:
+    linear-gradient(180deg,#304c67c9 0%,#051727ec 24%,#06121ff5 73%,#274056bf 100%);
+  box-shadow:0 .65cqw 1.25cqw #000c,
+    inset 0 0 0 .35cqw #07111b,
+    inset 0 0 0 .52cqw #c59c57,
+    inset 0 .4cqw .6cqw #bcecff1d;
+  white-space:nowrap;
+  color:#ffe3a1;
+  font:700 2.5cqw/1.1 Georgia,'Times New Roman',serif;
+  letter-spacing:.04em;text-shadow:0 .17cqw .28cqw #000;
+}
+.olympus-gold .promo-badge .promo-value{
+  font-size:3.45cqw;line-height:1;font-weight:900;
+  color:#f8e0a1;letter-spacing:.005em;
+  text-shadow:0 .18cqw .2cqw #000,0 0 .7cqw #dba84f55
+}
+.olympus-gold .promo-badge::before,.olympus-gold .promo-badge::after{
+  content:"";position:absolute;top:50%;
+  width:1.18cqw;height:1.18cqw;
+  border:.21cqw solid #e4c16e;
+  border-radius:.18cqw;
+  background:radial-gradient(circle at 25% 25%,#9cf1ff 0%,#239cff 40%,#043d91 81%);
+  box-shadow:0 0 .65cqw #3b9cffb3,0 0 0 .18cqw #081a2b;
+  transform:translateY(-50%) rotate(45deg);
+  pointer-events:none
+}
+.olympus-gold .promo-badge::before{left:2.1cqw}
+.olympus-gold .promo-badge::after{right:2.1cqw}
+.olympus-gold .promo-badge:focus-visible{outline:2px solid #e5d39d;outline-offset:3px}
+
+/* A 60%-diameter button retains its original center in the editable spinner
+   layer. The full parent geometry is unchanged, so old published snapshots
+   continue to work. The outer ring never rotates. */
+.olympus-gold .published-layer[data-layer="spinbutton"] #spin{
+  width:60%;height:60%;flex:0 0 auto;min-width:0;min-height:0;
+  border:.8cqw solid transparent;border-radius:50%;
+  background:
+    radial-gradient(circle at 49% 46%,#132637 0%,#06101e 50%,#10141d 72%,#070b10 100%) padding-box,
+    conic-gradient(from -35deg,#704015,#ffe5a0 9%,#b8792c 19%,#f4c970 33%,#55310e 45%,#e5b25a 58%,#fff0b9 72%,#996021 83%,#efc277 94%,#704015) border-box;
+  box-shadow:
+    inset 0 0 0 .45cqw #090d11,
+    inset 0 0 0 .78cqw #b58134,
+    inset 0 0 0 1.08cqw #2b170c,
+    inset 0 .8cqw 1.3cqw #e5b87115,
+    0 .2cqw 0 #f2d9908c,0 1.1cqw 2.2cqw #000c;
+  overflow:hidden;filter:drop-shadow(0 0 .9cqw #d1a1513b)
+}
+.olympus-gold .published-layer[data-layer="spinbutton"] #spin::before{
+  content:"";position:absolute;inset:5.7%;z-index:0;
+  border-radius:50%;border:.38cqw solid #c89544;
+  box-shadow:inset 0 0 0 .34cqw #0c1219,0 0 .65cqw #f2c56953;
+  pointer-events:none
+}
+.olympus-gold .published-layer[data-layer="spinbutton"] #spin::after{
+  content:"";position:absolute;left:26%;right:26%;top:7%;height:2%;
+  border-radius:50%;
+  background:linear-gradient(90deg,transparent,#f8dea0,transparent);
+  box-shadow:0 0 .6cqw #ffde9d66;
+  pointer-events:none
+}
+.olympus-gold .published-layer[data-layer="spinbutton"] #spin .spin-frame{display:none}
+.olympus-gold .published-layer[data-layer="spinbutton"] #spin .spin-rotor{z-index:1}
+@media(prefers-reduced-motion:reduce){
+  .olympus-gold .published-layer[data-layer="spinbutton"] #spin .spin-rotor{animation:none!important;will-change:auto}
+}
+
+
+/* Skygate v0.13.7: emblem-only credit and poker-chip BET, without altering
+   live numbers, touch controls, snapshot math or user-edited source art. */
+.olympus-gold .split-wallet-panel .wallet-coin-icon{
+  position:absolute;z-index:2;display:block;pointer-events:none;
+  top:50%;transform:translateY(-50%);
+  width:13%;height:67%;filter:drop-shadow(0 .22cqw .36cqw #000a)
+}
+.olympus-gold .split-wallet-panel .wallet-coin-icon svg{
+  display:block;width:100%;height:100%;overflow:visible
+}
+.olympus-gold .split-credit-panel .wallet-coin-credit{left:5.7%}
+.olympus-gold .split-bet-panel .wallet-coin-bet{left:25%;width:10.2%;height:60%}
+.olympus-gold .published-layer[data-layer=credits] .wallet-a11y-label,
+.olympus-gold .published-layer[data-layer=betlabel] .wallet-a11y-label{
+  position:absolute!important;width:1px!important;height:1px!important;
+  overflow:hidden!important;white-space:nowrap!important;
+  clip-path:inset(50%)!important;pointer-events:none!important
+}
+
+
+/* Skygate v0.14.0 full-bleed mobile viewport.
+   Safe-area padding belongs to the artwork stage, not the outer body.
+   The published layout remains editable through the same renderer in Studio. */
+.pwa-stage-background{display:none}
+.splash-play .splash-play-icon{
+  width:36px;height:36px;flex:0 0 36px;display:inline-flex;align-items:center;
+  justify-content:center;position:relative;filter:drop-shadow(0 0 6px #34b8ff95)
+}
+.splash-play .splash-play-icon svg{
+  display:block;width:100%;height:100%;fill:none;stroke:none;
+  overflow:visible;filter:drop-shadow(0 0 3px #b8efff);
+}
+.splash-play:not(:disabled) .splash-play-icon{
+  animation:skygate-play-emissive 3s ease-in-out infinite
+}
+.splash-play .splash-play-label{font:700 1em/1 Georgia,serif;letter-spacing:.12em}
+@keyframes skygate-play-emissive{
+  0%,100%{filter:drop-shadow(0 0 4px #3baaff75) drop-shadow(0 0 1px #e5c579)}
+  50%{filter:drop-shadow(0 0 9px #7addffe0) drop-shadow(0 0 4px #f1c875bf)}
+}
+@media(prefers-reduced-motion:reduce){
+  .splash-play .splash-play-icon{animation:none!important}
+}
+
+/* Portrait PWA and mobile Safari share a true full-height visual viewport.
+   Previously a 9:16 box was vertically centered, leaving bands above/below.
+   Keep all published layer coordinates, but stretch the available stage between
+   the iOS safe-area insets; backdrop fills even the status and Home-indicator
+   regions. No game rules, payment or reel motion math are changed. */
+@media (max-width:699px) and (orientation:portrait){
+  html{
+    height:100%;height:100dvh;min-height:100dvh;
+    overflow:hidden;background:#060b10;overscroll-behavior:none;
+  }
+  body{
+    width:100%;height:100vh;height:100dvh;min-height:100dvh;
+    margin:0;padding:0;display:block;overflow:hidden;
+    background:#060b10;overscroll-behavior:none;
+  }
+  .game{
+    position:relative;display:block;
+    width:100%;width:100vw;max-width:none;
+    height:100vh;height:100dvh;min-height:100dvh;
+    aspect-ratio:auto;border-radius:0!important;outline:none!important;
+    margin:0;box-shadow:none;overflow:clip;background:#060b10;
+  }
+  .game.has-published-scene>.pwa-stage-background{
+    position:absolute;inset:0;z-index:0;display:block;
+    width:100%;height:100%;object-fit:cover;object-position:center;
+    pointer-events:none;user-select:none;-webkit-user-drag:none;
+  }
+  .game.has-published-scene>.published-scene{
+    position:absolute;left:0;right:0;
+    top:env(safe-area-inset-top,0px);
+    bottom:env(safe-area-inset-bottom,0px);
+    height:auto;z-index:3;
+  }
+  .game.has-published-scene::after{z-index:1}
+  #bootSplash.boot-splash{
+    position:fixed;inset:0;
+    width:100%;width:100vw;
+    height:100vh;height:100dvh;min-height:100dvh;max-height:100dvh;
+    padding:calc(env(safe-area-inset-top,0px) + 25px) 22px
+            calc(env(safe-area-inset-bottom,0px) + 20px);
+    overflow:hidden;overscroll-behavior:none;
+    background:#060b10;
+  }
+  #bootSplash .splash-art{
+    position:absolute;inset:0;max-width:none;
+    width:100%;height:100%;margin:0;overflow:hidden;
+  }
+  #bootSplash .splash-background,
+  #bootSplash .splash-lightning{
+    width:100%;height:100%;object-fit:cover;object-position:center;
+  }
+}
+/* Large screens and the desktop Studio layout retain their framed 9:16
+   presentation. The SVG Play icon remains crisp at any size. */
+
+/* Skygate v0.14.1: preserve background artwork to the physical iPhone bottom.
+   A solid-black splash fade hid the lower part of the reference image. */
+.splash-shade{
+  background:linear-gradient(180deg,#03091080 0%,#03091000 23%,#03091012 49%,#03091075 78%,#03091052 100%);
+}
+/* Keep the pill and its WIN frame inside the same safe-area-aware scene.
+   The top edge is calculated from the editable winbanner Y coordinate. */
+.olympus-gold .published-scene > .promo-badge{
+  left:50%;transform:translateX(-50%);
+  width:52%;height:3.2%;z-index:55;
+}
+/* BET is a live sibling of MENU, VOLUME and RULES: identical footer baseline. */
+.olympus-gold .published-scene > .bet-menu{pointer-events:auto}
+
+/* v0.14.1 fixes iOS standalone's smaller dynamic viewport. The screen-height
+   CSS custom property is measured early in the document head for real PWAs;
+   ordinary Safari retains the current visual viewport and browser chrome. */
+@media (max-width:699px) and (orientation:portrait){
+  html,body,.game{
+    height:var(--sg-pwa-full-height,100dvh);
+    min-height:var(--sg-pwa-full-height,100dvh);
+  }
+  #bootSplash.boot-splash{
+    height:var(--sg-pwa-full-height,100dvh);
+    min-height:var(--sg-pwa-full-height,100dvh);
+    max-height:var(--sg-pwa-full-height,100dvh);
+  }
+  #bootSplash .splash-art,#bootSplash .splash-background{
+    height:100%;min-height:100%;
+  }
+}
+@media (display-mode:standalone) and (max-width:699px) and (orientation:portrait){
+  html{--sg-pwa-full-height:100lvh}
+}
+
+/* v0.14.2: AUTO and NORMAL stay perfectly circular regardless of iOS
+   standalone screen height, safe area, or Studio viewport aspect ratio.
+   The JS renderer gives the layer equal physical width/height; its gold
+   frame and icon must inherit the same square without scaling artifacts. */
+.olympus-gold .published-layer.published-mode-circle,
+.olympus-gold .published-layer.published-mode-circle>.mode-control{
+  aspect-ratio:1 / 1;
+  border-radius:50%;
+}
+.olympus-gold .published-layer.published-mode-circle>.mode-control{
+  width:100%;height:100%;min-width:0;min-height:0;
+  overflow:hidden;
+}
+.olympus-gold .published-layer.published-mode-circle .control-skin{
+  object-fit:contain;
+}
+
+/* v0.14.3 responsive central spinner. The Olympus published image layer has
+   a width-based square geometry in release.js, as do AUTO/NORMAL. Keep the
+   approved 60% central rotor diameter instead of enlarging it to the frame. */
+.olympus-gold .published-layer.published-spin-circle{
+  aspect-ratio:1 / 1;
+  align-items:center;justify-content:center;
+}
+.olympus-gold .published-layer.published-spin-circle > #spin{
+  width:60%;height:60%;min-width:0;min-height:0;
+  flex:0 0 auto;aspect-ratio:1 / 1;border-radius:50%;
+}
+.olympus-gold .published-layer.published-spin-circle > #spin img{
+  object-fit:contain;
+}

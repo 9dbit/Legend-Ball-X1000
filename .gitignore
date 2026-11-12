@@ -1,0 +1,12 @@
+node_modules/
+play/assets/
+play/audio_engine.js
+play/studio_math.js
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+studio/previews/
+studio/SKYGATE_Studio_Standalone_v0.3.html
+.local-data/
