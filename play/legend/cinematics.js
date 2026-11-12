@@ -34,7 +34,7 @@
       img.src=item.url;
       img.alt='';
       img.decoding='async';
-      img.loading=i===0?'eager':'lazy';
+      img.loading='eager'; // Preload all three so the lightning-cut swaps without blank frames.
       img.addEventListener('load',()=>{
         if(i===0){host.classList.add('legend-world-ready');ready=true;}
       });
