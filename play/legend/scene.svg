@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 920" role="img" aria-label="Aster Varn and the crystalline cosmic leviathan Veylorn">
+<defs>
+<radialGradient id="sky" cx="52%" cy="30%" r="78%"><stop stop-color="#4848a2"/><stop offset=".26" stop-color="#24245c"/><stop offset=".63" stop-color="#130e37"/><stop offset="1" stop-color="#070815"/></radialGradient>
+<radialGradient id="sun" cx="50%" cy="50%" r="50%"><stop stop-color="#f9f5b5"/><stop offset=".28" stop-color="#78f1ff"/><stop offset=".65" stop-color="#485fd5"/><stop offset="1" stop-color="#5267c3" stop-opacity="0"/></radialGradient>
+<linearGradient id="copper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff5bf"/><stop offset=".22" stop-color="#efb569"/><stop offset=".6" stop-color="#a65d73"/><stop offset="1" stop-color="#402a58"/></linearGradient>
+<linearGradient id="steel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#9afaff"/><stop offset=".35" stop-color="#278eb5"/><stop offset=".66" stop-color="#30466f"/><stop offset="1" stop-color="#151432"/></linearGradient>
+<linearGradient id="cape" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#b75383"/><stop offset=".6" stop-color="#532a72"/><stop offset="1" stop-color="#11142d"/></linearGradient>
+<filter id="bloom"><feGaussianBlur stdDeviation="14"/></filter>
+<filter id="spark"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<rect width="900" height="920" fill="url(#sky)"/>
+<g opacity=".85">
+<circle cx="497" cy="275" r="280" fill="url(#sun)" opacity=".46"/>
+<circle cx="492" cy="277" r="126" fill="none" stroke="#a9ffff" stroke-width="6" opacity=".6"/>
+<circle cx="492" cy="277" r="158" fill="none" stroke="#ceacff" stroke-width="2" stroke-dasharray="2 19" opacity=".7"/>
+<path d="M491 90 568 186 491 276 420 186Z M302 279 402 200 489 280 398 357Z M690 279 581 196 491 280 587 360Z" fill="none" stroke="#68ccff" stroke-width="3" opacity=".26"/>
+</g>
+<path d="M0 310Q105 275 192 350T380 349T566 322T900 285V920H0Z" fill="#21174d" opacity=".55"/>
+<path d="M0 490 105 370 170 465 302 330 389 483 525 359 612 449 743 320 900 463V920H0Z" fill="#191c48" stroke="#4f548c" stroke-width="3"/>
+<path d="M0 575 91 502 158 551 295 453 402 565 547 465 672 566 809 461 900 540V920H0Z" fill="#101435"/>
+<g opacity=".8" stroke="#45b6ef" stroke-width="3" fill="#1c2d5a">
+<path d="M100 555 137 380 179 544 154 570Z M674 556 718 358 753 545 721 577Z"/>
+<path d="M66 582 86 437 122 560Z M762 570 805 421 834 572Z"/>
+</g>
+<g fill="#b4f5ff"><circle cx="92" cy="80" r="2"/><circle cx="201" cy="140" r="3"/><circle cx="737" cy="116" r="2"/><circle cx="827" cy="244" r="3"/><circle cx="595" cy="70" r="2"/><circle cx="352" cy="56" r="3"/></g>
+<!-- Veylorn: faceted segmented crystal leviathan, not a scaled organic dragon -->
+<g transform="translate(410 30) rotate(4 270 260)">
+<path d="M390 495 Q570 420 545 308T665 149 Q750 103 771 56" fill="none" stroke="#2ee2f5" stroke-width="83" opacity=".19" filter="url(#bloom)"/>
+<path d="M376 501 449 454 494 390 502 328 469 276 520 219 591 198 652 148 674 94 725 67" fill="none" stroke="#172345" stroke-width="74" stroke-linecap="round"/>
+<path d="M379 500 449 455 493 387 501 329 472 274 521 217 593 198 656 146 678 89 721 66" fill="none" stroke="#77eafa" stroke-width="46" stroke-linecap="round" stroke-linejoin="bevel"/>
+<path d="M376 500 449 456 494 388 500 328 470 273 521 218 589 197 650 148 676 96 723 66" fill="none" stroke="#35436f" stroke-width="27" stroke-linecap="round" stroke-dasharray="24 13"/>
+<g fill="url(#steel)" stroke="#ddfdff" stroke-width="3">
+<path d="M578 201 623 153 655 161 627 210 596 237Z"/>
+<path d="M626 164 672 94 689 119 669 177Z"/>
+<path d="M662 111 694 38 721 67 714 120 689 137Z"/>
+<path d="M702 46 727 21 765 48 781 85 737 92 718 72Z"/>
+<path d="M725 29 731 -11 751 36Z M770 52 804 27 781 73Z"/>
+<path d="M736 90 765 108 721 114Z"/>
+</g>
+<path d="M728 69 743 65" stroke="#ffecab" stroke-width="7" stroke-linecap="round" filter="url(#spark)"/>
+<path d="M408 481 396 544 448 506 464 485Z M451 434 447 389 478 412 490 450Z M469 288 432 247 474 262 491 284Z" fill="#7df5ff" stroke="#e5ffff" stroke-width="3"/>
+</g>
+<!-- Aster Varn: angular masked rune knight, modular armor -->
+<g transform="translate(-14 53)">
+<path d="M120 743 55 565 179 480 247 509 295 618 264 812Z" fill="url(#cape)" stroke="#c06e97" stroke-width="5"/>
+<path d="M222 489Q300 418 333 457L390 584 338 780 145 781 151 570Z" fill="#181d48" stroke="#d69f75" stroke-width="8"/>
+<path d="M184 513 209 398 293 391 325 508 285 541Z" fill="url(#steel)" stroke="#fbd699" stroke-width="7"/>
+<path d="M212 388 212 326 288 325 291 391 253 421Z" fill="#293254" stroke="#d4a878" stroke-width="6"/>
+<path d="M170 338 204 288 189 205 239 185 271 160 300 195 326 252 310 335 276 378 214 368Z" fill="#152147" stroke="url(#copper)" stroke-width="11"/>
+<path d="M182 279 238 240 299 258 297 310 247 342 197 316Z" fill="url(#steel)" stroke="#a6faff" stroke-width="6"/>
+<path d="M196 289 250 272 286 281" fill="none" stroke="#d5ffff" stroke-width="12" filter="url(#spark)"/>
+<path d="M204 219 218 144 259 190 300 113 306 193 347 177 319 245Z" fill="#385176" stroke="#d6aa73" stroke-width="7"/>
+<path d="M245 173 266 125 271 206Z" fill="#79e9ec"/>
+<path d="M177 467 110 542 126 671 168 693 214 578Z M311 479 382 532 365 657 328 680 286 583Z" fill="url(#steel)" stroke="url(#copper)" stroke-width="8"/>
+<path d="M182 506 250 550 303 512 317 633 265 679 192 629Z" fill="url(#copper)" stroke="#fee1aa" stroke-width="7"/>
+<path d="M218 570 255 548 283 572 255 612Z" fill="#7af8ff" stroke="#eaffff" stroke-width="5" filter="url(#spark)"/>
+<path d="M191 688 209 786 265 789 279 694Z M286 692 295 793 344 795 356 674Z" fill="#273153" stroke="#e6b474" stroke-width="8"/>
+<path d="M211 785 193 841 271 842 269 792 M294 788 280 840 360 842 342 794" fill="#354f6e" stroke="#f9d69b" stroke-width="7"/>
+<path d="M104 646 60 720 96 743 151 689Z" fill="#9cefff" stroke="#fff1be" stroke-width="6"/>
+</g>
+<!-- rune light trails -->
+<path d="M20 759Q179 682 351 696T677 606T897 572" fill="none" stroke="#6beaff" stroke-width="9" opacity=".25" filter="url(#bloom)"/>
+<path d="M20 761Q179 680 351 695T677 606T897 572" fill="none" stroke="#88eaff" stroke-width="3" opacity=".8"/>
+<g fill="#ffe5a1" filter="url(#spark)"><circle cx="364" cy="371" r="5"/><circle cx="559" cy="494" r="4"/><circle cx="762" cy="422" r="6"/><circle cx="84" cy="540" r="3"/></g>
+<rect y="750" width="900" height="170" fill="url(#sky)" opacity=".75"/>
+</svg>
