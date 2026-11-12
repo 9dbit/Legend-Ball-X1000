@@ -73,6 +73,15 @@ jobs:
             for x in range(1080):
               q=front[x,y];v=fuzzy[x,y]
               front[x,y]=tuple(round((1-a)*q[i]+a*v[i]) for i in range(3))
+          # Preserve the immutable mockup's glowing rock foreground below ALL
+          # functional controls, but never burn duplicate buttons/text into UI.
+          base=foreground.load();rock=source.load()
+          for y in range(1788,1920):
+            t=max(0,min(1,(y-1788)/54))
+            strength=.93*t*t*(3-2*t)
+            for x in range(1080):
+              p=base[x,y];q=rock[x,y]
+              base[x,y]=tuple(round(p[k]*(1-strength)+q[k]*strength) for k in range(3))
           foreground.save(folder/'gameplay-backdrop.webp','WEBP',quality=88,method=6)
           backfile=folder/'gameplay-backdrop.webp'
           assets.append({'path':backfile.name,'sha256':hashlib.sha256(backfile.read_bytes()).hexdigest(),'bytes':backfile.stat().st_size,'size':foreground.size})
