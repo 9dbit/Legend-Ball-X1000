@@ -40,7 +40,7 @@ window.SkygateReels = class {
         const scatter = document.createElement('small'); scatter.className = 'scatter-label'; scatter.textContent = 'SCATTER'; scatter.hidden = true;
         motion.append(img, multiplier, scatter); tile.append(motion); track.append(tile);
         if (row < 5) tile.setAttribute('aria-hidden', 'true');
-        const cell = {tile, motion, img, multiplier, scatter, kind: null};
+        const cell = {tile, motion, img, multiplier, scatter, column, kind: null};
         cells.push(cell);
         if (row >= 5) {
           this.cells[(row - 5) * 6 + column] = cell;
@@ -62,8 +62,8 @@ window.SkygateReels = class {
     for(let i=0;i<30;i++){const flare=document.createElement('img');flare.className='firework-flare';flare.src=window.SkygateCascadeArt.firework;flare.alt='';this.fireworks.append(flare);this.flares.push(flare);}
     root.append(this.fireworks);
     // Decode each unique texture once before the first animated round.
-    this.textures = [...new Set(Object.values(art))].map(sprite => {
-      const img = document.createElement('img'); img.src = asset('symbols/' + sprite + '.png');
+    this.textures = (window.LegendBallArt?.textures() || [...new Set(Object.values(art))].map(sprite => asset('symbols/' + sprite + '.png'))).map(src => {
+      const img = document.createElement('img'); img.src = src;
       return img;
     });
     this.ready = Promise.allSettled([...this.textures,this.flares[0]].map(img => img.decode?.()));
@@ -72,7 +72,7 @@ window.SkygateReels = class {
     const {tile, img, multiplier, scatter} = cell;
     if (cell.kind !== symbol.kind) {
       cell.kind = symbol.kind;
-      img.src = this.asset('symbols/' + (this.art[symbol.kind] || 'ruby') + '.png');
+      img.src = window.LegendBallArt?.sprite(symbol.kind, cell.column) || this.asset('symbols/' + (this.art[symbol.kind] || 'ruby') + '.png');
       scatter.hidden = symbol.kind !== 'scatter';
     }
     const info = `${this.label[symbol.kind] || symbol.kind}${symbol.multiplier ? ' x' + symbol.multiplier : ''}`;
