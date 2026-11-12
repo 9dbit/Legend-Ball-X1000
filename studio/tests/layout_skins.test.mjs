@@ -70,6 +70,7 @@ test('live layout keeps bet controls on canvas and moves Auto caption into its e
 
 test('legacy Studio projects still put unsupported bet controls in the menu',()=>{
   const d=dom(),p=JSON.parse(read('studio/project.json'));
+  p.presentation='classic';p.layers=p.layers.filter(l=>!['minusbtn','plusbtn'].includes(l.id));
   d.window.SkygateApplyLayout(p,path=>'assets/'+path);
   assert.equal(d.nodes.get('plus').parent.className,'published-bet-controls');
   assert.equal(d.nodes.get('minus').parent,d.nodes.get('plus').parent);
@@ -269,7 +270,7 @@ test('approved 1000x pill copy, centering, ring scale and static frame are share
   assert(css.includes('.promo-badge::before'));
   assert(css.includes('.promo-badge::after'));
   assert(!css.includes('spin-frame{animation:'));
-  assert.match(read('play/game.js'),/WIN UP TO 1000×/);
+  assert.match(read('play/game.js'),/TUMBLE & FREE SPINS/);
   assert.match(read('studio/index.html'),/v0\.14\.3/);
 });
 

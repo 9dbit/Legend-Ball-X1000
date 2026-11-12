@@ -54,7 +54,7 @@
     if(!document.getElementById('gameStyles').sheet)throw Error('Game stylesheet unavailable');
     if(state!=='loading')throw Error('Loading expired');
     clearTimeout(timer);state='ready';root.dataset.boot=state;
-    status.textContent='Siap memasuki Skygate';progress.hidden=true;play.disabled=false;
+    status.textContent='Siap memasuki LEGEND BALL';progress.hidden=true;play.disabled=false;
     if(window.SkygatePreview)enter();
   }};
 })();

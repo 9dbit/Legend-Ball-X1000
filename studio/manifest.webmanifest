@@ -9,13 +9,13 @@
   "theme_color": "#070d21",
   "icons": [
     {
-      "src": "/play/icons/legend-touch-192.png",
+      "src": "/play/icons/legend-raster-v2-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/play/icons/legend-touch-512.png",
+      "src": "/play/icons/legend-raster-v2-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"

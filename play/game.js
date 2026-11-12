@@ -11,9 +11,10 @@ function startSkygate() {
   const savePreferences=()=>{try{window.localStorage?.setItem('legend-ball-settings-v1',JSON.stringify(preferences));}catch{}};
   if (!cfg || !MathEngine) throw new Error('Missing research math engine / browser config');
   const E = id => document.getElementById(id);
-  const asset=path=>window.SKY_PREVIEW_ASSETS?.['assets/'+path] || (release?.overrides?.['asset:'+path]? (window.SkygatePreview?'/studio/api/media/':'/play/media/')+release.overrides['asset:'+path].file:(path==='scene/logo.png'?'/play/legend/logo.svg':path==='scene/hero_composite_reference.jpg'?'/play/legend/scene.svg':'assets/'+path));
-  if(published)window.SkygateApplyLayout(published,asset);
-  window.SkygateSyncChrome?.(published,asset);
+  const asset=path=>window.SKY_PREVIEW_ASSETS?.['assets/'+path] || (release?.overrides?.['asset:'+path]? (window.SkygatePreview?'/studio/api/media/':'/play/media/')+release.overrides['asset:'+path].file:'/play/assets/'+path);
+  const layoutProject=published || window.LEGEND_DEFAULT_PROJECT;
+  if(layoutProject)window.SkygateApplyLayout(layoutProject,asset);
+  window.SkygateSyncChrome?.(layoutProject,asset);
   const art = {ruby:'ruby', sapphire:'sapphire', emerald:'emerald', amethyst:'amethyst', topaz:'topaz', amber:'ring', pearl:'chalice', scatter:'crown', orb:'orb'};
   Object.assign(art,{ring:'ring',crown:'crown',hourglass:'hourglass',chalice:'chalice'});
   if(published)Object.assign(art,{amber:'amber',pearl:'pearl',scatter:'scatter'});
@@ -232,7 +233,7 @@ function startSkygate() {
   let paytableKey='';
   function refreshPaytable(){
     const key=state.bet+':'+state.coin+':'+preferences.coinsView;if(key===paytableKey)return;paytableKey=key;
-    E('paytable').innerHTML=Object.entries(cfg.paytable).map(([kind,values])=>`<tr><td><img src="${window.LegendBallArt?.sprite(kind,0) || asset('symbols/'+art[kind]+'.png')}" alt="">${label[kind]}</td>${values.map(n=>`<td>${displayMoney(n*state.bet)}</td>`).join('')}</tr>`).join('');
+    E('paytable').innerHTML=Object.entries(cfg.paytable).map(([kind,values])=>`<tr><td><img src="${window.LegendBallArt?.sprite(kind,0,asset) || asset('symbols/'+art[kind]+'.png')}" alt="">${label[kind]}</td>${values.map(n=>`<td>${displayMoney(n*state.bet)}</td>`).join('')}</tr>`).join('');
     if(cfg.scatter_paytable)E('paytable').innerHTML+=`<tr><td>SCATTER</td><td colspan="3">${[4,5,6].map(n=>n+(n===6?'+':'')+' = '+displayMoney(cfg.scatter_paytable[n]*state.bet)).join(' · ')}</td></tr>`;
   }
   let finishFeature=null;
@@ -268,7 +269,7 @@ function startSkygate() {
     if(preferences.skipScreens&&!manual){await delay(1200,450);E('featureDialog').close();return;}
     await new Promise(resolve=>{finishFeature=()=>{E('featureDialog').close();finishFeature=null;resolve();};});
   }
-  async function showHome(){E('menuDialog').close();await featureScreen('LEGEND BALL X1000','WIN UP TO 1000×','8+ simbol membayar di mana saja. 4+ SCATTER memberi 15 Free Spins. Batas kemenangan aktual mengikuti Game Rules. Semua nilai adalah kredit virtual.',true);}
+  async function showHome(){E('menuDialog').close();await featureScreen('LEGEND BALL X1000','TUMBLE & FREE SPINS','8+ simbol membayar di mana saja. 4+ SCATTER memberi 15 Free Spins. Batas kemenangan aktual mengikuti Game Rules. Semua nilai adalah kredit virtual.',true);}
   function setupSettings(){
     for(const [button,dialog] of [['closeAuto','autoDialog'],['closeBet','betDialog'],['closeBuy','buyDialog'],['cancelBuy','buyDialog'],['closeHistory','historyDialog']])E(button).addEventListener('click',()=>E(dialog).close());
     E('featureContinue').addEventListener('click',()=>finishFeature?.());
@@ -344,7 +345,7 @@ function startSkygate() {
     if(state.sound&&!document.hidden&&(!mixer.isReady()||!mixer.isPlaying('bgm_celestial_loop'))){void mixer.unlock().then(ready=>{if(ready&&state.sound&&!document.hidden)void mixer.play('bgm_celestial_loop');});}
   });
   setupSettings();
-  E('paytable').innerHTML=Object.entries(cfg.paytable).map(([kind,values])=>`<tr><td><img src="${window.LegendBallArt?.sprite(kind,0) || asset('symbols/'+art[kind]+'.png')}" alt="">${label[kind]}</td>${values.map(n=>`<td>${n}×</td>`).join('')}</tr>`).join('');
+  E('paytable').innerHTML=Object.entries(cfg.paytable).map(([kind,values])=>`<tr><td><img src="${window.LegendBallArt?.sprite(kind,0,asset) || asset('symbols/'+art[kind]+'.png')}" alt="">${label[kind]}</td>${values.map(n=>`<td>${n}×</td>`).join('')}</tr>`).join('');
   E('bonusRulesText').textContent=`Hadiah ${cfg.bonus_start_spins} free spins diperoleh dari hasil spin dengan ${cfg.bonus_trigger_scatters}+ SCATTER dan berjalan otomatis. Di dalam bonus, ${cfg.bonus_retrigger_scatters}+ SCATTER memberi tambahan ${cfg.bonus_retrigger_add_spins} putaran. Orb mengalikan kemenangan simbol; pengalinya terkumpul selama bonus hanya pada putaran menang dengan orb baru. Pengali tersimpan diterapkan lagi jika putaran menang juga memunculkan orb baru. Bonus memakai bobot simbol terpisah.`;
   E('orbRules').textContent='Nilai orb: '+cfg.multiplier_values.map(n=>n+'×').join(', ')+'.';
   E('anteRulesNote').textContent=(cfg.ante_scatter_weight_multiplier>1?'Bonus Booster memakai bobot SCATTER lebih tinggi untuk putaran dasar. ':'Profil SCATTER Bonus Booster mengikuti pengaturan Studio. ')+'Biaya naik 25%; ini tidak menjamin bonus atau kemenangan. Contoh: base bet 2,00 menjadi 2,50 per spin. Matikan Bonus Booster untuk menggunakan BUY SPIN.';

@@ -5,25 +5,13 @@
   const $$=s=>Array.from(document.querySelectorAll(s));
   const deep=o=>JSON.parse(JSON.stringify(o));
   const DEFAULT=deep(window.SKY_PROJECT_DEFAULT);
-  const storageKey='skygate-studio-20261027-v03';
+  const storageKey='legend-ball-raster-20261112-v2';
   const VALID_TABS=['layers','assets','audio','math','jackpot','test'];
   let pendingEdit=null;
   let state=deep(DEFAULT), activeTab='layers', selected='guardian', mode='edit',undoHistory=[], engine=null, simCancelled=false, overrideURL=new Map(), overrideBlobs=new Map(), testStats=null, busy=false, toastTimeout=0, lastRound=null, previewVisualGrid=null;
   const symbolNames=['ruby','sapphire','emerald','amethyst','topaz','amber','pearl','ring','crown','hourglass','chalice','orb','scatter'];
   const symbolLabels={ruby:'Ruby',sapphire:'Sapphire',emerald:'Emerald',amethyst:'Amethyst',topaz:'Topaz',amber:'Amber',pearl:'Pearl',ring:'Ring',crown:'Crown',hourglass:'Hourglass',chalice:'Chalice',orb:'Multiplier Orb',scatter:'Scatter'};
-  const imageFiles=[
-    ...symbolNames.map(s=>({id:s,path:'symbols/'+s+'.png',group:'REEL SYMBOLS',kind:'symbol'})),
-    {id:'sky_background',path:'scene/sky_background.jpg',group:'SCENE & CHARACTER'},
-    {id:'guardian',path:'scene/guardian.png',group:'SCENE & CHARACTER'},
-    {id:'logo',path:'scene/logo.png',group:'SCENE & CHARACTER'},
-    {id:'column_left',path:'scene/column_left.png',group:'SCENE & CHARACTER'},
-    {id:'column_right',path:'scene/column_right.png',group:'SCENE & CHARACTER'},
-    {id:'reel_frame',path:'ui/reel_frame.svg',group:'FRAME & CONTROLS'},
-    {id:'gold_banner',path:'ui/gold_banner.svg',group:'FRAME & CONTROLS'},
-    {id:'blue_button',path:'ui/blue_button.svg',group:'FRAME & CONTROLS'},
-    {id:'spin_button',path:'ui/spin_button.svg',group:'FRAME & CONTROLS'},
-    ...['mini','minor','major','grand'].map(s=>({id:'jackpot_'+s,path:'ui/jackpot_'+s+'.svg',group:'JACKPOT BANNERS'}))
-  ];
+  const imageFiles=[{"id":"hero","path":"legend-raster/hero.png","group":"SCENE & CHARACTER","kind":"image"},{"id":"dragon","path":"legend-raster/dragon.png","group":"SCENE & CHARACTER","kind":"image"},{"id":"background","path":"legend-raster/background.png","group":"SCENE & CHARACTER","kind":"image"},{"id":"logo","path":"legend-raster/logo.png","group":"BRAND & SHARE","kind":"image"},{"id":"app-icon","path":"legend-raster/app-icon.png","group":"BRAND & SHARE","kind":"image"},{"id":"open-graph","path":"legend-raster/open-graph.png","group":"BRAND & SHARE","kind":"image"},{"id":"reel-frame","path":"legend-raster/reel-frame.png","group":"FRAME & CONTROLS","kind":"image"},{"id":"panel","path":"legend-raster/panel.png","group":"FRAME & CONTROLS","kind":"image"},{"id":"spin","path":"legend-raster/spin.png","group":"FRAME & CONTROLS","kind":"image"},{"id":"symbol-crown","path":"legend-raster/symbol-crown.png","group":"REEL SYMBOLS","kind":"symbol"},{"id":"symbol-hourglass","path":"legend-raster/symbol-hourglass.png","group":"REEL SYMBOLS","kind":"symbol"},{"id":"symbol-ring","path":"legend-raster/symbol-ring.png","group":"REEL SYMBOLS","kind":"symbol"},{"id":"symbol-chalice","path":"legend-raster/symbol-chalice.png","group":"REEL SYMBOLS","kind":"symbol"},{"id":"symbol-ruby","path":"legend-raster/symbol-ruby.png","group":"REEL SYMBOLS","kind":"symbol"},{"id":"symbol-amethyst","path":"legend-raster/symbol-amethyst.png","group":"REEL SYMBOLS","kind":"symbol"},{"id":"symbol-topaz","path":"legend-raster/symbol-topaz.png","group":"REEL SYMBOLS","kind":"symbol"},{"id":"symbol-emerald","path":"legend-raster/symbol-emerald.png","group":"REEL SYMBOLS","kind":"symbol"},{"id":"symbol-sapphire","path":"legend-raster/symbol-sapphire.png","group":"REEL SYMBOLS","kind":"symbol"},{"id":"symbol-amber","path":"legend-raster/symbol-amber.png","group":"REEL SYMBOLS","kind":"symbol"},{"id":"symbol-pearl","path":"legend-raster/symbol-pearl.png","group":"REEL SYMBOLS","kind":"symbol"},{"id":"scatter-1","path":"legend-raster/scatter-1.png","group":"REEL SYMBOLS","kind":"symbol"},{"id":"scatter-2","path":"legend-raster/scatter-2.png","group":"REEL SYMBOLS","kind":"symbol"},{"id":"scatter-3","path":"legend-raster/scatter-3.png","group":"REEL SYMBOLS","kind":"symbol"},{"id":"scatter-4","path":"legend-raster/scatter-4.png","group":"REEL SYMBOLS","kind":"symbol"},{"id":"scatter-5","path":"legend-raster/scatter-5.png","group":"REEL SYMBOLS","kind":"symbol"},{"id":"scatter-6","path":"legend-raster/scatter-6.png","group":"REEL SYMBOLS","kind":"symbol"},{"id":"multiplier","path":"legend-raster/multiplier.png","group":"REEL SYMBOLS","kind":"symbol"}];
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const fmt=n=>Number(n||0).toLocaleString('en-US',{maximumFractionDigits:2});
   function toast(message){const node=$('#toast');node.textContent=message;node.classList.add('visible');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>node.classList.remove('visible'),2800);}
@@ -75,7 +63,7 @@
       else if(l.kind==='text'){layerText(el,l);el.style.color=l.color||'#ffe5af';}
       else if(l.kind==='circle')el.textContent=l.text||'★';
       else if(l.kind==='grid'){
-        for(const id of previewVisualGrid||state.grid){const cell=document.createElement('div');cell.className='grid-cell';const im=document.createElement('img');im.alt=id;im.src=assetURL('symbols/'+id+'.png');im.draggable=false;cell.append(im);el.append(cell);}
+        for(const [cellIndex,id] of (previewVisualGrid||state.grid).entries()){const cell=document.createElement('div');cell.className='grid-cell';const im=document.createElement('img');im.alt=id;im.src=window.LegendBallArt.sprite(id,cellIndex%6,assetURL);im.draggable=false;cell.append(im);el.append(cell);}
       }
       root.append(el);
     }
@@ -92,7 +80,7 @@
       side.innerHTML=list.map(l=>`<div class="layer-row ${selected===l.id?'active':''}" data-layer-row="${esc(l.id)}"><div class="layer-icon">${{image:'▧',grid:'▦',text:'T',panel:'▰',circle:'●'}[l.kind]}</div><span class="name">${esc(l.name)}</span><span class="mini-action" title="${l.locked?'Unlock':'Lock'}" data-lock="${esc(l.id)}">${l.locked?'♙':'♧'}</span><span class="mini-action" title="${l.visible?'Hide':'Show'}" data-eye="${esc(l.id)}">${l.visible?'◉':'◌'}</span></div>`).join('');
     }else if(activeTab==='assets'){
       label.textContent='SEPARATE ASSETS';count.textContent=imageFiles.length+' files';let last='';
-      side.innerHTML=imageFiles.map(f=>{let head='';if(f.group!==last){last=f.group;head=`<div class="asset-group">${esc(last)}</div>`;}return head+`<button class="asset-row" data-asset="${esc(f.path)}"><img src="${esc(assetURL(f.path))}" loading="lazy"><span>${esc(f.id.replaceAll('_',' '))}<small>PNG / SVG · individual</small></span><b class="asset-chip">↗</b></button>`;}).join('');
+      side.innerHTML=imageFiles.map(f=>{let head='';if(f.group!==last){last=f.group;head=`<div class="asset-group">${esc(last)}</div>`;}return head+`<button class="asset-row" data-asset="${esc(f.path)}"><img src="${esc(assetURL(f.path))}" loading="lazy"><span>${esc(f.id.replaceAll('_',' '))}<small>PNG / RGBA · individual</small></span><b class="asset-chip">↗</b></button>`;}).join('');
     }else if(activeTab==='audio'){
       label.textContent='AUDIO ASSETS';count.textContent=state.tracks.length+' tracks';
       side.innerHTML=state.tracks.map(t=>`<div class="track-mini"><button type="button" class="track-preview-button" data-audio-preview="${esc(t.id)}" aria-label="Preview ${esc(t.name)}" title="Play / stop audio">▶</button><span class="track-name">${esc(t.name)}</span><small style="color:#7fdaa8;font-size:10px">${t.loop?'LOOP':'SFX'}</small></div>`).join('');

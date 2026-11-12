@@ -1,0 +1,61 @@
+name: Verify deployed approved PNG artwork
+on:
+  push:
+    branches: [fix/raster-artwork-20261112]
+    paths: [.github/workflows/raster-staging-verification.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-staging:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 538cc0b105798a27af4bd12c10798dac7bddf938
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify final deployed stylesheet, PNG bytes and editor protection
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE='https://legend-ball-web-staging.up.railway.app'
+          mkdir -p qa-artifacts/raster-v2
+          for i in $(seq 1 60); do
+            if curl -fsS --max-time 10 -o /tmp/live-theme.css "$BASE/play/legend/theme.css?v=538cc0b" && cmp -s /tmp/live-theme.css play/legend/theme.css; then break; fi
+            sleep 2
+          done
+          cmp /tmp/live-theme.css play/legend/theme.css
+          curl -fsS --max-time 15 -o /tmp/legend-play.html "$BASE/play/"
+          grep -q 'raster2' /tmp/legend-play.html
+          curl -fsS --max-time 15 -o /tmp/live-hero.png "$BASE/play/assets/legend-raster/hero.png"
+          cmp /tmp/live-hero.png studio/assets/legend-raster/hero.png
+          curl -fsS --max-time 15 -o /tmp/live-config.js "$BASE/play/config.js"
+          cmp /tmp/live-config.js play/config.js
+          curl -fsS --max-time 15 -o /tmp/live-engine.js "$BASE/play/engine.js"
+          cmp /tmp/live-engine.js play/engine.js
+          curl -fsS --max-time 15 -o /tmp/live-icon.png "$BASE/play/icons/legend-raster-v2-180.png"
+          cmp /tmp/live-icon.png studio/assets/legend-raster/icons/legend-touch-180.png
+          curl -fsS --max-time 15 -o /tmp/live-share.png "$BASE/play/assets/legend-raster/open-graph.png"
+          cmp /tmp/live-share.png studio/assets/legend-raster/open-graph.png
+          CODE=$(curl -sS --max-time 15 -o /tmp/private-editor.html -w '%{http_code}' "$BASE/studio/")
+          test "$CODE" = 401 || test "$CODE" = 503
+          printf 'Pinned source: 538cc0b105798a27af4bd12c10798dac7bddf938\nPublic stylesheet, PNG hero, icon, share image, math and engine bytes match.\nPrivate Studio HTTP: %s\n' "$CODE" > qa-artifacts/raster-v2/http-evidence.txt
+      - name: Install isolated verification browser
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Real final staging mobile and desktop playthrough
+        env:
+          LEGEND_URL: https://legend-ball-web-staging.up.railway.app/play/?v=raster2
+          TEST_STUDIO: '0'
+        run: node scripts/tests/raster-mobile-browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: legend-raster-live-staging-evidence
+          path: qa-artifacts/raster-v2/
+          if-no-files-found: error
+          retention-days: 14

@@ -1,0 +1,278 @@
+{
+  "schema": "legend/raster-art-v2",
+  "source": "design/references/approved-celestial-concept.png",
+  "sourceSha256": "53a1573585a62546b4bfec821c7642697845f395ca017b9eb3f62941356b3ea9",
+  "provenance": "Crop/mask derivatives of the conversation-approved concept, not recovered PSD or 3D masters. Title updated; stars replaced with six rune marks.",
+  "assets": [
+    {
+      "name": "hero.png",
+      "width": 390,
+      "height": 670,
+      "rgba": true,
+      "transparentPixels": 86383,
+      "bytes": 586811,
+      "sha256": "7da583f5a4d653641fc3dac137b017e5dfdd955327113b78a092362c4cfc75bf",
+      "note": "Approved anime hero with manual alpha silhouette, no geometric redraw."
+    },
+    {
+      "name": "dragon.png",
+      "width": 365,
+      "height": 216,
+      "rgba": true,
+      "transparentPixels": 39665,
+      "bytes": 182654,
+      "sha256": "271dd53009b1a20cf50eca6b8428a0d1dbe7d2c8dc14d87455fba9f5c3ff7809",
+      "note": "Approved blue dragon, individually masked."
+    },
+    {
+      "name": "background.png",
+      "width": 720,
+      "height": 1400,
+      "rgba": true,
+      "transparentPixels": 0,
+      "bytes": 492672,
+      "sha256": "5dd08b7dc3e06dd2dd99fecde8f33f343e611e9caaeed2c1cfbaea8239964b52",
+      "note": "Approved floating-island atmosphere with a clear dark underlay, no baked gameplay UI."
+    },
+    {
+      "name": "reel-frame.png",
+      "width": 989,
+      "height": 550,
+      "rgba": true,
+      "transparentPixels": 471594,
+      "bytes": 1117616,
+      "sha256": "25cc3ad5d29d374d0506d462d24aed15e7eadc71f10884d0567bba05c566f104",
+      "note": "Original gold rim with transparent reel window."
+    },
+    {
+      "name": "panel.png",
+      "width": 323,
+      "height": 89,
+      "rgba": true,
+      "transparentPixels": 19618,
+      "bytes": 36834,
+      "sha256": "2d9b270822812c2620bf7881c6e7abece0d9dccc25aa7ae0da74059a384d770b",
+      "note": "Approved panel rim, baked values removed through alpha; live DOM numbers remain independent."
+    },
+    {
+      "name": "symbol-crown.png",
+      "width": 256,
+      "height": 256,
+      "rgba": true,
+      "transparentPixels": 15320,
+      "bytes": 112832,
+      "sha256": "b0d0a8eab5e31f59b48e0cecb4b36a838a4e6b9ec8cfaabc9046acbbdd70de14",
+      "note": "Individual approved reel artwork crop with masked backdrop or retained portrait frame."
+    },
+    {
+      "name": "symbol-hourglass.png",
+      "width": 256,
+      "height": 256,
+      "rgba": true,
+      "transparentPixels": 18564,
+      "bytes": 107685,
+      "sha256": "5d597dd9d40457a82e2ad0e3573e5c9f78438e272c150ed0012d6405162e196c",
+      "note": "Individual approved reel artwork crop with masked backdrop or retained portrait frame."
+    },
+    {
+      "name": "symbol-ring.png",
+      "width": 256,
+      "height": 256,
+      "rgba": true,
+      "transparentPixels": 17434,
+      "bytes": 110007,
+      "sha256": "2b9793a6a96aa33d8bf3e4675242182b4c11e05cf24aa6862de2ed0c9aeb6632",
+      "note": "Individual approved reel artwork crop with masked backdrop or retained portrait frame."
+    },
+    {
+      "name": "symbol-chalice.png",
+      "width": 256,
+      "height": 256,
+      "rgba": true,
+      "transparentPixels": 19504,
+      "bytes": 99796,
+      "sha256": "ee26be8c819ced0ce810a9af0bc7b0a13b0a780dbd829be1b2c324be7d2e6b80",
+      "note": "Individual approved reel artwork crop with masked backdrop or retained portrait frame."
+    },
+    {
+      "name": "symbol-ruby.png",
+      "width": 256,
+      "height": 256,
+      "rgba": true,
+      "transparentPixels": 36589,
+      "bytes": 71407,
+      "sha256": "4981039dadd06996488614b6cafbeb0f3d94ec36fbbc9d19d7efee8a00bca6cc",
+      "note": "Individual approved reel artwork crop with masked backdrop or retained portrait frame."
+    },
+    {
+      "name": "symbol-amethyst.png",
+      "width": 256,
+      "height": 256,
+      "rgba": true,
+      "transparentPixels": 43311,
+      "bytes": 49228,
+      "sha256": "3a4f28f91d47c2721cd0c61a0dc36638fd26913348c56235a45d8eb2834bd85e",
+      "note": "Individual approved reel artwork crop with masked backdrop or retained portrait frame."
+    },
+    {
+      "name": "symbol-topaz.png",
+      "width": 256,
+      "height": 256,
+      "rgba": true,
+      "transparentPixels": 39090,
+      "bytes": 60592,
+      "sha256": "86426f15cecfb4099a84223fc77bb0f00559c0b00a1cd115c52cc525bb56c59c",
+      "note": "Individual approved reel artwork crop with masked backdrop or retained portrait frame."
+    },
+    {
+      "name": "symbol-emerald.png",
+      "width": 256,
+      "height": 256,
+      "rgba": true,
+      "transparentPixels": 34229,
+      "bytes": 61087,
+      "sha256": "ad7610ae663b2274770eac086329bb763992bb3f22c84ab6ad566f226286f2ca",
+      "note": "Individual approved reel artwork crop with masked backdrop or retained portrait frame."
+    },
+    {
+      "name": "symbol-sapphire.png",
+      "width": 256,
+      "height": 256,
+      "rgba": true,
+      "transparentPixels": 44938,
+      "bytes": 47442,
+      "sha256": "8223f0fb65508b21a96d30df595ee2838587ab046ce1001d3776186972c3926c",
+      "note": "Individual approved reel artwork crop with masked backdrop or retained portrait frame."
+    },
+    {
+      "name": "symbol-amber.png",
+      "width": 256,
+      "height": 256,
+      "rgba": true,
+      "transparentPixels": 20212,
+      "bytes": 97557,
+      "sha256": "4ad269ec71733b2fbebe0a559e5e6f875636346961afd66b3b24dc2163f318ef",
+      "note": "Individual approved reel artwork crop with masked backdrop or retained portrait frame."
+    },
+    {
+      "name": "symbol-pearl.png",
+      "width": 256,
+      "height": 256,
+      "rgba": true,
+      "transparentPixels": 17438,
+      "bytes": 104676,
+      "sha256": "3383f16789aff07810c60dc40777bd0625d3433245f6dd9fbc155fe3b13218d3",
+      "note": "Individual approved reel artwork crop with masked backdrop or retained portrait frame."
+    },
+    {
+      "name": "scatter-1.png",
+      "width": 336,
+      "height": 288,
+      "rgba": true,
+      "transparentPixels": 29692,
+      "bytes": 106630,
+      "sha256": "e5df5af43e08eaaff449f4b50a36802c4b0bf856c9faba7dc0a093aa26eee916",
+      "note": "Raster energy ball with star removed and unique rune. Visual skin only."
+    },
+    {
+      "name": "scatter-2.png",
+      "width": 336,
+      "height": 288,
+      "rgba": true,
+      "transparentPixels": 29692,
+      "bytes": 110903,
+      "sha256": "d6985d45d487260493c5a2afde2ec59feb18df20e9e78749c5857956d8a8b3ec",
+      "note": "Raster energy ball with star removed and unique rune. Visual skin only."
+    },
+    {
+      "name": "scatter-3.png",
+      "width": 336,
+      "height": 288,
+      "rgba": true,
+      "transparentPixels": 29692,
+      "bytes": 110637,
+      "sha256": "e569a43fbf00aaeefbd83f764ddf902a3bc41425cc5d2fcc153b0c1d33961aca",
+      "note": "Raster energy ball with star removed and unique rune. Visual skin only."
+    },
+    {
+      "name": "scatter-4.png",
+      "width": 336,
+      "height": 288,
+      "rgba": true,
+      "transparentPixels": 29692,
+      "bytes": 111439,
+      "sha256": "e69efd6b5ee055208152cdcd98a5a5fd1661b3eb13bbd2c6abed2226506430cc",
+      "note": "Raster energy ball with star removed and unique rune. Visual skin only."
+    },
+    {
+      "name": "scatter-5.png",
+      "width": 336,
+      "height": 288,
+      "rgba": true,
+      "transparentPixels": 29692,
+      "bytes": 111280,
+      "sha256": "e06c3d18c7e095a273742ceb9f15c817e462b9b7dbde6490bc93524503bb97ee",
+      "note": "Raster energy ball with star removed and unique rune. Visual skin only."
+    },
+    {
+      "name": "scatter-6.png",
+      "width": 336,
+      "height": 288,
+      "rgba": true,
+      "transparentPixels": 29692,
+      "bytes": 112625,
+      "sha256": "b2722e1d2105c58641fe76aef3db00b5c99d975cd2f17e979085760c00169c7b",
+      "note": "Raster energy ball with star removed and unique rune. Visual skin only."
+    },
+    {
+      "name": "multiplier.png",
+      "width": 336,
+      "height": 288,
+      "rgba": true,
+      "transparentPixels": 29692,
+      "bytes": 106788,
+      "sha256": "8925bbb5d2c9cd9ca2dcfebd0ddb2c3f6e5b9cff93d105fa4b1efb6137b7c38a",
+      "note": "Blank raster orb for original engine live multiplier value."
+    },
+    {
+      "name": "spin.png",
+      "width": 249,
+      "height": 233,
+      "rgba": true,
+      "transparentPixels": 13142,
+      "bytes": 120962,
+      "sha256": "9df2e41a706fb7dbedc5020c6a47fd3de2f3968c8b510d6b7b8b36357f43ef43",
+      "note": "Approved gold SPIN disc; interactive DOM button remains independent."
+    },
+    {
+      "name": "logo.png",
+      "width": 1000,
+      "height": 335,
+      "rgba": true,
+      "transparentPixels": 201824,
+      "bytes": 111409,
+      "sha256": "f768729dba69a9ee17c2edcd5c164a0924c731d0af77e608ca9aebd5518ddd2b",
+      "note": "Updated raster name lockup with approved gold, red and silver direction."
+    },
+    {
+      "name": "app-icon.png",
+      "width": 512,
+      "height": 512,
+      "rgba": true,
+      "transparentPixels": 0,
+      "bytes": 413376,
+      "sha256": "0c13a419d541157c8b61ee9272a791f50c421758460f653f95c6faa9309a31da",
+      "note": "App icon from the same approved hero and title."
+    },
+    {
+      "name": "open-graph.png",
+      "width": 1200,
+      "height": 630,
+      "rgba": true,
+      "transparentPixels": 0,
+      "bytes": 724907,
+      "sha256": "249559f24ab859c4e1572d682d7abfeb596aa88d91c1d4bdfa6dbefaf66f7a07",
+      "note": "Telegram/Open Graph image derived from the same PNG layers."
+    }
+  ]
+}
