@@ -1,0 +1,127 @@
+/* LEGEND BALL X1000 | mobile-first original cosmic rune-fantasy skin.
+   Presentation only. The Skygate 6x5 math, bonus rules, and credit settlement stay unchanged.
+   Source: independent original SVG sprite masters under /play/legend/. */
+:root{
+  --sg-panel:#0c1325;--sg-gold:#dda878;--sg-cream:#f9e7c3;
+  --sg-sapphire:#6be7ef;--sg-line:#d9a47966;
+  --gold:#e8bd80;--muted:#a9a8c7;--line:#a79fce38;
+}
+html,body{background:#050713;color:#f9f0dd}
+.game{
+  background:
+    radial-gradient(ellipse at 50% 21%,#344580 0%,#1e1e4d 35%,transparent 68%),
+    linear-gradient(180deg,#070a23,#151334 54%,#090c1d 100%);
+  box-shadow:0 0 0 1px #a9b2fc38,0 20px 80px #03040aa0;
+}
+.game:before{
+  opacity:.4;background-image:
+    radial-gradient(circle at 7% 35%,#a0fcff 0 1px,transparent 1.5px),
+    radial-gradient(circle at 90% 65%,#f9cd8f 0 1px,transparent 1.5px),
+    linear-gradient(144deg,transparent 35%,#6a5eb21b 50%,transparent 70%);
+}
+.hero{height:28.8%;mask-image:linear-gradient(#000 70%,transparent 100%)}
+.hero .legend-hero-art{
+  display:block;width:100%;height:100%;object-fit:cover;object-position:center 22%;
+  filter:saturate(1.18) contrast(1.05);
+}
+.hero .legend-hero-logo{
+  position:absolute;z-index:2;top:2%;left:10%;width:80%;height:50%;
+  object-fit:contain;filter:drop-shadow(0 4px 9px #040816bd);
+}
+.hero:after{background:linear-gradient(180deg,#080c201a 12%,transparent 50%,#10132e 100%)}
+.win-banner{
+  top:22.1%;left:16%;width:68%;height:6%;z-index:7;
+  border:1px solid #75ccebbd;border-radius:2.5cqw;
+  background:linear-gradient(105deg,#1a2149ee,#212443e8 50%,#18162dea);
+  box-shadow:0 8px 25px #0205199c,0 0 17px #3dbde627,inset 0 1px #dafdff45;
+}
+.win-banner .win-star{color:#85faff;text-shadow:0 0 10px #4ee4ff}
+.win-banner .win-value strong{color:#fff0c9;text-shadow:0 2px 7px #070c22}
+.board{
+  left:2.8%;top:29%;width:94.4%;height:40.65%;padding:1.3%;
+  border:2px solid #d4a66bc9;border-radius:3.1cqw;
+  background:
+    linear-gradient(145deg,#0d1430,#151c40 50%,#0c0e27),
+    radial-gradient(circle,#303e70,transparent);
+  box-shadow:inset 0 0 0 2px #639cf433,0 0 0 1px #5eccee3b,0 0 29px #4b67be4d,0 9px 30px #03071a85;
+}
+.board:before,.board:after{height:2px;background:linear-gradient(90deg,transparent,#86e9fd,#efc089,transparent)}
+.reels{background:radial-gradient(circle at 50% 50%,#2b2d6070,#0c122e85);border-radius:1.9cqw}
+.tile{
+  border-right:1px solid #65aad034;border-bottom:1px solid #65aad034;
+  background:radial-gradient(ellipse at 52% 30%,#6275d016,transparent 75%);
+}
+.tile .symbol{width:91%;height:91%;filter:drop-shadow(0 3px 3px #03031188)}
+.tile.win{background:radial-gradient(ellipse,#68e4ff47,#9073cf06);box-shadow:inset 0 0 0 1px #81f3ff}
+.scatter-label{
+  color:#fff1c6;text-shadow:0 1px 5px #070821,0 0 5px #2dcbe9;
+  letter-spacing:.06em;font-size:1.65cqw;
+}
+.orb-num{
+  border:1px solid #8cf9ff;color:#fff8cb;
+  background:radial-gradient(ellipse,#1f7ca0 20%,#213879 65%,#0e1839);
+  box-shadow:0 0 15px #49e6ee8a;font-family:system-ui,sans-serif;
+}
+.bonus-ribbon{background:linear-gradient(90deg,#1a336c,#ad6e57,#1b3472);color:#ffefbd}
+.feature-row{top:70.8%;height:6.4%;left:4%;right:4%;gap:2.5%}
+.feature{
+  border:1px solid #c1a27991;border-radius:2.2cqw;
+  background:linear-gradient(125deg,#27315ce8,#10182ddd);
+  color:#f3e7d3;
+  box-shadow:inset 0 1px #a8dfff19,0 4px 12px #0005;
+}
+.feature strong{color:#ffe6ae}
+.feature-buy{background:linear-gradient(122deg,#46324b,#251a34 60%,#4c3139)}
+.feature-ante{background:linear-gradient(122deg,#183c4f,#111b38 60%,#253b53)}
+.deal-note,.play-hint{color:#c6e5f0}
+.deck{top:79.1%;height:15.5%;left:4%;width:92%;border-top:1px solid #6de4f547}
+.wallet .credit-line,.wallet .bet-line{
+  background:linear-gradient(140deg,#18264a,#11182a);
+  border:1px solid #ba9f7c6b;box-shadow:inset 0 1px #91e9fd18;
+}
+.wallet label{color:#9ed5df;letter-spacing:.08em}
+.wallet strong{color:#fce9bc}
+.spin{
+  filter:drop-shadow(0 0 16px #5cdae377)!important;
+}
+.spin .spin-caption{
+  font-weight:950;letter-spacing:.08em;color:#f1fcff;text-shadow:0 1px 6px #00243b,0 0 5px #79efff;
+}
+.spin-row .round,.round{
+  border-color:#9dbee463;background:linear-gradient(145deg,#233460,#101629);
+  color:#d6f5ff;box-shadow:inset 0 1px #ffffff21;
+}
+.footer{border-top:1px solid #66b1f32d}
+.demo-label{color:#a6ddde}.demo-label i{background:#54e6c9;box-shadow:0 0 8px #54e6c9}
+.promo-badge{filter:hue-rotate(135deg) saturate(.8)}
+dialog{
+  background:linear-gradient(135deg,#202345,#0a1128);
+  border-color:#c49a74;color:#faeed8;box-shadow:0 20px 80px #030311cb;
+}
+.dialog-head{background:#182348;border-color:#e5ac7944}
+.dialog-head h2{color:#f5d6a4}
+.dialog-head h2:before{content:'LEGEND BALL X1000';color:#78e5ef}
+.primary-action,.splash-play{background:linear-gradient(118deg,#204b78,#2a4f7c 50%,#6a395e);color:#fff3ce;border-color:#edc694}
+.boot-splash{background:#070d21}
+.splash-art{max-width:680px}
+.splash-background{object-fit:cover;object-position:center 45%;filter:contrast(1.08) saturate(1.18)}
+.splash-lightning{display:none!important}
+.splash-shade{background:linear-gradient(180deg,#090b20a0,transparent 21%,#090b2033 51%,#070d21d9 78%,#070d21 100%)}
+.legend-splash-brand{width:100%;max-height:none;overflow:visible}
+.legend-splash-brand .brand-top{inset:0;position:relative;display:block;overflow:visible;height:auto;width:100%}
+.legend-splash-brand .brand-top img{position:relative!important;display:block;width:100%!important;height:auto!important;object-fit:contain!important;filter:drop-shadow(0 0 18px #32dcf355)}
+.splash-title{width:min(88vw,370px)}
+.splash-title>span{color:#bff4ff;letter-spacing:.25em;text-shadow:0 2px 4px #07091e}
+.splash-footer #bootStatus{color:#c2e6ed}
+.splash-footer>small{color:#8dc5cd}
+.splash-logo{opacity:.78;filter:hue-rotate(38deg)}
+:root{--sg-action-image:linear-gradient(145deg,#2a3564,#102144)}
+@media(max-width:399px){
+  .hero .legend-hero-logo{top:5%;height:43%}
+  .board{top:29.1%;height:40.5%}
+  .feature-row{top:70.9%}
+  .spin{min-width:73px;min-height:73px}
+}
+@media(prefers-reduced-motion:reduce){
+  .hero .legend-hero-logo,.splash-background{animation:none}
+}
