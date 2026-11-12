@@ -1,0 +1,61 @@
+name: Legend Ball V4 Spin UI and Audio Menu QA
+on:
+  push:
+    branches: [feat/spin-ui-energy-v4-20261113]
+    paths:
+      - 'play/**'
+      - 'studio/project.json'
+      - 'scripts/tests/spin-*.mjs'
+      - '.github/workflows/legend-spin-v4-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  spin-v4:
+    name: Locked Skygate engine + mobile UI acceptance
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax and unchanged source-engine verification
+        run: |
+          node --check play/game.js
+          node --check play/settings-model.js
+          node --check play/legend/default-project.js
+          node --check scripts/tests/spin-v4-mobile-browser.mjs
+          node --test scripts/tests/spin-controls-v4.test.mjs
+      - name: Existing Skygate source regression suite
+        run: npm test
+      - name: Source-locked cinematics and original art regression
+        run: |
+          node --test scripts/tests/legend-brand.test.mjs
+          node --test scripts/tests/cinematic-vfx.test.mjs
+      - name: Prepare stable game assets
+        run: npm run prepare:play
+      - name: Install Chromium for real portrait QA
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Boot independent local staging-equivalent game
+        shell: bash
+        run: |
+          set -euo pipefail
+          PORT=3107 NODE_ENV=development node server.mjs >/tmp/legend-spin-v4-server.log 2>&1 &
+          for i in $(seq 1 50); do
+            if curl -fsS http://127.0.0.1:3107/health >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/legend-spin-v4-server.log
+          exit 1
+      - name: Browser test on 320, 390, 430, 1440px + audio slider + deterministic Spin
+        run: node scripts/tests/spin-v4-mobile-browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: legend-spin-v4-mobile-visual-proof
+          path: qa-artifacts/spin-v4/
+          retention-days: 14
+          if-no-files-found: ignore
