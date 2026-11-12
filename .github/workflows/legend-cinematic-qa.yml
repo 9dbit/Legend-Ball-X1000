@@ -1,5 +1,5 @@
 name: Legend Ball 3-scene cinematic upgrade QA
-# Validate corrected Studio-safe footer geometry.
+# Validate original orange-clad hero and branded title above all three worlds.
 on:
   push:
     branches: [feat/cinematic-energy-scenes-20261113]
