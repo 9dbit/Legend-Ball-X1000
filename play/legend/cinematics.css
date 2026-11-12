@@ -1,0 +1,159 @@
+/* LEGEND BALL X1000 | presentation upgrade v3.
+   Scenery, lightning, reel motion and Veylorn motion do not affect outcomes.
+   Scene imagery is user-supplied preview material; not cleared for production. */
+.legend-scene .legend-world-stack{
+  position:absolute;inset:0;z-index:1;overflow:hidden;
+  pointer-events:none;background:#0a061c;isolation:isolate;
+}
+.legend-scene .legend-world-image{
+  position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center 36%;
+  opacity:0;visibility:hidden;transform:scale(1.035);
+  filter:saturate(1.10) contrast(1.08) brightness(.82);
+  transition:opacity 350ms ease-out,filter 350ms ease-out;
+  backface-visibility:hidden;
+}
+.legend-scene .legend-world-image.active{opacity:1;visibility:visible;filter:saturate(1.2) contrast(1.1) brightness(.9)}
+.legend-scene .legend-world-stack:after{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:2;
+  background:linear-gradient(180deg,#0202142e 0%,#08031716 19%,#110b2975 31%,#0a061e98 44%,#140824c8 73%,#070516d9 100%);
+}
+.legend-scene.legend-world-ready .legend-art[data-layer=sky]{opacity:0!important}
+.legend-scene.legend-world-ready .legend-art[data-layer=guardian]{
+  opacity:0!important;pointer-events:none
+}
+.legend-scene.legend-world-ready .legend-art[data-layer=dragon]{
+  opacity:0!important;pointer-events:none;will-change:transform,opacity;
+}
+.legend-scene.legend-world-ready.legend-awakened .legend-art[data-layer=dragon]{
+  opacity:.96!important;z-index:6!important;
+  animation:legendBeastRise 1300ms cubic-bezier(.16,.84,.22,1) both;
+  filter:drop-shadow(0 0 13px #f7d175) drop-shadow(0 0 30px #75d8ff)!important;
+}
+@keyframes legendBeastRise{
+  0%{transform:translate3d(12%,16%,0) scale(.84) rotate(4deg);opacity:0}
+  17%{opacity:.96}
+  45%{transform:translate3d(-2%,-5%,0) scale(1.09) rotate(-2deg)}
+  75%{transform:translate3d(1%,-2%,0) scale(1.03) rotate(1deg);opacity:.98}
+  100%{transform:translate3d(0,2%,0) scale(1);opacity:0}
+}
+.legend-scene .legend-lightning-flash{
+  position:absolute;inset:0;z-index:36;pointer-events:none;opacity:0;
+  background:
+    radial-gradient(ellipse at 69% 20%,#faffffdc,transparent 35%),
+    linear-gradient(103deg,#f8f1ee22,#e4f9ffde 55%,#fff6d3b8);
+  mix-blend-mode:screen;
+}
+.legend-scene .legend-lightning-flash svg{
+  display:block;width:100%;height:100%;filter:drop-shadow(0 0 8px #ddf9ff) drop-shadow(0 0 21px #8bdcff);
+}
+.legend-scene .legend-lightning-flash path{fill:none;stroke:#efffff;stroke-linecap:round;stroke-linejoin:miter}
+.legend-scene .legend-lightning-flash .legend-bolt-core{stroke-width:12}
+.legend-scene .legend-lightning-flash .legend-bolt-branch{stroke-width:5;stroke:#b8f6ff}
+.legend-scene.legend-striking .legend-lightning-flash{
+  animation:legendLightningFlash 610ms steps(1,end) forwards;
+}
+@keyframes legendLightningFlash{
+  0%{opacity:0}
+  9%{opacity:.15}
+  14%{opacity:.68}
+  23%{opacity:1}
+  31%{opacity:.9}
+  39%{opacity:.08}
+  49%{opacity:.56}
+  57%{opacity:0}
+  71%{opacity:.1}
+  100%{opacity:0}
+}
+/* Tie the logo into the strike: brushed metal illumination, not a franchise wordmark. */
+.legend-scene .legend-art[data-layer=logo] img{
+  filter:drop-shadow(2px 3px 0 #210c31) drop-shadow(0 5px 1px #0d0623)
+         drop-shadow(0 0 8px #fbb45bc7) drop-shadow(0 0 13px #536bffa1);
+}
+.legend-scene.legend-striking .legend-art[data-layer=logo] img{
+  animation:legendTitlePulse 620ms ease-out;
+}
+@keyframes legendTitlePulse{
+  0%,100%{filter:drop-shadow(2px 3px 0 #210c31) drop-shadow(0 0 8px #fbb45b)}
+  22%,42%{filter:drop-shadow(0 0 14px #fff) drop-shadow(0 0 30px #7ed9ff) brightness(1.35)}
+}
+/* Stronger glowing balls, without modifying the Scatter kind, reel data or RNG. */
+.legend-scene .tile.legend-energy-ball{isolation:isolate}
+.legend-scene .tile.legend-energy-ball:after{
+  content:'';position:absolute;inset:4%;pointer-events:none;z-index:0;
+  border-radius:50%;
+  background:radial-gradient(circle,#fffab366 0%,#ffc26e44 27%,#ff671516 51%,transparent 69%);
+  filter:blur(2px);box-shadow:0 0 12px #ffb15b77;
+  animation:legendOrbBreath 1600ms ease-in-out infinite alternate;
+}
+.legend-scene .tile.legend-energy-ball .symbol-motion{z-index:1}
+.legend-scene .tile.legend-energy-ball .symbol{
+  filter:drop-shadow(0 0 7px #ffd8a8) drop-shadow(0 0 14px #fc9b31) saturate(1.22);
+}
+.legend-scene .tile.legend-energy-ball[data-energy-kind=orb] .symbol{
+  filter:drop-shadow(0 0 7px #8fe9ff) drop-shadow(0 0 13px #39aeff);
+}
+@keyframes legendOrbBreath{from{opacity:.55;transform:scale(.89)}to{opacity:1;transform:scale(1.16)}}
+/* Reel velocity: directional streak + tiny blur, restoring sharp assets on settle. */
+.legend-scene .reels.rolling .tile .symbol{
+  filter:blur(1.65px) saturate(1.18) brightness(1.18)!important;
+}
+.legend-scene .reels.rolling .reel-column{position:relative}
+.legend-scene .reels.rolling .reel-column:after{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:5;
+  background:repeating-linear-gradient(180deg,
+     transparent 0,transparent 6px,#b0ddff1c 11px,#faf8ff40 13px,transparent 21px);
+  mix-blend-mode:screen;animation:legendSpeedStreak 90ms linear infinite;
+}
+@keyframes legendSpeedStreak{to{background-position:0 44px}}
+/* Cascades are energy discharges, not fireworks celebrations. */
+.legend-scene .fireworks-layer .firework-flare{opacity:0!important}
+.legend-scene .fireworks-layer .firework-spark{
+  width:21px!important;height:2px!important;
+  border-radius:2px!important;box-shadow:0 0 6px #d8ffff,0 0 11px #45dbff!important;
+  background:linear-gradient(90deg,transparent,#52dcff 18%,#fffbd1 54%,#ff9a4d 100%)!important;
+}
+.legend-scene .fireworks-layer .firework-spark.spark-1,
+.legend-scene .fireworks-layer .firework-spark.spark-3{
+  background:linear-gradient(90deg,transparent,#ff8133,#fff2b2 80%,transparent)!important;
+  box-shadow:0 0 8px #ff9c32!important;
+}
+.legend-scene .legend-blast-overlay{position:absolute;inset:0;z-index:30;pointer-events:none;overflow:visible}
+.legend-scene .legend-blast-ring{
+  position:absolute;width:22%;aspect-ratio:1;border-radius:50%;
+  transform:translate(-50%,-50%) scale(.1);opacity:0;
+  border:2px solid #f9e4ab;
+  background:radial-gradient(circle,#fffcd9cf 0%,#d2faff90 14%,#3ddcfe46 32%,transparent 63%);
+  box-shadow:0 0 12px #fffbd6,0 0 26px #5cd7ff,inset 0 0 11px #fff;
+  animation:legendBlast 750ms ease-out var(--burst-delay,0ms) forwards;
+}
+@keyframes legendBlast{
+  0%{transform:translate(-50%,-50%) scale(.1);opacity:0}
+  16%{opacity:.95}
+  48%{transform:translate(-50%,-50%) scale(1.35);opacity:.85}
+  100%{transform:translate(-50%,-50%) scale(2.2);opacity:0}
+}
+/* Thumb-friendly control cluster. Shared project layer coordinates remain editable. */
+.legend-scene .published-layer[data-layer=spinbutton]{
+  filter:drop-shadow(0 0 12px #ffba52b8) drop-shadow(0 0 22px #ea681c88);
+  touch-action:manipulation;
+}
+.legend-scene .published-layer[data-layer=autobtn],
+.legend-scene .published-layer[data-layer=turbobtn]{
+  filter:drop-shadow(0 0 7px #e5b97999);
+}
+.legend-scene .published-layer[data-layer=spinbutton] .spin:active{
+  transform:scale(.965);filter:brightness(1.2);
+}
+.legend-scene .legend-art[data-layer=reelframe]{
+  filter:drop-shadow(0 0 7px #e49e4eaa) drop-shadow(0 0 15px #8150ef4f)!important;
+}
+@media (prefers-reduced-motion:reduce){
+  .legend-scene .legend-lightning-flash,
+  .legend-scene .legend-world-image,
+  .legend-scene .legend-art[data-layer=dragon],
+  .legend-scene .tile.legend-energy-ball:after,
+  .legend-scene .reels.rolling .reel-column:after,
+  .legend-scene .legend-blast-ring{animation:none!important;transition:none!important}
+  .legend-scene .reels.rolling .tile .symbol{filter:none!important}
+}
