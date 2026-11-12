@@ -5,6 +5,7 @@ on:
     paths:
       - 'play/**'
       - 'studio/project.json'
+      - 'studio/assets/legend-raster/**'
       - 'scripts/tests/spin-*.mjs'
       - '.github/workflows/legend-spin-v4-qa.yml'
   workflow_dispatch:
