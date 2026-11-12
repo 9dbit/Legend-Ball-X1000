@@ -2,7 +2,7 @@
   "schema": "legend/raster-art-v2",
   "source": "design/references/approved-celestial-concept.png",
   "sourceSha256": "53a1573585a62546b4bfec821c7642697845f395ca017b9eb3f62941356b3ea9",
-  "provenance": "Crop/mask derivatives of the conversation-approved concept, not recovered PSD or 3D masters. Title updated; stars replaced with six rune marks.",
+  "provenance": "Crop/mask derivatives of the conversation-approved concept, not recovered PSD or 3D masters. Title updated; stars replaced with six rune marks. Original V4 logo independently rendered from editable six-rune SVG source.",
   "assets": [
     {
       "name": "hero.png",
@@ -247,12 +247,12 @@
     {
       "name": "logo.png",
       "width": 1000,
-      "height": 335,
+      "height": 350,
       "rgba": true,
-      "transparentPixels": 201824,
-      "bytes": 111409,
-      "sha256": "f768729dba69a9ee17c2edcd5c164a0924c731d0af77e608ca9aebd5518ddd2b",
-      "note": "Updated raster name lockup with approved gold, red and silver direction."
+      "transparentPixels": 177968,
+      "bytes": 147377,
+      "sha256": "869fe44b7a0d61a774f06d18866716430a956e6b1630a34a07769eacc92e34ac",
+      "note": "Independent chrome gold and electric-cyan original LEGEND BALL X1000 wordmark, rendered from play/legend/logo-chrome-v4.svg; six custom rune crest, not franchise stars."
     },
     {
       "name": "app-icon.png",
