@@ -62,7 +62,7 @@ window.SkygateReels = class {
     for(let i=0;i<30;i++){const flare=document.createElement('img');flare.className='firework-flare';flare.src=window.SkygateCascadeArt.firework;flare.alt='';this.fireworks.append(flare);this.flares.push(flare);}
     root.append(this.fireworks);
     // Decode each unique texture once before the first animated round.
-    this.textures = (window.LegendBallArt?.textures() || [...new Set(Object.values(art))].map(sprite => asset('symbols/' + sprite + '.png'))).map(src => {
+    this.textures = (window.LegendBallArt?.textures(asset) || [...new Set(Object.values(art))].map(sprite => asset('symbols/' + sprite + '.png'))).map(src => {
       const img = document.createElement('img'); img.src = src;
       return img;
     });
@@ -72,7 +72,7 @@ window.SkygateReels = class {
     const {tile, img, multiplier, scatter} = cell;
     if (cell.kind !== symbol.kind) {
       cell.kind = symbol.kind;
-      img.src = window.LegendBallArt?.sprite(symbol.kind, cell.column) || this.asset('symbols/' + (this.art[symbol.kind] || 'ruby') + '.png');
+      img.src = window.LegendBallArt?.sprite(symbol.kind, cell.column, this.asset) || this.asset('symbols/' + (this.art[symbol.kind] || 'ruby') + '.png');
       scatter.hidden = symbol.kind !== 'scatter';
     }
     const info = `${this.label[symbol.kind] || symbol.kind}${symbol.multiplier ? ' x' + symbol.multiplier : ''}`;

@@ -216,15 +216,15 @@ test('original Legend Ball high-resolution touch icons are installed for Safari,
     assert.equal(bytes.readUInt32BE(20),180,path);
   }
   const game=read('play/index.html'),studio=read('studio/index.html');
-  assert.match(game,/rel="apple-touch-icon" sizes="180x180" href="icons\/legend-touch-180.png"/);
+  assert.match(game,/rel="apple-touch-icon" sizes="180x180" href="icons\/legend-raster-v2-180.png"/);
   const version=JSON.parse(read('package.json')).version;
   assert(game.includes(`rel="manifest" href="manifest.webmanifest?v=${version}"`));
-  assert.match(studio,/rel="apple-touch-icon" sizes="180x180" href="\/play\/icons\/legend-touch-180.png"/);
+  assert.match(studio,/rel="apple-touch-icon" sizes="180x180" href="\/play\/icons\/legend-raster-v2-180.png"/);
   assert(studio.includes(`rel="manifest" href="/studio/manifest.webmanifest?v=${version}"`));
   const gameManifest=JSON.parse(read('play/manifest.webmanifest'));
   assert.equal(gameManifest.id,'/play/');
   assert.equal(gameManifest.start_url,'/play/');
-  assert(gameManifest.icons.some(icon=>icon.sizes==='192x192'&&icon.src.includes('legend-touch-192.png')));
+  assert(gameManifest.icons.some(icon=>icon.sizes==='192x192'&&icon.src.includes('legend-raster-v2-192.png')));
   assert(gameManifest.icons.some(icon=>icon.sizes==='512x512'&&icon.purpose==='any'));
   assert(gameManifest.icons.some(icon=>icon.sizes==='512x512'&&icon.purpose==='maskable'));
   const studioManifest=JSON.parse(read('studio/manifest.webmanifest'));

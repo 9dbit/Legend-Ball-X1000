@@ -32,6 +32,7 @@
 })();
 
 window.SkygateApplyLayout=(project,asset)=>{
+  if(project.presentation==='legend-raster-v2')return window.LegendBallApplyLayout(project,asset);
   const game=document.querySelector('.game');
   const scene=document.createElement('div');scene.className='published-scene';
   if(project.presentation==='olympus-gold'){
@@ -277,6 +278,7 @@ window.SkygateApplyLayout=(project,asset)=>{
 
 // Splash and popup identities follow the same published assets and crop as the game.
 window.SkygateSyncChrome=(project,asset)=>{
+  if(project?.presentation==='legend-raster-v2')return window.LegendBallSyncChrome(project,asset);
   const logo=project?.layers.find(l=>l.id==='logo');
   const panel=project?.layers.find(l=>l.id==='buybtn');
   // Published snapshots keep their immutable artwork. A fresh/unpublished game

@@ -7,7 +7,9 @@ import studioMath from './studio/math/studio_math.js';
 export const symbols = ['ruby','sapphire','emerald','amethyst','topaz','amber','pearl','ring','crown','hourglass','chalice','orb','scatter'];
 export const defaultSpinMotion = Object.freeze({normalMs:1800,quickMs:1150,turboMs:650});
 export const tracks = ['bgm_celestial_loop','spin_start','reel_stop','tumble','symbol_win','multiplier','bonus_intro','free_spin_start','big_win','mega_win','jackpot','ui_click','ambient_thunder'];
+export const legendRasterAssets = ["legend-raster/hero.png", "legend-raster/dragon.png", "legend-raster/background.png", "legend-raster/reel-frame.png", "legend-raster/panel.png", "legend-raster/symbol-crown.png", "legend-raster/symbol-hourglass.png", "legend-raster/symbol-ring.png", "legend-raster/symbol-chalice.png", "legend-raster/symbol-ruby.png", "legend-raster/symbol-amethyst.png", "legend-raster/symbol-topaz.png", "legend-raster/symbol-emerald.png", "legend-raster/symbol-sapphire.png", "legend-raster/symbol-amber.png", "legend-raster/symbol-pearl.png", "legend-raster/scatter-1.png", "legend-raster/scatter-2.png", "legend-raster/scatter-3.png", "legend-raster/scatter-4.png", "legend-raster/scatter-5.png", "legend-raster/scatter-6.png", "legend-raster/multiplier.png", "legend-raster/spin.png", "legend-raster/logo.png", "legend-raster/app-icon.png", "legend-raster/open-graph.png"];
 export const shippedAssets = [
+  ...legendRasterAssets,
   ...symbols.map(x=>`symbols/${x}.png`),
   ...['sky_background.jpg','hero_composite_reference.jpg','guardian.png','logo.png','column_left.png','column_right.png'].map(x=>`scene/${x}`),
   ...['gold_banner','blue_button','spin_button','spin_button_clean','reel_frame','jackpot_mini','jackpot_minor','jackpot_major','jackpot_grand'].map(x=>`ui/${x}.svg`),
@@ -92,7 +94,7 @@ export function validateProject(input, overrideKeys=[]){
   const spinMotion=Object.fromEntries(Object.entries({normalMs:[1200,3500],quickMs:[750,2300],turboMs:[420,1300]}).map(([key,[min,max]])=>
     [key,integer(requested[key]??defaultSpinMotion[key],min,max,key)]));
   if(!(spinMotion.normalMs>spinMotion.quickMs&&spinMotion.quickMs>spinMotion.turboMs))fail('Spin timing order must be NORMAL > QUICK > TURBO');
-  return {schema:p.schema,projectName:str(p.projectName||'SKYGATE',80,'project name'),presentation:p.presentation==='olympus-gold'?'olympus-gold':'classic',virtualCreditsOnly:true,stage:{width:1080,height:1920},layers,grid:[...p.grid],math:config,jackpot,audio,tracks:audioTracks,winPresentation,spinMotion,seed:integer(p.seed,1,4294967295,'seed'),bet:num(p.bet,.2,300,'bet'),credit:num(p.credit,1,100000000,'starting credit')};
+  return {schema:p.schema,projectName:str(p.projectName||'SKYGATE',80,'project name'),presentation:['olympus-gold','legend-raster-v2'].includes(p.presentation)?p.presentation:'classic',virtualCreditsOnly:true,stage:{width:1080,height:1920},layers,grid:[...p.grid],math:config,jackpot,audio,tracks:audioTracks,winPresentation,spinMotion,seed:integer(p.seed,1,4294967295,'seed'),bet:num(p.bet,.2,300,'bet'),credit:num(p.credit,1,100000000,'starting credit')};
 }
 
 // Validate WebP RIFF signatures and dimensions before writing untrusted media.

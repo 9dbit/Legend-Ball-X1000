@@ -26,7 +26,7 @@
   },
   "scatter": {
     "mathKind": "scatter",
-    "artStatus": "concept-only-not-implemented",
+    "artStatus": "raster-variants-integrated-visual-only",
     "maxOnePerColumnEnforced": false,
     "treatments": [
       {
@@ -92,5 +92,7 @@
   "production": {
     "ready": false,
     "allowed": false
-  }
+  },
+  "artRevision": "approved-raster-v2",
+  "artSourceSha256": "53a1573585a62546b4bfec821c7642697845f395ca017b9eb3f62941356b3ea9"
 }
