@@ -42,7 +42,7 @@ jobs:
           set -euo pipefail
           git clone --quiet https://github.com/9dbit/Skygate.git /tmp/locked-skygate
           git -C /tmp/locked-skygate checkout --quiet --detach 6a8aee9e3a0bebaa9552433ffe0051efe39d4a52
-          git -C /tmp/locked-skygate checkout 33aa774941e6da0e2e23d65c7ec8c9f8bb9763d6 -- game-factory/
+          git -C /tmp/locked-skygate checkout 7477568731e232505c7318bb8111ca4985502393 -- game-factory/
           node /tmp/locked-skygate/game-factory/validate.mjs
           node /tmp/locked-skygate/game-factory/create-game.mjs \
             --profile /tmp/locked-skygate/game-factory/profiles/legend-ball-x1000.json \
