@@ -125,3 +125,5 @@ dialog{
 @media(prefers-reduced-motion:reduce){
   .hero .legend-hero-logo,.splash-background{animation:none}
 }
+
+.splash-logo-text{font:950 clamp(16px,4.7vw,23px)/1.1 ui-monospace,monospace;letter-spacing:.32em;color:#eee5d1;text-shadow:0 0 13px #68e8f977;margin:12px auto 16px;text-align:center}
