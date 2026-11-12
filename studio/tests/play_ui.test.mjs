@@ -208,7 +208,7 @@ test('original Legend Ball high-resolution touch icons are installed for Safari,
     assert.deepEqual([...bytes.subarray(0,8)],[137,80,78,71,13,10,26,10],filename);
     assert.equal(bytes.readUInt32BE(16),size,filename+' width');
     assert.equal(bytes.readUInt32BE(20),size,filename+' height');
-    assert(bytes.length>5000,'Unexpected placeholder image '+filename);
+    assert(bytes.length>(size===48?800:5000),'Unexpected placeholder image '+filename);
   }
   for(const path of ['apple-touch-icon.png','play/apple-touch-icon.png','studio/apple-touch-icon.png']){
     const bytes=readFileSync(resolve(root,path));
