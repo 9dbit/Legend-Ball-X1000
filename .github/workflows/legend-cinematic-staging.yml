@@ -1,4 +1,4 @@
-name: Verify live Legend Ball V3 staging
+name: Verify live Legend Ball V3 staging orange hero
 on:
   push:
     branches: [feat/cinematic-energy-scenes-20261113]
@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: e8214491fb0854ffa262ae3c03a83457281b35a2
+          ref: 1d2a0ddeaf7163c15c9c24d63fa6e576a3204dc5
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
