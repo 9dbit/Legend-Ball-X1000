@@ -1,0 +1,57 @@
+name: Import original Legend Ball chrome logo as PNG
+on:
+  push:
+    branches: [feat/spin-ui-energy-v4-20261113]
+    paths:
+      - '.github/workflows/legend-logo-chrome-v4.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: legend-v4-logo-render
+  cancel-in-progress: false
+jobs:
+  rasterize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install SVG rasterizer
+        run: npm install --no-save --package-lock=false sharp@0.34.3
+      - name: Convert original six-rune chrome emblem to independent transparent PNG
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --input-type=module <<'JS'
+          import sharp from 'sharp';
+          import {readFile,writeFile} from 'node:fs/promises';
+          import {createHash} from 'node:crypto';
+          const source=await readFile('play/legend/logo-chrome-v4.svg');
+          const out='studio/assets/legend-raster/logo.png';
+          await sharp(source,{density:180}).resize({width:1000}).png({compressionLevel:9}).toFile(out);
+          const png=await readFile(out);
+          const {data,info}=await sharp(png).ensureAlpha().raw().toBuffer({resolveWithObject:true});
+          let transparent=0;
+          for(let i=3;i<data.length;i+=info.channels)if(data[i]===0)transparent++;
+          if(info.width!==1000||info.height<250||transparent<15000)throw Error('Bad logo alpha or resolution '+JSON.stringify({width:info.width,height:info.height,transparent}));
+          const file='studio/assets/legend-raster/manifest.json';
+          const m=JSON.parse(await readFile(file,'utf8'));
+          const entry=m.assets.find(a=>a.name==='logo.png');
+          if(!entry)throw Error('Missing logo manifest entry');
+          Object.assign(entry,{width:info.width,height:info.height,rgba:true,transparentPixels:transparent,bytes:png.length,sha256:createHash('sha256').update(png).digest('hex'),note:'Independent chrome gold and electric-cyan original LEGEND BALL X1000 wordmark, rendered from play/legend/logo-chrome-v4.svg; six custom rune crest, not franchise stars.'});
+          m.provenance+=' Original V4 logo independently rendered from editable six-rune SVG source.';
+          await writeFile(file,JSON.stringify(m,null,2)+'\n');
+          console.log('Original logo generated:',entry);
+          JS
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f studio/assets/legend-raster/logo.png studio/assets/legend-raster/manifest.json
+          if git diff --cached --quiet; then
+            echo 'Logo raster unchanged'
+          else
+            git commit -m 'art(legend): rasterize original V4 chrome title into Studio PNG layer'
+            git push origin HEAD:feat/spin-ui-energy-v4-20261113
+          fi
