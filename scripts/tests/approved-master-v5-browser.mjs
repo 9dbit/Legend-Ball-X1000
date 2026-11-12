@@ -32,11 +32,13 @@ try {
     await page.locator('#bootPlay').click({timeout:12000});
     await page.waitForFunction(()=>document.documentElement.dataset.boot==='entered',null,{timeout:15000});
     await page.waitForFunction(()=>[...document.querySelectorAll('.legend-master-control-image')].every(x=>x.complete&&x.naturalWidth>0),null,{timeout:12000});
+    await page.waitForFunction(()=>document.querySelector('.legend-scene')?.classList.contains('legend-world-ready'),null,{timeout:15000});
     const model=await page.evaluate(()=>{
       const scene=document.querySelector('.legend-scene');
       const rect=id=>{let r=scene.querySelector('[data-layer="'+id+'"]')?.getBoundingClientRect();return r?r.toJSON():null;};
       return {
         imageSource:scene.querySelector('[data-layer=sky] img')?.src,
+        skyOpacity:Number(getComputedStyle(scene.querySelector('[data-layer=sky]')).opacity),
         frameSource:scene.querySelector('[data-layer=reelframe] img')?.src,
         spinSource:document.querySelector('#spin .spin-frame')?.src,
         menuImage:scene.querySelector('[data-layer=menubtn] img.legend-master-control-image')?.src,
@@ -51,6 +53,7 @@ try {
       };
     });
     assert(model.imageSource.includes('legend-master/gameplay-backdrop.webp'),'wrong scene');
+    assert(model.skyOpacity>.98,width+': approved gameplay hero was hidden under old lightning world');
     assert(model.frameSource.includes('legend-master/reel-frame.png'),'wrong reel ornament');
     assert(model.spinSource.includes('legend-master/spin.png'),'wrong Spin art');
     assert(model.menuImage.includes('legend-master/menu.png'),'wrong footer art');
