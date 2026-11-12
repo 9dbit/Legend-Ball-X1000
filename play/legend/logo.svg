@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 272" role="img" aria-label="Legend Ball X1000">
+<defs>
+<linearGradient id="metal" x1=".1" y1="0" x2=".9" y2="1"><stop stop-color="#fff6c4"/><stop offset=".27" stop-color="#ffce6e"/><stop offset=".52" stop-color="#d77a43"/><stop offset=".75" stop-color="#f9cf87"/><stop offset="1" stop-color="#744069"/></linearGradient>
+<linearGradient id="power" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#baffff"/><stop offset=".45" stop-color="#44d1f4"/><stop offset="1" stop-color="#5f59f0"/></linearGradient>
+<filter id="glow"><feGaussianBlur stdDeviation="7" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+</defs>
+<path d="M68 130 127 34 188 108 260 46 284 130 388 90 426 130 474 66 548 130 628 76 681 128 753 41 801 129" fill="none" stroke="#43d5ec" stroke-width="9" opacity=".22" filter="url(#glow)"/>
+<path d="M12 210 95 210 132 242 721 242 757 210 848 210" fill="none" stroke="#bd855e" stroke-width="4"/>
+<text x="430" y="124" font-family="Arial Black, Impact, sans-serif" font-size="95" font-weight="1000" letter-spacing="-4" text-anchor="middle" fill="#070c1d" stroke="#070c1d" stroke-width="19" paint-order="stroke">LEGEND BALL</text>
+<text x="430" y="124" font-family="Arial Black, Impact, sans-serif" font-size="95" font-weight="1000" letter-spacing="-4" text-anchor="middle" fill="url(#metal)" stroke="#ffdfaa" stroke-width="1.5" paint-order="stroke">LEGEND BALL</text>
+<path d="M215 149 H335 L368 171 400 149 H464 L490 171 525 149 H647" fill="none" stroke="#40d8f2" stroke-width="2" opacity=".7"/>
+<text x="430" y="224" font-family="Arial Black, Impact, sans-serif" font-size="111" font-weight="1000" letter-spacing="16" text-anchor="middle" stroke="#030a20" stroke-width="17" paint-order="stroke" fill="url(#power)" filter="url(#glow)">X1000</text>
+<circle cx="126" cy="171" r="12" fill="#3fdafa"/><circle cx="730" cy="171" r="12" fill="#eaa967"/>
+<text x="430" y="263" text-anchor="middle" font-family="Arial,sans-serif" font-size="17" letter-spacing="13" fill="#bed8e7">RISE OF THE SIX RUNES</text>
+</svg>

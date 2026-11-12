@@ -1,0 +1,107 @@
+name: Bootstrap Legend Ball from locked Skygate source
+
+on:
+  push:
+    branches: [feat/skygate-derived-starter]
+    paths:
+      - '.github/workflows/bootstrap-from-skygate.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: legend-ball-bootstrap
+  cancel-in-progress: false
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Confirm brand-new destination
+        id: guard
+        shell: bash
+        run: |
+          if test -e game-source-lock.json; then
+            echo 'already=true' >> "$GITHUB_OUTPUT"
+            echo 'Game already seeded, refusing to overwrite'
+          else
+            echo 'already=false' >> "$GITHUB_OUTPUT"
+          fi
+      - name: Create isolated game from Skygate pinned source
+        if: steps.guard.outputs.already == 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git clone --quiet https://github.com/9dbit/Skygate.git /tmp/locked-skygate
+          git -C /tmp/locked-skygate checkout --quiet --detach 6a8aee9e3a0bebaa9552433ffe0051efe39d4a52
+          git -C /tmp/locked-skygate checkout 7477568731e232505c7318bb8111ca4985502393 -- game-factory/
+          node /tmp/locked-skygate/game-factory/validate.mjs
+          node /tmp/locked-skygate/game-factory/create-game.mjs \
+            --profile /tmp/locked-skygate/game-factory/profiles/legend-ball-x1000.json \
+            --output /tmp/legend-ball-generated
+          cp -a /tmp/legend-ball-generated/. "$GITHUB_WORKSPACE"/
+          cat > README.md <<'README'
+          # LEGEND BALL X1000
+
+          An original, mobile-first cosmic martial-fantasy game in development by Soft Tech.
+
+          This is an isolated virtual-credit research prototype derived from an immutable
+          Skygate v0.14.3 source snapshot. It is not a new RNG engine, certified gaming
+          product, real-money platform or approved production release.
+
+          - Layout: 6 reels x 5 rows, mobile portrait
+          - Unmodified source: tumble, pay-anywhere, 15 Free Spins on 4+ Scatter,
+            5 retrigger Free Spins on 3+ Scatter during bonus, original multiplier
+            table, 5000x round cap, Buy Spin and Bonus Booster.
+          - New original art direction: Aster Varn, Veylorn crystalline leviathan,
+            six rune-ball Scatter artwork ideas (not implemented), distinct
+            symbols, UI, audio and animation still to be created.
+          - Scatter is still generated per cell. There is no guaranteed
+            maximum of one Scatter per column.
+
+          Local: npm test then npm start. Game at /play/, editor at /studio/.
+          The current cloned game still displays source Skygate artwork.
+          It must be fully replaced with original art before design approval.
+
+          Original: https://github.com/9dbit/Skygate
+          Source: 6a8aee9e3a0bebaa9552433ffe0051efe39d4a52
+          Template PR: https://github.com/9dbit/Skygate/pull/27
+
+          No deployment, gateway credentials, wallet or source repo releases are shared.
+          Review CLONE_STATUS.md, game-profile.json, game-source-lock.json
+          before enabling isolated staging.
+          README
+          cat > .gitignore <<'GITIGNORE'
+          node_modules/
+          play/assets/
+          play/audio_engine.js
+          play/studio_math.js
+          .env
+          .env.*
+          !.env.example
+          *.log
+          .DS_Store
+          studio/previews/
+          studio/SKYGATE_Studio_Standalone_v0.3.html
+          .local-data/
+          GITIGNORE
+          npm test
+      - name: Commit source-locked isolated prototype
+        if: steps.guard.outputs.already == 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add --all
+          git -c core.whitespace=-blank-at-eol diff --cached --check
+          git commit -m 'feat: bootstrap isolated Legend Ball starter from locked Skygate'
+          git push origin HEAD:feat/skygate-derived-starter

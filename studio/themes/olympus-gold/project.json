@@ -1,0 +1,790 @@
+{
+  "schema": "skygate/studio-v0.3",
+  "projectName": "SKYGATE · Olympus Gold",
+  "virtualCreditsOnly": true,
+  "stage": {
+    "width": 1080,
+    "height": 1920
+  },
+  "layers": [
+    {
+      "id": "sky",
+      "name": "Olympus storm and temple environment",
+      "kind": "image",
+      "x": 0,
+      "y": 0,
+      "w": 1080,
+      "h": 1920,
+      "z": 1,
+      "rotate": 0,
+      "opacity": 100,
+      "visible": true,
+      "locked": false,
+      "asset": "custom/olympus_background.png"
+    },
+    {
+      "id": "guardian",
+      "name": "Zeus · transparent character",
+      "kind": "image",
+      "x": 504,
+      "y": -8,
+      "w": 610,
+      "h": 610,
+      "z": 5,
+      "rotate": 0,
+      "opacity": 100,
+      "visible": true,
+      "locked": false,
+      "asset": "custom/zeus_guardian.png",
+      "crop": {
+        "x": 0,
+        "y": 0,
+        "w": 1,
+        "h": 1
+      }
+    },
+    {
+      "id": "logo",
+      "name": "SKYGATE · sculpted gold logo",
+      "kind": "image",
+      "x": 12,
+      "y": 36,
+      "w": 572,
+      "h": 337,
+      "z": 7,
+      "rotate": 0,
+      "opacity": 100,
+      "visible": true,
+      "locked": false,
+      "asset": "custom/skygate_logo.png",
+      "crop": {
+        "x": 0.003669724770642202,
+        "y": 0.016632016632016633,
+        "w": 0.9914373088685016,
+        "h": 0.9719334719334719
+      }
+    },
+    {
+      "id": "reelframe",
+      "name": "Gold Ionic columns · reel architecture",
+      "kind": "image",
+      "x": 0,
+      "y": 520,
+      "w": 1080,
+      "h": 740,
+      "z": 22,
+      "rotate": 0,
+      "opacity": 100,
+      "visible": true,
+      "locked": false,
+      "asset": "custom/reel_architecture.png",
+      "crop": {
+        "x": 0.00390625,
+        "y": 0.0078125,
+        "w": 0.9934895833333334,
+        "h": 0.966796875
+      }
+    },
+    {
+      "id": "reels",
+      "name": "Live 6 × 5 symbols",
+      "kind": "grid",
+      "x": 122,
+      "y": 596,
+      "w": 836,
+      "h": 578,
+      "z": 21,
+      "rotate": 0,
+      "opacity": 100,
+      "visible": true,
+      "locked": false
+    },
+    {
+      "id": "winbanner",
+      "name": "Round total · laurel banner",
+      "kind": "image",
+      "x": 92,
+      "y": 457,
+      "w": 896,
+      "h": 145,
+      "z": 24,
+      "rotate": 0,
+      "opacity": 100,
+      "visible": true,
+      "locked": false,
+      "asset": "custom/win_banner.png",
+      "crop": {
+        "x": 0.0055248618784530384,
+        "y": 0.1574585635359116,
+        "w": 0.988950276243094,
+        "h": 0.6353591160220995
+      }
+    },
+    {
+      "id": "winamount",
+      "name": "Live round amount",
+      "kind": "text",
+      "x": 205,
+      "y": 487,
+      "w": 670,
+      "h": 84,
+      "z": 25,
+      "rotate": 0,
+      "opacity": 100,
+      "visible": true,
+      "locked": false,
+      "text": "0.00",
+      "font": 86,
+      "color": "#fff0b8"
+    },
+    {
+      "id": "antebtn",
+      "name": "Ante Bet · live toggle",
+      "kind": "image",
+      "x": 551,
+      "y": 1268,
+      "w": 495,
+      "h": 105,
+      "z": 26,
+      "rotate": 0,
+      "opacity": 100,
+      "visible": true,
+      "locked": false,
+      "asset": "custom/feature_panel.png",
+      "crop": {
+        "x": 0.006445672191528545,
+        "y": 0.20718232044198895,
+        "w": 0.9866482504604052,
+        "h": 0.5649171270718232
+      }
+    },
+    {
+      "id": "controlboard",
+      "name": "Credit and bet · marble panel",
+      "kind": "image",
+      "x": 28,
+      "y": 1390,
+      "w": 1024,
+      "h": 114,
+      "z": 29,
+      "rotate": 0,
+      "opacity": 100,
+      "visible": true,
+      "locked": false,
+      "asset": "custom/feature_panel.png",
+      "crop": {
+        "x": 0.006445672191528545,
+        "y": 0.20718232044198895,
+        "w": 0.9866482504604052,
+        "h": 0.5649171270718232
+      }
+    },
+    {
+      "id": "credits",
+      "name": "Live credit value",
+      "kind": "text",
+      "x": 60,
+      "y": 1409,
+      "w": 460,
+      "h": 72,
+      "z": 31,
+      "rotate": 0,
+      "opacity": 100,
+      "visible": true,
+      "locked": false,
+      "text": "100,000.00",
+      "font": 43,
+      "color": "#fff0b8"
+    },
+    {
+      "id": "betlabel",
+      "name": "Live bet value",
+      "kind": "text",
+      "x": 747,
+      "y": 1409,
+      "w": 150,
+      "h": 72,
+      "z": 31,
+      "rotate": 0,
+      "opacity": 100,
+      "visible": true,
+      "locked": false,
+      "text": "20",
+      "font": 43,
+      "color": "#fff0b8"
+    },
+    {
+      "id": "minusbtn",
+      "name": "Decrease bet",
+      "kind": "circle",
+      "x": 577,
+      "y": 1402,
+      "w": 90,
+      "h": 90,
+      "z": 40,
+      "rotate": 0,
+      "opacity": 100,
+      "visible": true,
+      "locked": false,
+      "text": "−",
+      "font": 32.4,
+      "color": "#fff0a3",
+      "asset": "custom/round_button.png",
+      "crop": {
+        "x": 0.023923444976076555,
+        "y": 0.022328548644338118,
+        "w": 0.9521531100478469,
+        "h": 0.9425837320574163
+      }
+    },
+    {
+      "id": "plusbtn",
+      "name": "Increase bet",
+      "kind": "circle",
+      "x": 930,
+      "y": 1402,
+      "w": 90,
+      "h": 90,
+      "z": 40,
+      "rotate": 0,
+      "opacity": 100,
+      "visible": true,
+      "locked": false,
+      "text": "+",
+      "font": 32.4,
+      "color": "#fff0a3",
+      "asset": "custom/round_button.png",
+      "crop": {
+        "x": 0.023923444976076555,
+        "y": 0.022328548644338118,
+        "w": 0.9521531100478469,
+        "h": 0.9425837320574163
+      }
+    },
+    {
+      "id": "spinbutton",
+      "name": "Spin · gold laurel medallion",
+      "kind": "image",
+      "x": 366,
+      "y": 1471,
+      "w": 348,
+      "h": 348,
+      "z": 42,
+      "rotate": 0,
+      "opacity": 100,
+      "visible": true,
+      "locked": false,
+      "asset": "custom/spin_medallion.png",
+      "crop": {
+        "x": 0.005582137161084529,
+        "y": 0.014354066985645933,
+        "w": 0.9880382775119617,
+        "h": 0.9688995215311005
+      }
+    },
+    {
+      "id": "autobtn",
+      "name": "Auto · live toggle",
+      "kind": "circle",
+      "x": 202,
+      "y": 1552,
+      "w": 143,
+      "h": 143,
+      "z": 40,
+      "rotate": 0,
+      "opacity": 100,
+      "visible": true,
+      "locked": false,
+      "text": "▶",
+      "font": 51.48,
+      "color": "#fff0a3",
+      "asset": "custom/round_button.png",
+      "crop": {
+        "x": 0.023923444976076555,
+        "y": 0.022328548644338118,
+        "w": 0.9521531100478469,
+        "h": 0.9425837320574163
+      }
+    },
+    {
+      "id": "turbobtn",
+      "name": "Turbo · live toggle",
+      "kind": "circle",
+      "x": 735,
+      "y": 1552,
+      "w": 143,
+      "h": 143,
+      "z": 40,
+      "rotate": 0,
+      "opacity": 100,
+      "visible": true,
+      "locked": false,
+      "text": "ϟ",
+      "font": 51.48,
+      "color": "#fff0a3",
+      "asset": "custom/round_button.png",
+      "crop": {
+        "x": 0.023923444976076555,
+        "y": 0.022328548644338118,
+        "w": 0.9521531100478469,
+        "h": 0.9425837320574163
+      }
+    },
+    {
+      "id": "autolabel",
+      "name": "Auto · live start/stop caption",
+      "kind": "text",
+      "x": 197,
+      "y": 1704,
+      "w": 153,
+      "h": 33,
+      "z": 43,
+      "rotate": 0,
+      "opacity": 100,
+      "visible": true,
+      "locked": false,
+      "text": "AUTO",
+      "font": 25,
+      "color": "#fff9e6"
+    },
+    {
+      "id": "turbolabel",
+      "name": "Spin speed · live caption",
+      "kind": "text",
+      "x": 728,
+      "y": 1704,
+      "w": 157,
+      "h": 33,
+      "z": 43,
+      "rotate": 0,
+      "opacity": 100,
+      "visible": true,
+      "locked": false,
+      "text": "NORMAL",
+      "font": 25,
+      "color": "#fff9e6"
+    },
+    {
+      "id": "menubtn",
+      "name": "Menu",
+      "kind": "circle",
+      "x": 32,
+      "y": 1814,
+      "w": 90,
+      "h": 90,
+      "z": 40,
+      "rotate": 0,
+      "opacity": 100,
+      "visible": true,
+      "locked": false,
+      "text": "☰",
+      "font": 32.4,
+      "color": "#fff0a3",
+      "asset": "custom/round_button.png",
+      "crop": {
+        "x": 0.023923444976076555,
+        "y": 0.022328548644338118,
+        "w": 0.9521531100478469,
+        "h": 0.9425837320574163
+      }
+    },
+    {
+      "id": "soundbtn",
+      "name": "Sound · live mute toggle",
+      "kind": "circle",
+      "x": 850,
+      "y": 1814,
+      "w": 90,
+      "h": 90,
+      "z": 40,
+      "rotate": 0,
+      "opacity": 100,
+      "visible": true,
+      "locked": false,
+      "text": "♪",
+      "font": 32.4,
+      "color": "#fff0a3",
+      "asset": "custom/round_button.png",
+      "crop": {
+        "x": 0.023923444976076555,
+        "y": 0.022328548644338118,
+        "w": 0.9521531100478469,
+        "h": 0.9425837320574163
+      }
+    },
+    {
+      "id": "infobtn",
+      "name": "Rules and information",
+      "kind": "circle",
+      "x": 958,
+      "y": 1814,
+      "w": 90,
+      "h": 90,
+      "z": 40,
+      "rotate": 0,
+      "opacity": 100,
+      "visible": true,
+      "locked": false,
+      "text": "i",
+      "font": 32.4,
+      "color": "#fff0a3",
+      "asset": "custom/round_button.png",
+      "crop": {
+        "x": 0.023923444976076555,
+        "y": 0.022328548644338118,
+        "w": 0.9521531100478469,
+        "h": 0.9425837320574163
+      }
+    },
+    {
+      "id": "buybtn",
+      "name": "Buy Free Spins · live purchase",
+      "kind": "image",
+      "x": 35,
+      "y": 1268,
+      "w": 495,
+      "h": 105,
+      "z": 26,
+      "rotate": 0,
+      "opacity": 100,
+      "visible": true,
+      "locked": false,
+      "asset": "custom/feature_panel.png",
+      "crop": {
+        "x": 0.006445672191528545,
+        "y": 0.20718232044198895,
+        "w": 0.9866482504604052,
+        "h": 0.5649171270718232
+      }
+    }
+  ],
+  "grid": [
+    "emerald",
+    "amethyst",
+    "amber",
+    "topaz",
+    "amber",
+    "topaz",
+    "topaz",
+    "sapphire",
+    "amber",
+    "topaz",
+    "orb",
+    "amber",
+    "amethyst",
+    "pearl",
+    "ruby",
+    "sapphire",
+    "amber",
+    "topaz",
+    "ruby",
+    "sapphire",
+    "sapphire",
+    "amethyst",
+    "amber",
+    "topaz",
+    "sapphire",
+    "pearl",
+    "orb",
+    "amber",
+    "amethyst",
+    "topaz"
+  ],
+  "assets": {},
+  "tracks": [
+    {
+      "id": "bgm_celestial_loop",
+      "name": "Celestial BGM",
+      "event": "background",
+      "loop": true,
+      "volume": 54,
+      "fade": 700
+    },
+    {
+      "id": "spin_start",
+      "name": "Spin Start",
+      "event": "spin",
+      "loop": false,
+      "volume": 74,
+      "fade": 0
+    },
+    {
+      "id": "reel_stop",
+      "name": "Reel Stop",
+      "event": "reel_stop",
+      "loop": false,
+      "volume": 72,
+      "fade": 0
+    },
+    {
+      "id": "tumble",
+      "name": "Tumble Cascade",
+      "event": "tumble",
+      "loop": false,
+      "volume": 74,
+      "fade": 0
+    },
+    {
+      "id": "symbol_win",
+      "name": "Win Small",
+      "event": "win",
+      "loop": false,
+      "volume": 74,
+      "fade": 0
+    },
+    {
+      "id": "multiplier",
+      "name": "Multiplier",
+      "event": "multiplier",
+      "loop": false,
+      "volume": 72,
+      "fade": 0
+    },
+    {
+      "id": "bonus_intro",
+      "name": "Free Spin Intro",
+      "event": "bonus",
+      "loop": false,
+      "volume": 76,
+      "fade": 0
+    },
+    {
+      "id": "free_spin_start",
+      "name": "Free Spin Start",
+      "event": "free_spin",
+      "loop": false,
+      "volume": 72,
+      "fade": 0
+    },
+    {
+      "id": "big_win",
+      "name": "Big Win",
+      "event": "bigwin",
+      "loop": false,
+      "volume": 78,
+      "fade": 0
+    },
+    {
+      "id": "mega_win",
+      "name": "Mega Win",
+      "event": "megawin",
+      "loop": false,
+      "volume": 80,
+      "fade": 0
+    },
+    {
+      "id": "jackpot",
+      "name": "Jackpot Celebration",
+      "event": "jackpot",
+      "loop": false,
+      "volume": 85,
+      "fade": 0
+    },
+    {
+      "id": "ui_click",
+      "name": "UI Click",
+      "event": "click",
+      "loop": false,
+      "volume": 65,
+      "fade": 0
+    },
+    {
+      "id": "ambient_thunder",
+      "name": "Ambient Thunder",
+      "event": "thunder",
+      "loop": false,
+      "volume": 50,
+      "fade": 0
+    }
+  ],
+  "audio": {
+    "muted": false,
+    "master": 75
+  },
+  "math": {
+    "profile_id": "skygate-reference-rules-v1",
+    "name": "Skygate screenshot rules",
+    "description": "Visible mechanics transcribed from supplied screenshots. Original synthetic weights; no certified RTP claim.",
+    "grid_columns": 6,
+    "grid_rows": 5,
+    "min_match": 8,
+    "symbol_weights": {
+      "crown": 5,
+      "hourglass": 7,
+      "ring": 9,
+      "chalice": 10,
+      "ruby": 12,
+      "amethyst": 14,
+      "topaz": 17,
+      "emerald": 20,
+      "sapphire": 24,
+      "scatter": 1.7,
+      "orb": 1.4
+    },
+    "paytable": {
+      "crown": [
+        10,
+        25,
+        50
+      ],
+      "hourglass": [
+        2.5,
+        10,
+        25
+      ],
+      "ring": [
+        2,
+        5,
+        15
+      ],
+      "chalice": [
+        1.5,
+        2,
+        12
+      ],
+      "ruby": [
+        1,
+        1.5,
+        10
+      ],
+      "amethyst": [
+        0.8,
+        1.2,
+        8
+      ],
+      "topaz": [
+        0.5,
+        1,
+        5
+      ],
+      "emerald": [
+        0.4,
+        0.9,
+        4
+      ],
+      "sapphire": [
+        0.25,
+        0.75,
+        2
+      ]
+    },
+    "multiplier_values": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      8,
+      10,
+      12,
+      15,
+      20,
+      25,
+      50,
+      100,
+      250,
+      500
+    ],
+    "multiplier_weights": [
+      35,
+      23,
+      13,
+      10,
+      8,
+      6,
+      4,
+      3,
+      2,
+      1.5,
+      1,
+      0.5,
+      0.2,
+      0.06,
+      0.02
+    ],
+    "bonus_start_spins": 15,
+    "bonus_trigger_scatters": 4,
+    "bonus_retrigger_scatters": 3,
+    "bonus_retrigger_add_spins": 5,
+    "round_max_win_x": 5000,
+    "safety_max_tumbles": 10000,
+    "safety_max_bonus_spins": 10000,
+    "research_note": "Reference RTP 96.50%; Skygate RTP unverified. Reels and RNG weights were not supplied. Ante weights increase bonus frequency; exact 2x frequency not certified.",
+    "reference_rules": true,
+    "bonus_symbol_weights": {
+      "crown": 5,
+      "hourglass": 7,
+      "ring": 9,
+      "chalice": 10,
+      "ruby": 12,
+      "amethyst": 14,
+      "topaz": 17,
+      "emerald": 20,
+      "sapphire": 24,
+      "scatter": 1.7,
+      "orb": 2.8
+    },
+    "ante_scatter_weight_multiplier": 1.25,
+    "scatter_paytable": {
+      "4": 3,
+      "5": 5,
+      "6": 100
+    }
+  },
+  "jackpot": {
+    "enabled": false,
+    "type": "fixed-demo",
+    "tiers": [
+      {
+        "id": "grand",
+        "name": "GRAND",
+        "awardX": 2000,
+        "perMillion": 1,
+        "color": "#f05370"
+      },
+      {
+        "id": "major",
+        "name": "MAJOR",
+        "awardX": 500,
+        "perMillion": 4,
+        "color": "#ad6aff"
+      },
+      {
+        "id": "minor",
+        "name": "MINOR",
+        "awardX": 100,
+        "perMillion": 20,
+        "color": "#508ff3"
+      },
+      {
+        "id": "mini",
+        "name": "MINI",
+        "awardX": 25,
+        "perMillion": 40,
+        "color": "#5bc79f"
+      }
+    ]
+  },
+  "winPresentation": {
+    "smallX": 1,
+    "bigX": 10,
+    "megaX": 25,
+    "superX": 100
+  },
+  "spinMotion": {
+    "normalMs": 1800,
+    "quickMs": 1150,
+    "turboMs": 650
+  },
+  "targetRTP": 96.5,
+  "seed": 20261027,
+  "bet": 2,
+  "credit": 100000,
+  "ui": {
+    "theme": "gold-purple",
+    "showReference": false,
+    "showGridGuides": false
+  },
+  "presentation": "olympus-gold",
+  "name": "SKYGATE · Gold"
+}

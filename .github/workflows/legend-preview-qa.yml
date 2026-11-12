@@ -1,0 +1,61 @@
+name: Legend Ball gameplay and original art QA
+
+on:
+  push:
+    branches: [feat/skygate-derived-starter]
+    paths-ignore:
+      - '.github/workflows/bootstrap-from-skygate.yml'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: JavaScript syntax validation
+        run: |
+          node --check play/game.js
+          node --check play/reels.js
+          node --check play/legend/art.js
+          node --check scripts/legend-icons.mjs
+      - name: Original SVG parse check
+        run: |
+          python3 - <<'PY'
+          import glob,xml.etree.ElementTree as ET
+          files=glob.glob('play/legend/*.svg')
+          assert len(files)>=18, f'Expected at least 18 originals; found {len(files)}'
+          for f in files:
+              root=ET.parse(f).getroot()
+              assert root.tag.endswith('svg'), f
+          print(f'PASS: {len(files)} SVG masters XML-valid')
+          PY
+      - name: Skygate gameplay regression suite
+        run: npm test
+      - name: Legend-specific math, icon, visual-asset tests
+        run: node --test scripts/tests/legend-brand.test.mjs
+      - name: Browser entry routes and generated icons
+        shell: bash
+        run: |
+          set -euo pipefail
+          PORT=3107 SKYGATE_STUDIO_PUBLIC_TESTING=false node server.mjs > /tmp/legend-http.log 2>&1 &
+          PID=$!
+          trap 'kill "$PID" 2>/dev/null || true' EXIT
+          for i in $(seq 1 40); do
+            if curl -fsS http://127.0.0.1:3107/health >/tmp/legend-health.json; then break; fi
+            sleep .2
+          done
+          cat /tmp/legend-health.json
+          curl -fsS http://127.0.0.1:3107/play/ | grep -q 'LEGEND BALL X1000'
+          curl -fsS http://127.0.0.1:3107/play/legend/logo.svg | grep -q '<svg'
+          curl -fsS http://127.0.0.1:3107/play/legend/ball-6.svg | grep -q '<svg'
+          curl -fsS -o /tmp/legend-icon.png http://127.0.0.1:3107/play/icons/legend-touch-180.png
+          node -e "const b=require('fs').readFileSync('/tmp/legend-icon.png');if(b.readUInt32BE(16)!==180)process.exit(1)"

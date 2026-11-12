@@ -1,0 +1,24 @@
+{
+  "id": "/studio/",
+  "name": "LEGEND BALL X1000 STUDIO",
+  "short_name": "LEGEND Studio",
+  "start_url": "/studio/",
+  "scope": "/studio/",
+  "display": "standalone",
+  "background_color": "#070d21",
+  "theme_color": "#070d21",
+  "icons": [
+    {
+      "src": "/play/icons/legend-touch-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/play/icons/legend-touch-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

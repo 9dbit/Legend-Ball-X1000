@@ -1,0 +1,16 @@
+{
+  "name": "legend-ball-x1000",
+  "version": "0.14.3",
+  "private": true,
+  "description": "LEGEND BALL X1000: isolated Skygate-derived virtual-credit preview (artwork pending)",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node --test studio/tests/*.test.js studio/tests/*.test.mjs",
+    "prepare:play": "node scripts/prepare-play.mjs",
+    "pretest": "node scripts/prepare-play.mjs",
+    "prestart": "node scripts/prepare-play.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
