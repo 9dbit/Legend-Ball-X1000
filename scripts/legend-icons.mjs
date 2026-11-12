@@ -48,7 +48,12 @@ export async function generateLegendIcons(root){
   const play=resolve(root,'play'),icons=resolve(play,'icons');await mkdir(icons,{recursive:true});
   for(const size of [48,180,192,512]){
     const bytes=render(size);await writeFile(resolve(icons,'legend-touch-'+size+'.png'),bytes);
-    if(size===180)await writeFile(resolve(play,'apple-touch-icon.png'),bytes);
+    if(size===180){
+      await writeFile(resolve(play,'apple-touch-icon.png'),bytes);
+      await mkdir(resolve(root,'studio'),{recursive:true});
+      await writeFile(resolve(root,'studio/apple-touch-icon.png'),bytes);
+      await writeFile(resolve(root,'apple-touch-icon.png'),bytes);
+    }
   }
   await writeFile(resolve(icons,'legend-touch-maskable-512.png'),render(512,true));
 }
