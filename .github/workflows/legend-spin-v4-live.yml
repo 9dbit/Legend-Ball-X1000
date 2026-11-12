@@ -1,4 +1,4 @@
-name: Verify Legend Ball V4 live staging
+name: Verify Legend Ball V4 chrome logo final live staging
 on:
   push:
     branches: [feat/spin-ui-energy-v4-20261113]
@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: c8d600d5efda51cba3b443e3a888388719a9c862
+          ref: 0c59c79bd5cdc84212dfec3846e5f18d3acdf412
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
