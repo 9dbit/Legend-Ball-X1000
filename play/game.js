@@ -37,10 +37,10 @@ function startSkygate() {
   const displayMoney=n=>preferences.coinsView?Settings.money(n/state.coin).toLocaleString('en-US')+' COINS':credit(n);
   const makeEngine=seed=>published?window.SkygateStudioMath.createStudioEngine(cfg,published.jackpot,seed):MathEngine.createEngine(cfg,seed);
   let engine = makeEngine(state.seed);
-  const audioSettings={muted:true,master:published?.audio.master ?? 70};
+  const audioSettings={muted:true,master:preferences.volume};
   const audioTracks=Object.fromEntries(['bgm_celestial_loop','spin_start','reel_stop','tumble','symbol_win','multiplier','bonus_intro','free_spin_start','big_win','mega_win','ui_click'].map(id=>[id,{id,loop:id==='bgm_celestial_loop',volume:id==='bgm_celestial_loop'?35:70,fade:id==='bgm_celestial_loop'?600:0}]));
   if(published)for(const track of published.tracks)audioTracks[track.id]=track;
-  const mixer=new window.SkyAudioMixer({resolve:id=>release?.overrides?.['audio:'+id]?(window.SkygatePreview?'/studio/api/media/':'/play/media/')+release.overrides['audio:'+id].file:asset('audio/'+id+'.mp3'),track:id=>audioTracks[id],settings:()=>audioSettings,onError:()=>status('Suara belum tersedia. Ketuk ikon suara untuk mencoba lagi.')});
+  const mixer=new window.SkyAudioMixer({resolve:id=>release?.overrides?.['audio:'+id]?(window.SkygatePreview?'/studio/api/media/':'/play/media/')+release.overrides['audio:'+id].file:asset('audio/'+id+'.mp3'),track:id=>audioTracks[id],settings:()=>audioSettings,onError:()=>status('Suara belum tersedia. Buka MENU lalu aktifkan SOUND untuk mencoba lagi.')});
   let displayGrid=[];
   const credit = n => Number(n).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
   const isReduced = () => window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -60,7 +60,7 @@ function startSkygate() {
   async function toggleSound() {
     if(state.sound){state.sound=false;audioSettings.muted=true;mixer.stopAll();mixer.updateMix();refresh();return;}
     const ready=await mixer.unlock();
-    if(!ready){status('Ketuk ikon suara lagi untuk mengaktifkan audio.');return;}
+    if(!ready){status('Buka MENU lalu aktifkan SOUND untuk mencoba audio lagi.');return;}
     state.sound=true;audioSettings.muted=false;mixer.updateMix();refresh();
     void mixer.play('bgm_celestial_loop');
   }
@@ -261,6 +261,7 @@ function startSkygate() {
     E('autoTurbo').checked=state.speed==='turbo';E('autoQuick').checked=state.speed==='quick';E('autoSkip').checked=preferences.skipScreens;
     E('autoCount').value=Math.max(0,Settings.autoCounts.indexOf(preferences.autospins));E('autoCountValue').textContent=preferences.autospins;E('autoStart').textContent='START AUTOPLAY ('+preferences.autospins+')';
     E('batterySetting').checked=preferences.battery;E('soundSetting').checked=state.sound;E('lockSetting').checked=preferences.spinLocked;E('promoSetting').checked=preferences.promotions;
+    E('volumeRange').value=String(preferences.volume);E('volumeValue').textContent=preferences.volume+'%';
     E('promoBadge').hidden=!preferences.promotions;E('spin').classList.toggle('battery-saver',preferences.battery);
   }
   function setBet(next){if(locked()||!next)return;state.level=next.level;state.coin=next.coin;state.bet=Settings.total(next.level,next.coin);refresh();}
@@ -293,6 +294,12 @@ function startSkygate() {
     E('confirmBuy').addEventListener('click',()=>{if(locked()||state.ante||state.credits<state.bet*100)return;E('buyDialog').close();void runRound(false,true);});
     E('batterySetting').addEventListener('change',()=>{preferences.battery=E('batterySetting').checked;savePreferences();refresh();});
     E('soundSetting').addEventListener('change',()=>void toggleSound());
+    E('volumeRange').addEventListener('input',()=>{
+      const raw=Number(E('volumeRange').value);
+      const next=Number.isFinite(raw)?Math.max(0,Math.min(100,Math.round(raw/5)*5)):70;
+      preferences.volume=next;audioSettings.master=next;savePreferences();mixer.updateMix();
+      E('volumeValue').textContent=next+'%';
+    });
     E('lockSetting').addEventListener('change',()=>{preferences.spinLocked=E('lockSetting').checked;savePreferences();refresh();});
     E('promoSetting').addEventListener('change',()=>{preferences.promotions=E('promoSetting').checked;savePreferences();refresh();});
     E('home').addEventListener('click',()=>void showHome());E('promoBadge').addEventListener('click',()=>{if(!locked())void showHome();});
@@ -323,6 +330,8 @@ function startSkygate() {
     resetGame(n);E('menuDialog').close();
   });
   E('sound').addEventListener('click',()=>void toggleSound());
+  // Legacy external sound button stays in the DOM only for runtime binding; Volume lives in MENU.
+  E('sound').tabIndex=-1;E('sound').setAttribute('aria-hidden','true');
   const openRules = section => {
     E('modal').showModal();
     if(section)E(section).scrollIntoView({block:'start'});
