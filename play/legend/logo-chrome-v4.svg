@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" role="img" aria-label="LEGEND BALL X1000 original chrome gold and blue rune logo">
+<defs>
+  <linearGradient id="gold" x1="0" x2="0" y1="0" y2="1">
+    <stop offset="0" stop-color="#fff9e0"/><stop offset=".12" stop-color="#ffeab0"/>
+    <stop offset=".26" stop-color="#ffbd3b"/><stop offset=".47" stop-color="#a94b05"/>
+    <stop offset=".52" stop-color="#ffe89c"/><stop offset=".7" stop-color="#ffa622"/>
+    <stop offset=".88" stop-color="#e56e0c"/><stop offset="1" stop-color="#672030"/>
+  </linearGradient>
+  <linearGradient id="ice" x1="0" x2="0" y1="0" y2="1">
+    <stop offset="0" stop-color="#ffffff"/><stop offset=".14" stop-color="#c5f7ff"/>
+    <stop offset=".37" stop-color="#7fe3ff"/><stop offset=".52" stop-color="#1682e6"/>
+    <stop offset=".62" stop-color="#e3faff"/><stop offset=".81" stop-color="#3e7fe1"/>
+    <stop offset="1" stop-color="#262b8a"/>
+  </linearGradient>
+  <radialGradient id="runeOrb" cx=".36" cy=".23" r=".82">
+    <stop offset="0" stop-color="#fff8bf"/><stop offset=".26" stop-color="#ffd558"/>
+    <stop offset=".58" stop-color="#fa7d19"/><stop offset=".9" stop-color="#a43b0c"/>
+    <stop offset="1" stop-color="#40162b"/>
+  </radialGradient>
+  <filter id="shadow" x="-20%" y="-40%" width="140%" height="180%">
+    <feGaussianBlur in="SourceAlpha" stdDeviation="8" result="s"/>
+    <feOffset in="s" dy="14" dx="0" result="offset"/>
+    <feFlood flood-color="#03051d" flood-opacity=".92"/><feComposite in2="offset" operator="in" result="dark"/>
+    <feMerge><feMergeNode in="dark"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+  <filter id="spark" x="-100%" y="-100%" width="300%" height="300%">
+    <feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+  </filter>
+</defs>
+<!-- Crest uses six unique runes, not licensed seven-star orbs. -->
+<g transform="translate(600 92)" filter="url(#spark)">
+  <circle r="78" fill="#112044" opacity=".55"/>
+  <circle r="66" fill="url(#runeOrb)" stroke="#fff0aa" stroke-width="8"/>
+  <circle r="58" fill="none" stroke="#fff6d2" stroke-opacity=".5" stroke-width="2"/>
+  <g fill="none" stroke="#6c2a21" stroke-width="7" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M-34-27-19-51-7-27-22-18Z"/><path d="M12-43 34-31 21-18-2-25Z"/>
+    <path d="M41 2 30 23 10 17 19-4Z"/><path d="M18 30-2 48-23 25 0 17Z"/>
+    <path d="M-31 17-49 0-25-8-10 9Z"/><path d="M-4-9 10-10 0 9-13 7Z"/>
+  </g>
+  <path d="M-53-26Q-47-56-6-60" fill="none" stroke="#fff" stroke-opacity=".66" stroke-width="8" stroke-linecap="round"/>
+</g>
+<!-- Main chrome-gold wordmark, layered bevel and extrusion. -->
+<g font-family="Impact, Arial Black, Liberation Sans, system-ui, sans-serif"
+   font-weight="1000" font-style="oblique" text-anchor="middle" letter-spacing="-3">
+  <text x="600" y="235" font-size="141" fill="#03132b" stroke="#04132b" stroke-width="36" stroke-linejoin="round" paint-order="stroke" filter="url(#shadow)">LEGEND BALL</text>
+  <text x="600" y="226" font-size="141" fill="#70233f" stroke="#f87621" stroke-width="20" stroke-linejoin="round" paint-order="stroke">LEGEND BALL</text>
+  <text x="600" y="218" font-size="141" fill="url(#gold)" stroke="#fff0a3" stroke-width="3" stroke-linejoin="round" paint-order="stroke">LEGEND BALL</text>
+  <text x="600" y="369" font-size="152" letter-spacing="-2" fill="#080b30" stroke="#0c0e2c" stroke-width="38" stroke-linejoin="round" paint-order="stroke">X1000</text>
+  <text x="600" y="357" font-size="152" letter-spacing="-2" fill="#26366e" stroke="#ffb350" stroke-width="16" stroke-linejoin="round" paint-order="stroke">X1000</text>
+  <text x="600" y="350" font-size="152" letter-spacing="-2" fill="url(#ice)" stroke="#e8fcff" stroke-width="3" stroke-linejoin="round" paint-order="stroke">X1000</text>
+</g>
+<!-- Electric arcs bound the emblem without blocking character art. -->
+<path d="M25 205 141 176 214 214 287 196M918 196 987 172 1061 199 1174 165" fill="none" stroke="#5aeaff" stroke-width="7" opacity=".9" filter="url(#spark)"/>
+<path d="M128 360 255 347 316 369M866 367 931 345 1056 359" fill="none" stroke="#ffb14a" stroke-width="8" opacity=".9" filter="url(#spark)"/>
+<path d="M62 264 155 251 198 276M1009 263 1052 238 1144 258" fill="none" stroke="#fff3cb" stroke-width="4"/>
+</svg>
