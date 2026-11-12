@@ -1,0 +1,77 @@
+name: Legend Ball mobile portrait Chromium QA
+
+on:
+  push:
+    branches: [feat/skygate-derived-starter]
+    paths:
+      - '.github/workflows/legend-mobile-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mobile-chromium:
+    name: Original art and interactive mobile screenshot test
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare bundled Skygate-source audio and new Legend icons
+        run: npm run prepare:play
+      - name: Install isolated browser QA dependencies
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Boot isolated local research server
+        shell: bash
+        run: |
+          PORT=3107 NODE_ENV=development node server.mjs > /tmp/legend-browser-server.log 2>&1 &
+          for i in $(seq 1 60); do
+            if curl -fsS http://127.0.0.1:3107/health >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/legend-browser-server.log
+          exit 1
+      - name: Verify 320/390/430 mobile, splash art, 30 cells and working Spin
+        run: node scripts/tests/legend-mobile-browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: legend-ball-mobile-qa
+          path: qa-artifacts/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  staging-http:
+    name: Isolated Railway staging public game and private Studio
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Wait for staging and verify public/private routes
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE='https://legend-ball-web-staging.up.railway.app'
+          for i in $(seq 1 45); do
+            if curl -fsS --max-time 8 "$BASE/health" > /tmp/legend-health.json; then break; fi
+            sleep 2
+          done
+          cat /tmp/legend-health.json
+          curl -fsS --max-time 15 "$BASE/play/" | grep -q 'LEGEND BALL X1000'
+          curl -fsS --max-time 15 "$BASE/play/legend/ball-6.svg" | grep -q '<svg'
+          curl -fsS --max-time 15 -o /tmp/legend-icon.png "$BASE/play/icons/legend-touch-180.png"
+          python3 - <<'PY'
+          with open('/tmp/legend-icon.png','rb') as f: b=f.read(24)
+          assert b[:8]==bytes([137,80,78,71,13,10,26,10])
+          assert int.from_bytes(b[16:20],'big')==180
+          PY
+          code=$(curl -sS -o /tmp/legend-studio.html -w '%{http_code}' --max-time 15 "$BASE/studio/")
+          if test "$code" != '503' && test "$code" != '401'; then
+            echo "ERROR: private Studio expected fail-closed 503 or auth 401, got $code"
+            exit 1
+          fi
+          echo "PASS: game 200, icon/ball accessible, Studio protected with HTTP $code"
