@@ -8,6 +8,8 @@ import { dirname, extname, posix, resolve, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 const root=dirname(fileURLToPath(import.meta.url));
 const {version}=JSON.parse(await readFile(resolve(root,'package.json'),'utf8'));
+// Public UI build identity is separate from game engine/package version.
+const LEGEND_UI_BUILD='cutout-v8-20261113';
 const port=Number(process.env.PORT || 3000);
 const types={'.webmanifest':'application/manifest+json; charset=utf-8','.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.jpeg':'image/jpeg','.ogg':'audio/ogg','.mp3':'audio/mpeg','.m4a':'audio/mp4','.wav':'audio/wav','.md':'text/markdown; charset=utf-8'};
 const base={'X-Content-Type-Options':'nosniff','Referrer-Policy':'same-origin','X-Frame-Options':'SAMEORIGIN'};
@@ -48,6 +50,11 @@ createServer(async(req,res)=>{
   const api=raw.startsWith('/studio/api/');
   if(!['GET','HEAD'].includes(req.method||'')&&!(api&&req.method==='POST')){res.writeHead(405,{...base,Allow:'GET, HEAD'});res.end();return;}
   if(raw==='/health') {res.writeHead(200,{...base,'Content-Type':'application/json','Cache-Control':'no-store'});res.end(req.method==='HEAD'?'':JSON.stringify({ok:true,service:'skygate-studio',version}));return;}
+  if(raw==='/play/ui-version.json'){
+    const payload=JSON.stringify({ui:LEGEND_UI_BUILD,layout:'cutout-modular-v7',commit:(process.env.RAILWAY_GIT_COMMIT_SHA||'').slice(0,12)});
+    res.writeHead(200,{...base,'Content-Type':'application/json; charset=utf-8','Content-Length':Buffer.byteLength(payload),'Cache-Control':'no-store, no-cache, must-revalidate','Pragma':'no-cache','Expires':'0','X-Legend-UI-Version':LEGEND_UI_BUILD});
+    res.end(req.method==='HEAD'?'':payload);return;
+  }
   // Only the two app directories are web roots; repository files are not routes.
   if(raw!=='/'&&raw!=='/studio'&&!raw.startsWith('/studio/')&&raw!=='/play'&&!raw.startsWith('/play/')){res.writeHead(404,base);res.end('Not Found');return;}
   if(raw.split('/').some(part=>part.startsWith('.'))){res.writeHead(404,base);res.end('Not Found');return;}
@@ -84,12 +91,22 @@ createServer(async(req,res)=>{
     res.writeHead(200,{...base,'Content-Type':'text/html; charset=utf-8','Cache-Control':'private, no-store','X-Robots-Tag':'noindex, nofollow, noarchive'});res.end(req.method==='HEAD'?'':html);return;
   }
   if(raw==='/'){res.writeHead(308,{...base,Location:'/studio/','Cache-Control':'no-store'});res.end();return;}
-  if(raw==='/studio'||raw==='/play'){res.writeHead(308,{...base,Location:raw+'/'});res.end();return;}
+  if(raw==='/studio'||raw==='/play'){
+    const query=new URL(req.url||'/', 'http://localhost').search;
+    res.writeHead(308,{...base,Location:raw+'/'+query,'Cache-Control':'no-store'});res.end();return;
+  }
   let target=resolve(root,'.'+raw);
   if(target!==root&&!target.startsWith(root+sep)){res.writeHead(403,base);res.end('Forbidden');return;}
   let info;try{info=await stat(target);if(info.isDirectory()){target=resolve(target,'index.html');info=await stat(target);}if(!info.isFile())throw Error('not file')}catch{res.writeHead(404,base);res.end('Not Found');return;}
   const type=types[extname(target).toLowerCase()];if(!type){res.writeHead(404,base);res.end('Not Found');return;}
-  res.writeHead(200,{...base,...(privateRoute?{'X-Robots-Tag':'noindex, nofollow, noarchive'}:{}),'Content-Type':type,'Content-Length':info.size,'Cache-Control':privateRoute?'private, no-store':type.startsWith('text/html')?'no-cache':'public, max-age=3600'});
+  // iPhone Safari and in-app browsers can reuse an outdated public HTML shell
+  // or mixed old JS/CSS for up to an hour. Never cache executable UI or cutouts
+  // by their stable paths. Content-addressed published media remains immutable.
+  const freshPublicUI=raw.startsWith('/play/')&&(type.startsWith('text/')||extname(target)==='.webmanifest'||extname(target)==='.json'||raw.startsWith('/play/assets/legend-cutouts/'));
+  const policy=privateRoute?'private, no-store':freshPublicUI?'no-store, no-cache, must-revalidate':'public, max-age=3600';
+  res.writeHead(200,{...base,...(privateRoute?{'X-Robots-Tag':'noindex, nofollow, noarchive'}:{}),
+    'Content-Type':type,'Content-Length':info.size,'Cache-Control':policy,
+    ...(freshPublicUI?{'Pragma':'no-cache','Expires':'0','X-Legend-UI-Version':LEGEND_UI_BUILD}:{})});
   if(req.method==='HEAD'){res.end();return;}createReadStream(target).on('error',()=>res.destroy()).pipe(res);
  }catch(e){if(!(e instanceof ReleaseError))console.error(e.message);if(!res.headersSent)json(res,e.status||500,{error:e instanceof ReleaseError?e.message:'Server error'});else res.destroy();}
 }).listen(port,'0.0.0.0',function(){console.log(`SKYGATE Studio listening on ${this.address().port}`);startBridge({game:'skygate-5000',port:this.address().port,version});});

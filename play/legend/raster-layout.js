@@ -15,6 +15,16 @@
         wrap.classList.add(layer.id==='spinbutton'?'published-spin-circle':'published-mode-circle');
         wrap.style.height=layer.w/1080*100+'cqw';wrap.style.top=`calc(${(layer.y+layer.h/2)/1920*100}% - ${layer.w/1080*50}cqw)`;
       }
+      // Locked master UI: preserve native clickable control while the approved
+      // artwork supplies its visual surface. No screenshot replaces live DOM.
+      if(circular.has(layer.id) && layer.id!=='spinbutton' && layer.asset) {
+        const artImage=document.createElement('img');
+        artImage.className='legend-master-control-image';
+        artImage.src=asset(layer.asset);artImage.alt='';artImage.draggable=false;
+        artImage.setAttribute('aria-hidden','true');
+        wrap.classList.add('legend-master-control');
+        wrap.append(artImage);
+      }
       const node=nodes[layer.id];
       if(node){
         wrap.classList.add('legend-binding','legend-'+layer.id);wrap.append(node);

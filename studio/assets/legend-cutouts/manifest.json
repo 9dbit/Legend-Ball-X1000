@@ -1,0 +1,672 @@
+{
+  "schema": "legend/cutout-library-v7",
+  "stage": [
+    1080,
+    1920
+  ],
+  "source_sha256": "9288db54b3b331d3b7f580ecc19ebad94fa9eb1d2fcf780970f07f7d0f1db492",
+  "master_sha_lock_unchanged": true,
+  "assets": [
+    {
+      "path": "legend-cutouts/scene-sky.webp",
+      "label": "Seamless celestial / lava background",
+      "group": "01 · Background",
+      "kind": "art",
+      "size": [
+        1080,
+        1920
+      ],
+      "alpha": false,
+      "sha256": "08b6e6e07906ec729c2cf413d9a1d24150d2ea4730b551bc041686915c19ddf2",
+      "bytes": 51344,
+      "source": "gameplay-backdrop.webp"
+    },
+    {
+      "path": "legend-cutouts/hero.png",
+      "label": "Main hero transparent cutout",
+      "group": "02 · Character",
+      "kind": "art",
+      "size": [
+        398,
+        560
+      ],
+      "alpha": true,
+      "sha256": "98db81cb2d4557b7206dac06c1a62e980c8a76a520f24695e164c72cca6f8812",
+      "bytes": 560774,
+      "source": "gameplay-approved-reference.jpg",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.6034
+    },
+    {
+      "path": "legend-cutouts/dragon.png",
+      "label": "Dragon transparent cutout",
+      "group": "02 · Character",
+      "kind": "art",
+      "size": [
+        649,
+        256
+      ],
+      "alpha": true,
+      "sha256": "b117cfd8a55d6b5b342d2b5be233092165f79b0a50835106a4422456ed84aecb",
+      "bytes": 414771,
+      "source": "gameplay-approved-reference.jpg",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.4375
+    },
+    {
+      "path": "legend-cutouts/logo.png",
+      "label": "LEGEND BALL X1000 wordmark",
+      "group": "03 · Branding",
+      "kind": "art",
+      "size": [
+        602,
+        293
+      ],
+      "alpha": true,
+      "sha256": "457830e7fea678305e5b30be33974c6ccfbe53b883eb6fef8274ae8dce333793",
+      "bytes": 452102,
+      "source": "gameplay-approved-reference.jpg",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.3774
+    },
+    {
+      "path": "legend-cutouts/win-frame.png",
+      "label": "WIN golden dragons bezel",
+      "group": "04 · Ornamental Frames",
+      "kind": "art",
+      "size": [
+        571,
+        117
+      ],
+      "alpha": true,
+      "sha256": "0303df40895a4615da3089cf1499d142d5783da693dfbf4aa5f59a4e550f341f",
+      "bytes": 109848,
+      "source": "win-panel.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.7055
+    },
+    {
+      "path": "legend-cutouts/reel-bezel.png",
+      "label": "6x5 golden reel transparent bezel",
+      "group": "04 · Ornamental Frames",
+      "kind": "art",
+      "size": [
+        921,
+        738
+      ],
+      "alpha": true,
+      "sha256": "45f8430d8a0e34be2632e7919b89e54e76583a2deda12871ca1044a55aa4f250",
+      "bytes": 248914,
+      "source": "reel-frame-square.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.0495
+    },
+    {
+      "path": "legend-cutouts/buy-frame.png",
+      "label": "BUY SPIN enamel / gold shell",
+      "group": "05 · Action Panels",
+      "kind": "art",
+      "size": [
+        428,
+        123
+      ],
+      "alpha": true,
+      "sha256": "fe40ce457224aa5a4f438f7e37d372add09746dc82d3f5a2c90d94b4669b5a34",
+      "bytes": 48671,
+      "source": "buy-panel.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.8079
+    },
+    {
+      "path": "legend-cutouts/booster-frame.png",
+      "label": "Bonus Booster blue/gold shell",
+      "group": "05 · Action Panels",
+      "kind": "art",
+      "size": [
+        480,
+        123
+      ],
+      "alpha": true,
+      "sha256": "263550e6c128b7bbf1c7610eea75ab56d961e9075646ea10d4b2809bcd29a379",
+      "bytes": 55001,
+      "source": "bonus-panel.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.7354
+    },
+    {
+      "path": "legend-cutouts/credit-frame.png",
+      "label": "KREDIT VIRTUAL enamel / gold shell",
+      "group": "06 · Wallet Panels",
+      "kind": "art",
+      "size": [
+        377,
+        97
+      ],
+      "alpha": true,
+      "sha256": "167da9ff708e8b0a47bb73f7e2bb6c8c27efa8493d771bdd6024e1afd88217b0",
+      "bytes": 27248,
+      "source": "credit-panel.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.8213
+    },
+    {
+      "path": "legend-cutouts/bet-frame.png",
+      "label": "TOTAL BET independent panel",
+      "group": "06 · Wallet Panels",
+      "kind": "art",
+      "size": [
+        490,
+        97
+      ],
+      "alpha": true,
+      "sha256": "f6af675436273589178e60313a99553e690f20111eb3f3c84fd90d38b08a4f52",
+      "bytes": 55325,
+      "source": "bet-panel.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.4744
+    },
+    {
+      "path": "legend-cutouts/minus.png",
+      "label": "Decrease bet (gold/red cutout)",
+      "group": "07 · Bet Controls",
+      "kind": "art",
+      "size": [
+        132,
+        87
+      ],
+      "alpha": true,
+      "sha256": "85616d623e307aef18c261e220f6d7f191df372ac7420ae6b669287156ebf03b",
+      "bytes": 21209,
+      "source": "bet-panel.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.5408
+    },
+    {
+      "path": "legend-cutouts/plus.png",
+      "label": "Increase bet (gold/red cutout)",
+      "group": "07 · Bet Controls",
+      "kind": "art",
+      "size": [
+        131,
+        87
+      ],
+      "alpha": true,
+      "sha256": "29a1837342a415848a7cacb11686fb4435716080e93f29b9eda59f262bd73168",
+      "bytes": 21852,
+      "source": "bet-panel.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.5686
+    },
+    {
+      "path": "legend-cutouts/spin.png",
+      "label": "SPIN orbital coin cutout",
+      "group": "08 · Gameplay Buttons",
+      "kind": "art",
+      "size": [
+        307,
+        306
+      ],
+      "alpha": true,
+      "sha256": "d5b121bf944ec9cc08334b528d175efef28b5e83610f25ddc53f6018999782b1",
+      "bytes": 229294,
+      "source": "spin.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.6968
+    },
+    {
+      "path": "legend-cutouts/auto.png",
+      "label": "AUTO cutout",
+      "group": "08 · Gameplay Buttons",
+      "kind": "art",
+      "size": [
+        125,
+        131
+      ],
+      "alpha": true,
+      "sha256": "61df72062f70b38ce80e6be2a4ab509c3acf954b02377f16601ad22fd6ac7ac6",
+      "bytes": 33188,
+      "source": "auto.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.5965
+    },
+    {
+      "path": "legend-cutouts/turbo.png",
+      "label": "TURBO cutout",
+      "group": "08 · Gameplay Buttons",
+      "kind": "art",
+      "size": [
+        127,
+        131
+      ],
+      "alpha": true,
+      "sha256": "fb2d03ee409d4215c5f0d123bb52626c5535ea36e6b8f21c4e0946ad68d61454",
+      "bytes": 36284,
+      "source": "turbo.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.5981
+    },
+    {
+      "path": "legend-cutouts/menu.png",
+      "label": "MENU cutout",
+      "group": "08 · Gameplay Buttons",
+      "kind": "art",
+      "size": [
+        118,
+        127
+      ],
+      "alpha": true,
+      "sha256": "03b3b0ddb2b056476c2a0df31d6bdb8722172e97bcc2c1dd6cbe8b71294c38d4",
+      "bytes": 29168,
+      "source": "menu.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.5882
+    },
+    {
+      "path": "legend-cutouts/info.png",
+      "label": "INFO cutout",
+      "group": "08 · Gameplay Buttons",
+      "kind": "art",
+      "size": [
+        141,
+        127
+      ],
+      "alpha": true,
+      "sha256": "ae8bd6d8ce6326553cdd17e457033705afc2cf9845052ef12e481ac10dfd6e6f",
+      "bytes": 37224,
+      "source": "rules.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.5998
+    },
+    {
+      "path": "legend-cutouts/symbol-amber.png",
+      "label": "Symbol Amber",
+      "group": "09 · Reel Symbols",
+      "kind": "symbol",
+      "size": [
+        96,
+        96
+      ],
+      "alpha": true,
+      "sha256": "612747a7d428bd4980baba1d292996c7561fe9f00e8f7bd0e819f75813b77c9f",
+      "bytes": 22287,
+      "source": "symbol-amber.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.8992
+    },
+    {
+      "path": "legend-cutouts/symbol-amethyst.png",
+      "label": "Symbol Amethyst",
+      "group": "09 · Reel Symbols",
+      "kind": "symbol",
+      "size": [
+        96,
+        96
+      ],
+      "alpha": true,
+      "sha256": "2f5cfe5268d7c0beaf9426c2c4879d8236821932b20e6fe40dbdd71510b3409a",
+      "bytes": 25554,
+      "source": "symbol-amethyst.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.8992
+    },
+    {
+      "path": "legend-cutouts/symbol-chalice.png",
+      "label": "Symbol Chalice",
+      "group": "09 · Reel Symbols",
+      "kind": "symbol",
+      "size": [
+        96,
+        96
+      ],
+      "alpha": true,
+      "sha256": "908c0cba4edc28ac91c9be1ed00712033399f1ebed83c4eb37358066b6b085e3",
+      "bytes": 22182,
+      "source": "symbol-chalice.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.8992
+    },
+    {
+      "path": "legend-cutouts/symbol-crown.png",
+      "label": "Symbol Crown",
+      "group": "09 · Reel Symbols",
+      "kind": "symbol",
+      "size": [
+        96,
+        96
+      ],
+      "alpha": true,
+      "sha256": "3f5e2bf6e15efb8a06191d3aa555c6f9fddf412a6ac322d268bfa810cfa5c1c4",
+      "bytes": 25688,
+      "source": "symbol-crown.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.8992
+    },
+    {
+      "path": "legend-cutouts/symbol-emerald.png",
+      "label": "Symbol Emerald",
+      "group": "09 · Reel Symbols",
+      "kind": "symbol",
+      "size": [
+        96,
+        96
+      ],
+      "alpha": true,
+      "sha256": "14bd6e37b3f823734ad47bc664216bd773e9d4d8f1f7b5deca4bd1bedefee4d7",
+      "bytes": 23519,
+      "source": "symbol-emerald.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.8992
+    },
+    {
+      "path": "legend-cutouts/symbol-hourglass.png",
+      "label": "Symbol Hourglass",
+      "group": "09 · Reel Symbols",
+      "kind": "symbol",
+      "size": [
+        96,
+        96
+      ],
+      "alpha": true,
+      "sha256": "825b21fd0321fd58334cd591fcf24625da47b71440dec841957a041c447829c1",
+      "bytes": 26173,
+      "source": "symbol-hourglass.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.8992
+    },
+    {
+      "path": "legend-cutouts/symbol-pearl.png",
+      "label": "Symbol Pearl",
+      "group": "09 · Reel Symbols",
+      "kind": "symbol",
+      "size": [
+        96,
+        96
+      ],
+      "alpha": true,
+      "sha256": "39fb34573bf19ed6a8e6aacb70f9fb5e213a6d3c4218ea01dca6172e8ad54d83",
+      "bytes": 26042,
+      "source": "symbol-pearl.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.8992
+    },
+    {
+      "path": "legend-cutouts/symbol-ring.png",
+      "label": "Symbol Ring",
+      "group": "09 · Reel Symbols",
+      "kind": "symbol",
+      "size": [
+        96,
+        96
+      ],
+      "alpha": true,
+      "sha256": "9a570b5f57d3ebbde18259f4924fde4ccc1d0565d2013ebd72ed4f187b94543f",
+      "bytes": 22122,
+      "source": "symbol-ring.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.8992
+    },
+    {
+      "path": "legend-cutouts/symbol-ruby.png",
+      "label": "Symbol Ruby",
+      "group": "09 · Reel Symbols",
+      "kind": "symbol",
+      "size": [
+        96,
+        96
+      ],
+      "alpha": true,
+      "sha256": "f4a84803f8c354c3858a185da2e5d8cd38d6add41070b336a6b0fd3d1b66327e",
+      "bytes": 25678,
+      "source": "symbol-ruby.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.8992
+    },
+    {
+      "path": "legend-cutouts/symbol-sapphire.png",
+      "label": "Symbol Sapphire",
+      "group": "09 · Reel Symbols",
+      "kind": "symbol",
+      "size": [
+        96,
+        96
+      ],
+      "alpha": true,
+      "sha256": "46b76cb3ff3fd29ce0b58e0814e321585ad156b0ddc4a5d9f25894b91ae8d3f6",
+      "bytes": 20186,
+      "source": "symbol-sapphire.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.8992
+    },
+    {
+      "path": "legend-cutouts/symbol-topaz.png",
+      "label": "Symbol Topaz",
+      "group": "09 · Reel Symbols",
+      "kind": "symbol",
+      "size": [
+        96,
+        96
+      ],
+      "alpha": true,
+      "sha256": "b921c951e5d28dd2b4dbf095419aaa6093f5ad04587d96512abc99a520b5aa15",
+      "bytes": 25429,
+      "source": "symbol-topaz.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.8992
+    },
+    {
+      "path": "legend-cutouts/scatter-1.png",
+      "label": "Scatter 1",
+      "group": "09 · Reel Symbols",
+      "kind": "symbol",
+      "size": [
+        96,
+        96
+      ],
+      "alpha": true,
+      "sha256": "9bc8b5f0c2ed8c8f6320fbe574887c898ac84c8fb7e538535443eb4e6d116c77",
+      "bytes": 25201,
+      "source": "scatter-1.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.8992
+    },
+    {
+      "path": "legend-cutouts/scatter-2.png",
+      "label": "Scatter 2",
+      "group": "09 · Reel Symbols",
+      "kind": "symbol",
+      "size": [
+        96,
+        96
+      ],
+      "alpha": true,
+      "sha256": "3e817b3186fc77a35c81f8517ee75843986241579c4dcc2ef497119727850f43",
+      "bytes": 20629,
+      "source": "scatter-2.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.8992
+    },
+    {
+      "path": "legend-cutouts/scatter-3.png",
+      "label": "Scatter 3",
+      "group": "09 · Reel Symbols",
+      "kind": "symbol",
+      "size": [
+        96,
+        96
+      ],
+      "alpha": true,
+      "sha256": "9bc8b5f0c2ed8c8f6320fbe574887c898ac84c8fb7e538535443eb4e6d116c77",
+      "bytes": 25201,
+      "source": "scatter-3.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.8992
+    },
+    {
+      "path": "legend-cutouts/scatter-4.png",
+      "label": "Scatter 4",
+      "group": "09 · Reel Symbols",
+      "kind": "symbol",
+      "size": [
+        96,
+        96
+      ],
+      "alpha": true,
+      "sha256": "3e817b3186fc77a35c81f8517ee75843986241579c4dcc2ef497119727850f43",
+      "bytes": 20629,
+      "source": "scatter-4.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.8992
+    },
+    {
+      "path": "legend-cutouts/scatter-5.png",
+      "label": "Scatter 5",
+      "group": "09 · Reel Symbols",
+      "kind": "symbol",
+      "size": [
+        96,
+        96
+      ],
+      "alpha": true,
+      "sha256": "9bc8b5f0c2ed8c8f6320fbe574887c898ac84c8fb7e538535443eb4e6d116c77",
+      "bytes": 25201,
+      "source": "scatter-5.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.8992
+    },
+    {
+      "path": "legend-cutouts/scatter-6.png",
+      "label": "Scatter 6",
+      "group": "09 · Reel Symbols",
+      "kind": "symbol",
+      "size": [
+        96,
+        96
+      ],
+      "alpha": true,
+      "sha256": "3e817b3186fc77a35c81f8517ee75843986241579c4dcc2ef497119727850f43",
+      "bytes": 20629,
+      "source": "scatter-6.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.8992
+    },
+    {
+      "path": "legend-cutouts/multiplier.png",
+      "label": "Multiplier orb",
+      "group": "09 · Reel Symbols",
+      "kind": "symbol",
+      "size": [
+        96,
+        96
+      ],
+      "alpha": true,
+      "sha256": "b673099ac1830fdab5e0087e6bfde16b80875a7a0fa4539b5a5e779ea85f7702",
+      "bytes": 24524,
+      "source": "multiplier.png",
+      "alphaExtrema": [
+        0,
+        255
+      ],
+      "opaqueFraction": 0.8992
+    }
+  ],
+  "note": "Derived preview cutouts from approved flattened gameplay JPEG. Transparent assets are NOT originally supplied layered source files. Rights approval needed for production."
+}

@@ -1,0 +1,59 @@
+name: LEGEND BALL iPhone splash and first-spin regression
+
+on:
+  push:
+    branches:
+      - fix/legend-ball-ios-splash-20261113
+      - feat/approved-master-ui-v5-20261113
+  pull_request:
+    branches:
+      - feat/approved-master-ui-v5-20261113
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Boot, reel, math, Chromium and WebKit
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check focused browser-side JavaScript
+        run: |
+          node --check play/boot.js
+          node --check play/reels.js
+          node --check scripts/tests/legend-ios-webkit-smoke.mjs
+      - name: Full existing game and studio regression suite
+        run: npm test
+      - name: Check approved master V5 against source lock
+        run: node --test scripts/tests/approved-master-v5.test.mjs
+      - name: Install browser QA runtime
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium webkit
+      - name: Launch isolated staging-equivalent server and run both browser suites
+        shell: bash
+        run: |
+          set -euo pipefail
+          PORT=3107 NODE_ENV=development node server.mjs >/tmp/legend-ios-boot.log 2>&1 &
+          pid=$!
+          trap 'kill "$pid" 2>/dev/null || true' EXIT
+          for i in $(seq 1 60); do
+            if curl -fsS --max-time 3 http://127.0.0.1:3107/health >/dev/null; then break; fi
+            sleep .5
+          done
+          curl -fsS --max-time 3 http://127.0.0.1:3107/health
+          node scripts/tests/legend-ios-webkit-smoke.mjs
+          node scripts/tests/approved-master-v5-browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: legend-ios-boot-and-v5-browser-qa
+          path: qa-artifacts/approved-v5/
+          retention-days: 14
+          if-no-files-found: ignore

@@ -4,8 +4,9 @@ import {readFileSync} from 'node:fs';
 import vm from 'node:vm';
 import {makeDOM} from './dom-fixture.mjs';
 const source=readFileSync(new URL('../../play/reels.js',import.meta.url),'utf8');
-function setup(motion=null){
+function setup(motion=null,stallTextures=false){
   const dom=makeDOM(),window={},timers=new Map();let id=0;
+  if(stallTextures)dom.Node.prototype.decode=()=>new Promise(()=>{});
   vm.runInNewContext(readFileSync(new URL('../../play/cascade-art.js',import.meta.url),'utf8'),{window});
   vm.runInNewContext(source,{window,document:{createElement:t=>new dom.Node(t)},setTimeout:(fn,ms)=>{timers.set(++id,{fn,ms});return id;},clearTimeout:id=>timers.delete(id)});
   const root=new dom.Node(),renderer=new window.SkygateReels(root,{asset:p=>p,art:{ruby:'ruby',emerald:'emerald',orb:'orb'},label:{ruby:'Ruby',emerald:'Emerald',orb:'Orb'},motion});
@@ -150,4 +151,18 @@ test('Studio duration override changes only reel timeline while preserving a fix
   assert.equal(t.renderer.animations.size,0);
   assert(t.window.SkygateSpinTiming('normal').rollMs<t.window.SkygateSpinTiming('normal',motion).rollMs);
   assert(t.window.SkygateSpinTiming('normal',{normalMs:'not a number'}).rollMs===t.window.SkygateSpinTiming('normal').rollMs);
+});
+
+test('iPhone stalled texture decoders never block the first reel animation',async()=>{
+  const t=setup(null,true);
+  const gate=[...t.timers].find(([,entry])=>entry.ms===2500);
+  assert(gate,'expected decode fallback timer');
+  const spin=t.renderer.spin(t.before);
+  await Promise.resolve();
+  assert.equal(t.root.classList.contains('rolling'),false);
+  t.timers.delete(gate[0]);gate[1].fn();
+  await t.renderer.ready;
+  for(let i=0;i<8&&!t.root.classList.contains('rolling');i++)await Promise.resolve();
+  assert.equal(t.root.classList.contains('rolling'),true);
+  t.renderer.cancel();await spin;
 });

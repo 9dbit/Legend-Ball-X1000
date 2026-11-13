@@ -1,0 +1,266 @@
+/* LEGEND BALL X1000 | APPROVED MASTER UI v5.
+   Locked source: splash user-approved JPEG SHA-256 36506b8e...
+   Gameplay master JPEG SHA-256 9288db54...
+   No alternative character/dragon/logo layout is authorized here.
+   Presentation only. Skygate 6x5 RNG, payouts and ledger stay unchanged. */
+:root{--legend-master-gold:#ffe79a;--legend-master-fire:#ff991b;--legend-master-electric:#3bd8ff;}
+
+/* Splash: exact approved composition, including ORIGINAL red/gold ENTER artwork.
+   Only an invisible accessible native HTML button sits above the painted ENTER;
+   it uses the same SkygateBoot click/gesture/audio path as before. */
+#bootSplash {
+  position:fixed!important;inset:0!important;width:100%!important;height:100%!important;
+  background-color:#050711!important;
+  background-image:url('/play/assets/legend-master/splash-master.jpg')!important;
+  background-size:cover!important;
+  background-position:center center!important;
+  background-repeat:no-repeat!important;
+  isolation:isolate;overflow:hidden!important;
+}
+#bootSplash .splash-art,
+#bootSplash .splash-shade,
+#bootSplash .splash-title,
+#bootSplash .splash-logo-text,
+#bootSplash .boot-progress,
+#bootSplash .splash-footer>small,
+#bootSplash .splash-play-icon,
+#bootSplash .splash-play-label,
+#bootSplash noscript {display:none!important;}
+#bootSplash .splash-footer {
+  position:static!important;inset:auto!important;width:auto!important;height:auto!important;
+  padding:0!important;margin:0!important;display:block!important;
+  background:none!important;border:0!important;box-shadow:none!important;
+  transform:none!important;pointer-events:none;
+}
+#bootSplash #bootPlay {
+  display:block!important;position:absolute!important;
+  left:10.5%!important;top:79.3%!important;
+  width:79%!important;height:15.6%!important;max-width:none!important;
+  margin:0!important;padding:0!important;
+  background:transparent!important;border:0!important;
+  color:transparent!important;box-shadow:none!important;
+  opacity:0!important;filter:none!important;
+  outline:0!important;z-index:9;pointer-events:auto!important;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation;cursor:pointer;
+}
+#bootSplash #bootPlay:disabled {cursor:progress;pointer-events:none!important;}
+#bootSplash #bootPlay:not(:disabled):focus-visible {
+  opacity:1!important;outline:3px solid #a9f6ff!important;
+  outline-offset:3px!important;border-radius:30px;
+}
+#bootSplash #bootRetry {
+  position:absolute!important;z-index:12;top:85%;left:20%;width:60%;
+  background:#39122b!important;color:#ffe5a8!important;border:2px solid #ffd476!important;
+  border-radius:20px;min-height:60px;pointer-events:auto!important;
+}
+#bootSplash #bootStatus {
+  position:absolute!important;z-index:12;top:73%;left:7%;width:86%;
+  color:#fff6d7!important;display:none!important;font:700 14px/1.45 system-ui,sans-serif;
+  text-shadow:0 3px 8px #080312;text-align:center!important;
+}
+html[data-boot=error] #bootSplash #bootStatus {display:block!important;}
+
+/* Gameplay: treat the approved premium JPEG top section as immutable hero art.
+   Hidden duplicate layers remain editable in Studio but NEVER re-appear in play. */
+.legend-scene .legend-world-stack {display:none!important;}
+.legend-scene .legend-art[data-layer=guardian],
+.legend-scene .legend-art[data-layer=dragon],
+.legend-scene .legend-art[data-layer=logo] {display:none!important;}
+.legend-scene .legend-art[data-layer=sky] {z-index:0!important;opacity:1!important;}
+.legend-scene .legend-art[data-layer=sky] img {
+  width:100%!important;height:100%!important;object-fit:cover!important;
+  filter:none!important;animation:none!important;
+}
+.legend-scene.legend-striking .legend-art[data-layer=sky] img{
+  filter:brightness(1.24) saturate(1.16)!important;
+}
+.legend-scene .legend-art[data-layer=reelframe]{
+  z-index:12!important;filter:drop-shadow(0 0 9px #ffa52e88)!important;pointer-events:none;
+}
+.legend-scene .legend-art[data-layer=reelframe] img {object-fit:fill!important;}
+.legend-scene .live-grid {
+  z-index:8!important;overflow:visible!important;
+  background:#160826!important;border-radius:0!important;
+  box-shadow:0 0 4px #000e!important;
+}
+.legend-scene .reels {background:#160821!important;isolation:isolate;border-radius:0!important;}
+.legend-scene .tile {
+  background:#1b0b2d!important;
+  border-right:1px solid #ffc8793b!important;
+  border-bottom:1px solid #f7a6512b!important;
+}
+.legend-scene .tile .symbol {
+  width:100%!important;height:100%!important;
+  object-fit:contain!important;
+  filter:drop-shadow(0 0 5px #f7a34266) saturate(1.17)!important;
+}
+.legend-scene .tile.legend-energy-ball .symbol{
+  filter:drop-shadow(0 0 9px #ffae20) drop-shadow(0 0 13px #fb5b16)!important;
+}
+.legend-scene .tile.win {
+  background:radial-gradient(ellipse at center,#ffb84a66,#240a37 75%)!important;
+  box-shadow:inset 0 0 0 2px #ffd780!important;
+}
+.legend-scene .scatter-label{font-size:1.7cqw!important;color:#fff2aa!important;}
+.legend-scene .orb-num {
+  left:16%!important;top:35%!important;font:1000 4cqw/1 Impact,system-ui!important;
+  color:#fff5bf!important;text-shadow:0 1px 2px #102050,0 0 9px #49bcff!important;
+}
+
+/* Exact approved ornament slices behind real readable dynamic values. */
+.legend-scene .legend-art[data-layer=winbanner],
+.legend-scene .legend-art[data-layer=creditpanel],
+.legend-scene .legend-art[data-layer=betpanel]{
+  border:0!important;background:none!important;
+  border-radius:0!important;overflow:visible!important;
+}
+.legend-scene .legend-winamount,
+.legend-scene .legend-credits,
+.legend-scene .legend-betlabel {
+  text-align:center;justify-content:center!important;gap:.3cqw!important;
+}
+.legend-scene .legend-value-caption {
+  font:950 2.25cqw/1.05 system-ui,sans-serif!important;
+  color:#ffeba6!important;letter-spacing:.095em!important;
+  text-shadow:0 2px 3px #07010d,0 0 7px #f58341!important;
+}
+.legend-scene .legend-winamount #win {
+  color:#fff3af!important;font:1000 6.8cqw/1 Georgia,serif!important;
+  text-shadow:0 2px #76300d,0 0 8px #ff9b23!important;
+}
+.legend-scene .legend-credits #credits,
+.legend-scene .legend-betlabel #betText {
+  color:#fff3c9!important;font:900 4cqw/1.12 system-ui,sans-serif!important;
+  text-shadow:0 2px #221020,0 0 6px #f3c56577!important;
+}
+.legend-scene .legend-copy[data-layer=bonuscopy]{
+  font:900 2.5cqw/1.0 system-ui!important;
+  text-shadow:0 3px 4px #120316,0 0 9px #ffba5da1!important;
+  color:#ffe9c2!important;
+}
+.legend-scene .feature{
+  inset:0!important;padding:1.9cqw 2cqw!important;
+  background:transparent!important;border:0!important;box-shadow:none!important;
+  font:900 2.8cqw/1.05 system-ui,sans-serif!important;color:#fff6d2!important;
+}
+.legend-scene .feature:after{
+  inset:0!important;background:var(--legend-panel) center/100% 100% no-repeat!important;
+  filter:drop-shadow(0 0 7px #ffb94c66);
+}
+.legend-scene .feature strong{
+  color:#ffe080!important;font:1000 4.5cqw/1.02 system-ui!important;
+  text-shadow:0 2px 4px #330e0e,0 0 7px #ffc95a8c!important;
+}
+.legend-scene .feature small{font-size:1.85cqw!important;}
+.legend-scene #playHint {color:#f3cfd8!important;font-size:2.0cqw!important;}
+
+/* Genuine PNG of each approved ornate button; native button remains top-layer. */
+.legend-scene .legend-master-control {background:none!important;isolation:isolate;overflow:visible!important;}
+.legend-scene .legend-master-control .legend-master-control-image {
+  position:absolute!important;inset:0!important;width:100%!important;height:100%!important;
+  object-fit:contain!important;display:block!important;
+  pointer-events:none!important;user-select:none!important;z-index:0!important;
+  filter:drop-shadow(0 0 3px #ff993b77);
+}
+.legend-scene .legend-master-control button.round {
+  position:relative!important;inset:0!important;z-index:1!important;
+  width:100%!important;height:100%!important;
+  background:transparent!important;color:transparent!important;
+  border:0!important;outline:0!important;box-shadow:none!important;
+  opacity:1!important;pointer-events:auto!important;touch-action:manipulation;
+}
+.legend-scene .legend-master-control button.round svg,
+.legend-scene .legend-master-control button.round small,
+.legend-scene .legend-master-control button.round:after {opacity:0!important;}
+.legend-scene .legend-master-control button.round:focus-visible {
+  outline:3px solid #a5edff!important;outline-offset:2px!important;
+}
+.legend-scene .legend-master-control:has(.round.selected)::after{
+  content:'';position:absolute;inset:0;border-radius:18%;z-index:2;pointer-events:none;
+  box-shadow:0 0 12px #76ecff,0 0 23px #ffe48b7a;
+}
+.legend-scene .legend-minusbtn .round,
+.legend-scene .legend-plusbtn .round {
+  clip-path:polygon(22% 0,78% 0,100% 50%,78% 100%,22% 100%,0 50%);
+  border:0!important;background:radial-gradient(ellipse at 40% 20%,#ab313c,#3b0d34 70%)!important;
+  box-shadow:inset 0 0 11px #ffad49!important;
+  color:#ffe1a3!important;
+}
+
+/* Spin stays a real button. The v4 electric orbit remains, now around exact approved orb PNG. */
+.legend-scene .published-layer[data-layer=spinbutton]{z-index:19!important;}
+.legend-scene .published-layer[data-layer=spinbutton] #spin .spin-frame {
+  width:100%!important;height:100%!important;object-fit:contain!important;
+  filter:drop-shadow(0 0 8px #ff9319aa)!important;
+}
+.legend-scene .published-layer[data-layer=spinbutton]::before,
+.legend-scene .published-layer[data-layer=spinbutton]::after {
+  pointer-events:none!important;
+}
+/* Turbo is immediately to Spin's right; Auto to left. Hide the separate
+   sound control without changing the internal mandatory editor layer. */
+.legend-scene .published-layer[data-layer=soundbtn],.game #sound{
+  display:none!important;visibility:hidden!important;pointer-events:none!important;
+}
+.legend-scene .published-layer[data-layer=menubtn]{
+  left:3.333%!important;right:auto!important;
+  top:90.677%!important;bottom:auto!important;
+  width:10.833%!important;height:10.833cqw!important;
+}
+.legend-scene .published-layer[data-layer=infobtn]{
+  left:85.185%!important;right:auto!important;
+  top:90.677%!important;bottom:auto!important;
+  width:10.833%!important;height:10.833cqw!important;
+}
+.legend-scene .legend-copy[data-layer=provider] {
+  top:94.95%!important;bottom:auto!important;left:21.48%!important;
+  width:57.04%!important;height:1.83%!important;
+  font:800 1.7cqw/1.12 system-ui!important;letter-spacing:.1em!important;
+  white-space:nowrap!important;text-align:center!important;color:#ffcfbd!important;
+}
+
+/* Preserve the approved composite layout as one art direction.
+   The light transition animates effects, never reauthors the scene. */
+@media(max-width:699px) and (orientation:portrait) {
+  .legend-scene{inset:0!important;height:100%!important;}
+}
+@media(prefers-reduced-motion:reduce) {
+  .legend-scene .legend-master-control .legend-master-control-image{animation:none!important;}
+  .legend-scene .published-layer[data-layer=spinbutton]::before,
+  .legend-scene .published-layer[data-layer=spinbutton]::after{
+    animation:none!important;opacity:.48!important;
+  }
+}
+
+/* Visual regression correction: original cinematic controller marks 'world-ready',
+   which used to set the background to opacity zero. The LOCKED artwork is now
+   authoritative and must always remain visible behind live game layers. */
+.legend-scene.legend-world-ready .legend-art[data-layer=sky],
+.legend-scene.legend-awakened .legend-art[data-layer=sky]{
+  opacity:1!important;display:flex!important;visibility:visible!important;
+}
+.legend-scene.legend-world-ready .legend-art[data-layer=sky] img{
+  opacity:1!important;visibility:visible!important;
+}
+/* Approved carved panel ornaments contain legacy painted numbers. Mask ONLY
+   their interior text area, leaving gold perimeter untouched, then paint live
+   dynamic values above. This prevents stale 200.00/99,997.10 ghost values. */
+.legend-scene .legend-art[data-layer=creditpanel]::after,
+.legend-scene .legend-art[data-layer=betpanel]::after{
+  content:'';position:absolute;z-index:1;left:10%;right:9%;
+  top:10%;bottom:1%;pointer-events:none;border-radius:4px;
+  background:linear-gradient(90deg,#2b0d29,#1a0a2a 50%,#210924);
+}
+.legend-scene .feature:before{
+  content:'';position:absolute;z-index:1;left:15%;right:14%;
+  top:23%;bottom:12%;border-radius:6px;pointer-events:none;
+  background:linear-gradient(90deg,#3a1024,#200b2c 58%,#33152e);
+}
+.legend-scene .feature-ante:before{
+  background:linear-gradient(90deg,#122144,#16213d 64%,#121a38);
+}
+.legend-scene .feature>span{position:relative;z-index:3!important}
+.legend-scene .feature:after{z-index:0!important}
+
+/* The approved gold banner already has WIN engraved in the original art. Do not print it twice. */
+.legend-scene .legend-winamount > .legend-value-caption{display:none!important}

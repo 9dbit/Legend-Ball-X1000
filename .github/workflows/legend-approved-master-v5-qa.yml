@@ -1,0 +1,75 @@
+name: LEGEND BALL approved master UI V5 QA
+# Final QA: no legacy panel numbers, accurate Win/Free Spins spacing and original rock foreground.
+# Visual regression: ensure source-true hero backdrop stays visible with V3 lightning controller.
+on:
+  push:
+    branches: [feat/approved-master-ui-v5-20261113]
+    paths:
+      - '.github/workflows/legend-approved-master-v5-qa.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  master-ui:
+    name: Source lock, exact JPEG, interactive 6x5 and real portrait screenshots
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install image-diff and validate source scripts
+        run: |
+          pip install Pillow==11.1.0
+          node --check play/game.js
+          node --check play/reels.js
+          node --check play/legend/default-project.js
+          node --check play/legend/raster-layout.js
+          node --check play/legend/art.js
+          node --check scripts/tests/approved-master-v5-browser.mjs
+      - name: Verify original master JPEG SHA, shared Studio geometry, locked Skygate math
+        run: node --test scripts/tests/approved-master-v5.test.mjs
+      - name: Existing regression suite (source Skygate)
+        run: npm test
+      - name: Import real editable master UI symbols, panels and controls
+        run: npm run prepare:play
+      - name: Install Chromium
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Start isolated real game server
+        shell: bash
+        run: |
+          set -euo pipefail
+          PORT=3107 NODE_ENV=development node server.mjs >/tmp/legend-locked-v5.log 2>&1 &
+          for i in $(seq 1 60); do
+            if curl -fsS --max-time 3 http://127.0.0.1:3107/health >/dev/null; then exit 0; fi
+            sleep .5
+          done
+          cat /tmp/legend-locked-v5.log
+          exit 1
+      - name: Compare EXACT splash to user-approved master at native dimensions
+        run: node scripts/tests/approved-master-v5-browser.mjs
+      - name: Pixel-diff audit on native 864x1536 splash
+        run: |
+          python - <<'PY'
+          from PIL import Image,ImageChops,ImageStat
+          src=Image.open('studio/assets/legend-master/splash-master.jpg').convert('RGB')
+          out=Image.open('qa-artifacts/approved-v5/splash-864.png').convert('RGB')
+          assert src.size==out.size,(src.size,out.size)
+          d=ImageChops.difference(src,out)
+          means=ImageStat.Stat(d).mean
+          assert max(means)<6.5, f'Splash changed from approved artwork, mean channel pixel difference {means}'
+          print('PASS splash JPEG exact composition. Mean pixel differences:',means)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: legend-v5-approved-master-proof
+          path: qa-artifacts/approved-v5/
+          retention-days: 14
+          if-no-files-found: ignore

@@ -105,6 +105,28 @@ test('protected Studio uses the resolved path for authentication', async t => {
     }
     assert.equal((await get(port, '/studio/', { method: 'HEAD' })).status, 401);
   });
+  await t.test('iPhone always receives fresh modular UI instead of stale V6 browser assets', async () => {
+    for (const path of ['/play/', '/play/?square=v6', '/play/?art=cutout-v7', '/play/game.js', '/play/legend/cutout-v7.css', '/play/legend/default-project.js', '/play/assets/legend-cutouts/hero.png']) {
+      const r = await get(port, path);
+      assert.equal(r.status, 200, path);
+      assert.equal(r.headers['cache-control'], 'no-store, no-cache, must-revalidate', path);
+      assert.equal(r.headers['x-legend-ui-version'], 'cutout-v8-20261113', path);
+      if(path.startsWith('/play/?') || path==='/play/'){
+        assert.match(r.body, /name="legend-ui-build" content="cutout-v8-20261113"/, path);
+        assert.match(r.body, /legend\/update-guard\.js\?v=cutout-v8-20261113/, path);
+      }
+    }
+    const build = await get(port, '/play/ui-version.json');
+    assert.equal(build.status, 200);
+    assert.equal(JSON.parse(build.body).ui, 'cutout-v8-20261113');
+    assert.match(build.headers['cache-control'], /no-store/);
+    const redirected = await get(port, '/play?ui=cutout-v8-20261113');
+    assert.equal(redirected.status, 308);
+    assert.equal(redirected.headers.location, '/play/?ui=cutout-v8-20261113');
+    const head = await get(port, '/play/ui-version.json', {method:'HEAD'});
+    assert.equal(head.status, 200);
+    assert.equal(head.body, '');
+  });
   await t.test('repository files and traversal targets are not served', async () => {
     for (const path of ['/package.json', '/README.md', '/railway.json',
       '/play/..%2fpackage.json', '/studio/..%2fpackage.json', '/studio/.env',

@@ -1,0 +1,172 @@
+name: Build immutable approved master UI image pack
+on:
+  push:
+    branches: [feat/approved-master-ui-v5-20261113]
+    paths:
+      - '.github/workflows/legend-master-v5-assets.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: legend-approved-master-v5
+  cancel-in-progress: false
+jobs:
+  package-reference:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Pillow image cutter
+        run: pip install Pillow==11.1.0
+      - name: Import only approved original user-supplied JPEG screenshots
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/approved-ui-v5 studio/assets/legend-master
+          curl -fLsS --retry 3 --retry-delay 2 \
+            -o /tmp/approved-ui-v5/splash.jpg \
+            'https://d2ol7oe51mr4n9.cloudfront.net/user_3IjqYUczuG9elCX3y0j3snqLYXf/ba5375d7-cff3-435d-82b8-b731f5f341fb.jpg'
+          curl -fLsS --retry 3 --retry-delay 2 \
+            -o /tmp/approved-ui-v5/gameplay.jpg \
+            'https://d2ol7oe51mr4n9.cloudfront.net/user_3IjqYUczuG9elCX3y0j3snqLYXf/72326a44-285e-4605-921e-77daa76f4b09.jpg'
+          echo '36506b8ec5a8f51dab0ceb6b94a95d6cb44ae6131941ce1cfa869c2b0eab46c6  /tmp/approved-ui-v5/splash.jpg' | sha256sum -c -
+          echo '9288db54b3b331d3b7f580ecc19ebad94fa9eb1d2fcf780970f07f7d0f1db492  /tmp/approved-ui-v5/gameplay.jpg' | sha256sum -c -
+      - name: Extract editable game UI panels and symbols without redrawing master
+        shell: bash
+        run: |
+          python - <<'PY'
+          from PIL import Image,ImageDraw,ImageFilter,ImageEnhance
+          from pathlib import Path
+          import hashlib,json,math,random
+          folder=Path('studio/assets/legend-master')
+          refs=Path('/tmp/approved-ui-v5')
+          splash=Image.open(refs/'splash.jpg').convert('RGB')
+          gameplay=Image.open(refs/'gameplay.jpg').convert('RGB')
+          assert splash.size==(864,1536),splash.size
+          assert gameplay.size==(941,1672),gameplay.size
+          (folder/'splash-master.jpg').write_bytes((refs/'splash.jpg').read_bytes())
+          (folder/'gameplay-approved-reference.jpg').write_bytes((refs/'gameplay.jpg').read_bytes())
+          assets=[]
+          def save(im,name):
+            file=folder/name
+            im.save(file,'PNG',optimize=True,compress_level=9)
+            assets.append({'path':name,'sha256':hashlib.sha256(file.read_bytes()).hexdigest(),'bytes':file.stat().st_size,'size':im.size})
+          # Exact 9:16 hero/dragon/logo, only lower half softened so the real UI is legible.
+          source=gameplay.resize((1080,1920),Image.Resampling.LANCZOS)
+          atmospheric=ImageEnhance.Brightness(source.filter(ImageFilter.GaussianBlur(radius=42))).enhance(.46)
+          dark=Image.new('RGB',source.size,(16,5,35))
+          atmospheric=Image.blend(atmospheric,dark,.39)
+          foreground=source.copy()
+          front=foreground.load();fuzzy=atmospheric.load()
+          for y in range(495,1920):
+            t=max(0,min(1,(y-495)/145))
+            a=t*t*(3-2*t)
+            if a<=0:continue
+            if a>=1:
+              foreground.paste(atmospheric.crop((0,y,1080,y+1)),(0,y))
+              continue
+            for x in range(1080):
+              q=front[x,y];v=fuzzy[x,y]
+              front[x,y]=tuple(round((1-a)*q[i]+a*v[i]) for i in range(3))
+          # Preserve the immutable mockup's glowing rock foreground below ALL
+          # functional controls, but never burn duplicate buttons/text into UI.
+          base=foreground.load();rock=source.load()
+          for y in range(1788,1920):
+            t=max(0,min(1,(y-1788)/54))
+            strength=.93*t*t*(3-2*t)
+            for x in range(1080):
+              p=base[x,y];q=rock[x,y]
+              base[x,y]=tuple(round(p[k]*(1-strength)+q[k]*strength) for k in range(3))
+          foreground.save(folder/'gameplay-backdrop.webp','WEBP',quality=88,method=6)
+          backfile=folder/'gameplay-backdrop.webp'
+          assets.append({'path':backfile.name,'sha256':hashlib.sha256(backfile.read_bytes()).hexdigest(),'bytes':backfile.stat().st_size,'size':foreground.size})
+          # Source-true ornamental frame with a fully transparent center for the live 6x5 grid.
+          frame=gameplay.crop((9,555,930,1065)).convert('RGBA')
+          draw=ImageDraw.Draw(frame)
+          draw.rectangle((40,35,frame.width-42,frame.height-39),fill=(0,0,0,0))
+          save(frame,'reel-frame.png')
+          def carved(crop,name,inner):
+            im=gameplay.crop(crop).convert('RGBA')
+            d=ImageDraw.Draw(im)
+            x0,y0,x1,y1=inner
+            for y in range(y0,y1):
+              t=(y-y0)/max(1,(y1-y0))
+              col=(23+int(t*7),8+int(t*2),35+int(t*15),255)
+              d.line((x0,y,x1,y),fill=col)
+            save(im,name)
+          carved((184,457,755,574),'win-panel.png',(112,41,461,104))
+          carved((16,1061,444,1184),'buy-panel.png',(68,24,375,99))
+          carved((450,1061,930,1184),'bonus-panel.png',(78,24,416,99))
+          carved((34,1190,411,1287),'credit-panel.png',(45,19,336,78))
+          carved((421,1190,911,1287),'bet-panel.png',(101,19,381,78))
+          # Transparent png crops of visually approved controls. Hit targets stay real DOM buttons.
+          def cut_button(crop,name,style='octagon'):
+            im=gameplay.crop(crop).convert('RGBA')
+            w,h=im.size
+            mask=Image.new('L',(w,h),0)
+            d=ImageDraw.Draw(mask)
+            if style=='circle':
+              d.ellipse((4,4,w-5,h-5),fill=255)
+            else:
+              d.polygon([(int(w*.19),1),(int(w*.81),1),(w-2,int(h*.22)),(w-2,int(h*.78)),(int(w*.81),h-2),(int(w*.19),h-2),(1,int(h*.78)),(1,int(h*.22))],fill=255)
+            mask=mask.filter(ImageFilter.GaussianBlur(radius=1.6))
+            im.putalpha(mask)
+            save(im,name)
+          cut_button((341,1280,648,1586),'spin.png','circle')
+          cut_button((128,1350,253,1481),'auto.png')
+          cut_button((242,1350,369,1481),'turbo.png')
+          cut_button((20,1350,138,1477),'menu.png')
+          cut_button((762,1350,903,1477),'rules.png')
+          # independently addressable symbol atlas cut from approved gameplay screenshot.
+          picks={
+            'crown':(124,650),'hourglass':(399,752),'ring':(536,752),
+            'chalice':(678,650),'ruby':(123,650),'amethyst':(538,646),
+            'topaz':(535,980),'emerald':(121,860),'sapphire':(254,647),
+            'amber':(400,980),'pearl':(392,756),
+            'multiplier':(399,860)
+          }
+          for name,(cx,cy) in picks.items():
+            im=gameplay.crop((cx-48,cy-47,cx+48,cy+49)).convert('RGBA')
+            mask=Image.new('L',im.size,0);ImageDraw.Draw(mask).rounded_rectangle((1,1,95,95),radius=12,fill=255)
+            im.putalpha(mask.filter(ImageFilter.GaussianBlur(radius=1)))
+            save(im,('multiplier.png' if name=='multiplier' else 'symbol-'+name+'.png'))
+          for i in range(6):
+            cx,cy=((397,646) if i%2==0 else (119,752))
+            im=gameplay.crop((cx-48,cy-47,cx+48,cy+49)).convert('RGBA')
+            mask=Image.new('L',im.size,0);ImageDraw.Draw(mask).rounded_rectangle((1,1,95,95),radius=12,fill=255)
+            im.putalpha(mask.filter(ImageFilter.GaussianBlur(radius=1)))
+            save(im,f'scatter-{i+1}.png')
+          manifest={
+            'schema':'legend/master-ui-locked-v5',
+            'source':'User-approved LEGEND BALL X1000 splash JPEG and gameplay JPEG, 2026-11-13',
+            'splashSha256':'36506b8ec5a8f51dab0ceb6b94a95d6cb44ae6131941ce1cfa869c2b0eab46c6',
+            'gameplaySha256':'9288db54b3b331d3b7f580ecc19ebad94fa9eb1d2fcf780970f07f7d0f1db492',
+            'layoutStatus':'LOCKED; no unapproved compositional changes',
+            'mathChanges':False,
+            'stagingOnly':True,
+            'rightsReviewRequired':True,
+            'notes':'Exact splash raster preserved. Gameplay: exact approved header, authentic carved ornamental art, independent 6x5 interactive reels and DOM controls. Artwork resembling third-party anime remains for reference and must be replaced or licensed before commercial production.',
+            'assets':assets
+          }
+          (folder/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
+          print('Generated approved UI reference pack',len(assets),'derivative layers')
+          PY
+      - name: Commit approved art pack to development branch only
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f studio/assets/legend-master/
+          git diff --cached --check
+          if git diff --cached --quiet; then
+            echo 'Identical master pack, no commit'
+          else
+            git commit -m 'assets(legend): lock exact user-approved splash and gameplay ornamental PNG master pack'
+            git push origin HEAD:feat/approved-master-ui-v5-20261113
+          fi
