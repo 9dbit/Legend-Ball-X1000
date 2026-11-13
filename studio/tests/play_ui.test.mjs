@@ -25,6 +25,16 @@ function boot(project=null){
   return {nodes,window,document,dom,state:()=>window.SlotGameTest.getState(),click:async id=>{nodes.get(id).events.click({target:nodes.get(id)});await new Promise(setImmediate);}};
 }
 
+test('inline public HTML scripts are syntactically valid and line breaks are real',()=>{
+  const html=read('play/index.html');
+  assert.match(html,/^<!doctype html>\r?\n/i,'HTML must contain real newline separators');
+  const scripts=[...html.matchAll(/<script\b(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi)];
+  assert(scripts.length>=1,'Expected embedded responsive-viewport bootstrap');
+  for(const [i,match] of scripts.entries()){
+    assert.doesNotThrow(()=>new vm.Script(match[1],{filename:'play/index.html:inline-'+i}));
+  }
+});
+
 test('public game uses standalone illustrated sprites and all assets exist',()=>{
   const ui=boot();
   const board=ui.nodes.get('reels');
