@@ -6,7 +6,8 @@ import {resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 const root=resolve(fileURLToPath(new URL('../..',import.meta.url)));
 const read=p=>readFile(resolve(root,p),'utf8');
-const blob=b=>createHash('sha1').update(Buffer.from('blob '+b.length+'\0')).update(b).digest('hex');
+// Git hashes normalized LF text; a Windows checkout may use CRLF on disk.
+const blob=b=>{const bytes=Buffer.from(b.toString('utf8').replace(/\r\n/g,'\n'),'utf8');return createHash('sha1').update(Buffer.from('blob '+bytes.length+'\0')).update(bytes).digest('hex');};
 test('approved master JPEGs are SHA-locked and never regenerated',async()=>{
   const manifest=JSON.parse(await read('studio/assets/legend-master/manifest.json'));
   assert.equal(manifest.schema,'legend/master-ui-locked-v5');

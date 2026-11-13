@@ -1,0 +1,215 @@
+/* LEGEND BALL X1000 | 6x5 physically square raster layout, mobile v6.
+   Presentation-only: no changes to RNG, reel order, wallet or settlement.
+   Every visible game control is painted by the approved raster art. */
+.legend-scene{
+  --legend-grid-y:26.5625%;
+  --legend-square-h:72.222222cqw;
+  --legend-feature-top:calc(var(--legend-grid-y) + var(--legend-square-h) + 4cqw);
+  --legend-wallet-top:calc(var(--legend-feature-top) + 12cqw);
+  --legend-aspect-slack:clamp(0px,calc(33% - 58.6667cqw),52px);
+  --legend-spin-top:calc(var(--legend-wallet-top) + 9.3cqw + var(--legend-aspect-slack));
+  --legend-spin-size:24.62963cqw;
+}
+/* Width = six equal columns. Height = exactly five matching squares,
+   irrespective of Safari browser bars or portrait screen aspect ratio. */
+.legend-scene .published-layer[data-layer="reels"].live-grid{
+  left:6.666667%!important;
+  top:var(--legend-grid-y)!important;
+  width:86.666667%!important;
+  height:var(--legend-square-h)!important;
+  min-height:0!important;
+  aspect-ratio:6 / 5;
+  overflow:hidden!important;
+  background:#170726!important;
+}
+.legend-scene .reels{
+  display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr))!important;
+  width:100%!important;height:100%!important;
+  overflow:hidden!important;gap:0!important;
+}
+.legend-scene .reel-column{min-width:0!important;width:100%!important;height:100%!important}
+.legend-scene .tile{overflow:hidden!important;aspect-ratio:1 / 1}
+.legend-scene .tile .symbol{width:84%!important;height:84%!important;object-fit:contain!important}
+.legend-scene .tile.legend-energy-ball .symbol{width:86%!important;height:86%!important}
+.legend-scene .scatter-label{bottom:3%!important;max-width:100%!important;font-size:1.55cqw!important;white-space:nowrap!important}
+/* Nine-slice-derived PNG: ornate top/bottom corners not vertically stretched. */
+.legend-scene .legend-art[data-layer="reelframe"]{
+  left:1.111111%!important;top:calc(var(--legend-grid-y) - 3cqw)!important;
+  width:97.777778%!important;height:calc(var(--legend-square-h) + 6cqw)!important;
+  z-index:12!important;overflow:visible!important;pointer-events:none!important;
+}
+.legend-scene .legend-art[data-layer="reelframe"] img{object-fit:fill!important}
+.legend-scene .legend-art[data-layer="winbanner"]{top:18.4375%!important;height:5%!important}
+.legend-scene .legend-copy[data-layer="bonuscopy"]{
+  top:23.645833%!important;height:1.20%!important;
+  font:900 clamp(10px,2.05cqw,25px)/1 system-ui!important;
+  white-space:nowrap!important;overflow:hidden!important;
+}
+/* Two fully separate graphic-backed feature buttons, no baked numbers exposed. */
+.legend-scene .published-layer[data-layer="buybtn"],
+.legend-scene .published-layer[data-layer="antebtn"]{
+  top:var(--legend-feature-top)!important;
+  height:11cqw!important;min-height:0!important;overflow:visible!important;
+}
+.legend-scene .feature{
+  width:100%!important;height:100%!important;max-width:100%;
+  min-width:0!important;padding:0!important;display:flex!important;
+  justify-content:center!important;align-items:center!important;
+  line-height:1.06!important;overflow:hidden!important;
+  border:0!important;background:transparent!important;
+  font-family:system-ui,sans-serif!important;
+  container-type:normal;
+}
+.legend-scene .feature:after{
+  inset:0!important;background:var(--legend-panel) center/100% 100% no-repeat!important;
+  border:0!important;box-shadow:none!important;
+}
+.legend-scene .feature:before{
+  left:18%!important;right:14%!important;top:22%!important;bottom:7%!important;
+  background:#24102c!important;border-radius:4px!important;
+}
+.legend-scene .feature-ante:before{background:#152044!important}
+.legend-scene .feature > span{
+  width:73%!important;max-width:73%!important;margin:0 0 0 14%!important;
+  min-width:0!important;flex:0 1 auto!important;
+  display:flex!important;flex-direction:column!important;
+  align-items:center!important;justify-content:center!important;
+  overflow:hidden!important;white-space:nowrap!important;
+  font:900 clamp(10px,2.4cqw,23px)/1.06 system-ui!important;
+  letter-spacing:.005em!important;text-align:center!important;
+  text-overflow:ellipsis!important;
+}
+.legend-scene .feature-buy strong{
+  display:block!important;margin-top:.25cqw!important;
+  color:#ffe3a3!important;font:1000 clamp(15px,3.85cqw,36px)/1.03 system-ui!important;
+  white-space:nowrap!important;max-width:100%!important;
+  overflow:hidden!important;text-overflow:ellipsis!important;
+}
+.legend-scene .feature-ante>span{
+  display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;
+  grid-template-rows:auto auto!important;column-gap:.55cqw!important;
+  align-content:center!important;justify-items:center!important;
+  margin-left:2%!important;width:68%!important;max-width:68%!important;
+  font:800 clamp(9px,1.85cqw,19px)/1.1 system-ui!important;
+  white-space:nowrap!important;
+}
+.legend-scene .feature-ante>span>b{
+  font:950 clamp(11px,3.2cqw,30px)/1 system-ui!important;
+  white-space:nowrap!important;color:#ffdda0!important;
+}
+.legend-scene .feature-ante small{
+  display:block!important;grid-column:1 / -1!important;
+  margin-top:.45cqw!important;color:#e4deee!important;
+  font:800 clamp(8px,1.55cqw,17px)/1.1 system-ui!important;
+  white-space:nowrap!important;
+}
+.legend-scene .feature-ante small b{color:#ffdd91!important}
+.legend-scene .feature:focus-visible{outline:3px solid #92efff!important;outline-offset:1px!important}
+/* Status remains available to screen readers, not printed over buy panels. */
+.legend-scene .legend-binding[data-layer="hint"]{
+  position:absolute!important;width:1px!important;height:1px!important;
+  padding:0!important;overflow:hidden!important;clip-path:inset(50%)!important;
+}
+/* Fit variable balances inside the original decorative panel interiors. */
+.legend-scene .legend-art[data-layer="creditpanel"],
+.legend-scene .legend-art[data-layer="betpanel"]{
+  top:var(--legend-wallet-top)!important;height:9.05cqw!important;
+  overflow:visible!important;
+}
+.legend-scene .legend-art[data-layer="creditpanel"]::after,
+.legend-scene .legend-art[data-layer="betpanel"]::after{
+  display:none!important;
+}
+.legend-scene .legend-binding[data-layer="credits"],
+.legend-scene .legend-binding[data-layer="betlabel"]{
+  top:calc(var(--legend-wallet-top) + .50cqw)!important;
+  height:8.05cqw!important;
+  min-width:0!important;overflow:hidden!important;
+  padding:0 1cqw!important;gap:.15cqw!important;
+  justify-content:center!important;align-items:center!important;
+}
+.legend-scene .legend-value-caption{
+  margin:0!important;max-width:100%!important;
+  font:950 clamp(8px,2.05cqw,20px)/1.08 system-ui!important;
+  letter-spacing:.035em!important;white-space:nowrap!important;
+  text-overflow:ellipsis!important;overflow:hidden!important;
+}
+.legend-scene .legend-credits #credits,
+.legend-scene .legend-betlabel #betText{
+  display:block!important;max-width:100%!important;min-width:0!important;
+  font:950 clamp(13px,3.6cqw,36px)/1.08 system-ui!important;
+  color:#ffe7aa!important;font-variant-numeric:tabular-nums!important;
+  white-space:nowrap!important;text-align:center!important;
+  text-overflow:ellipsis!important;overflow:hidden!important;
+}
+/* The original JPEG bet-panel ALREADY contains red minus/plus artworks.
+   Transparent accessible controls sit precisely over those raster buttons. */
+.legend-scene .legend-binding[data-layer="minusbtn"],
+.legend-scene .legend-binding[data-layer="plusbtn"]{
+  top:calc(var(--legend-wallet-top) + .4cqw)!important;
+  width:max(8.8cqw,44px)!important;height:max(8.8cqw,44px)!important;
+  min-height:0!important;overflow:visible!important;
+}
+.legend-scene .legend-minusbtn button.round,
+.legend-scene .legend-plusbtn button.round{
+  clip-path:none!important;position:relative!important;
+  background:transparent!important;border:0!important;border-radius:0!important;
+  color:transparent!important;font-size:0!important;
+  box-shadow:none!important;padding:0!important;
+  min-height:0!important;min-width:0!important;
+  width:100%!important;height:100%!important;opacity:1!important;
+}
+.legend-scene .legend-minusbtn button.round::before,
+.legend-scene .legend-plusbtn button.round::before,
+.legend-scene .legend-minusbtn button.round::after,
+.legend-scene .legend-plusbtn button.round::after{display:none!important}
+.legend-scene .legend-minusbtn button.round:focus-visible,
+.legend-scene .legend-plusbtn button.round:focus-visible{
+  outline:2px solid #a5edff!important;outline-offset:0!important;
+}
+/* 296px to 266px (minus 10%) with the same approved SPIN raster artwork. */
+.legend-scene .published-layer[data-layer="spinbutton"]{
+  left:37.685185%!important;top:var(--legend-spin-top)!important;
+  width:var(--legend-spin-size)!important;height:var(--legend-spin-size)!important;
+  aspect-ratio:1/1!important;
+}
+.legend-scene .published-layer[data-layer="spinbutton"] #spin{
+  width:100%!important;height:100%!important;aspect-ratio:1!important;
+  background:transparent!important;
+}
+.legend-scene .published-layer[data-layer="spinbutton"]::after{display:none!important}
+.legend-scene .published-layer[data-layer="spinbutton"] .spin-frame{
+  display:block!important;opacity:1!important;object-fit:contain!important;
+}
+.legend-scene .published-layer[data-layer="autobtn"],
+.legend-scene .published-layer[data-layer="turbobtn"]{
+  top:calc(var(--legend-spin-top) + 5.9722cqw)!important;
+  height:12.685185cqw!important;width:12.685185cqw!important;
+  aspect-ratio:1!important;
+}
+/* All icon surfaces are original artwork images. No new SVG UI icons. */
+.legend-scene .legend-master-control button.round svg,
+.legend-scene .published-mode-circle svg,
+.legend-scene .legend-minusbtn svg,
+.legend-scene .legend-plusbtn svg{display:none!important}
+.legend-scene .legend-master-control .legend-master-control-image{
+  width:100%!important;height:100%!important;object-fit:contain!important;
+}
+.legend-scene .legend-master-control button.round{
+  width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;
+  background:transparent!important;color:transparent!important;border:0!important;
+  box-shadow:none!important;
+}
+.legend-scene .legend-copy[data-layer="provider"]{
+  top:97.00%!important;left:25%!important;width:50%!important;height:1.35%!important;
+  color:#ffd9be!important;font:800 clamp(7px,1.25cqw,14px)/1.1 system-ui!important;
+  letter-spacing:.13em!important;white-space:nowrap!important;
+}
+/* Stabilize numeric and decorative geometry under mobile safe areas. */
+@media(max-width:699px) and (orientation:portrait){
+  .legend-scene{inset:0!important;height:100%!important}
+  .legend-scene .legend-art[data-layer="reelframe"]{max-height:none!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .legend-scene .published-layer[data-layer="spinbutton"]::before{animation:none!important;will-change:auto!important}
+}
