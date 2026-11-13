@@ -34,9 +34,13 @@ test('both renderers have the same positions and exactly one live 6x5 grid',asyn
   for(const id of ['sky','reelframe','winbanner','buybtn','antebtn','creditpanel','betpanel','spinbutton']){
     const l=a.layers.find(x=>x.id===id);
     assert.ok(l,id);
-    assert(l.asset.startsWith('legend-master/'),id);
+    assert(l.asset.startsWith('legend-cutouts/'),id+' must use a standalone cutout');
   }
-  for(const id of ['guardian','dragon','logo'])assert.equal(a.layers.find(l=>l.id===id).visible,false,'no old duplicate '+id);
+  for(const id of ['guardian','dragon','logo','minusbtn','plusbtn']){
+    const l=a.layers.find(x=>x.id===id);
+    assert.equal(l.visible,true,id+' must be independently visible');
+    assert(l.asset.startsWith('legend-cutouts/'),id+' missing movable PNG cutout');
+  }
   assert.equal(a.layers.filter(l=>l.kind==='grid').length,1);
   const spin=a.layers.find(l=>l.id==='spinbutton'),turbo=a.layers.find(l=>l.id==='turbobtn');
   const auto=a.layers.find(l=>l.id==='autobtn');
@@ -48,6 +52,23 @@ test('both renderers have the same positions and exactly one live 6x5 grid',asyn
       assert(l.y+l.h<=1921,l.id+' off bottom');
     }
   }
+});
+test('separate cutout library has inspectable transparent PNG assets',async()=>{
+  const manifest=JSON.parse(await read('studio/assets/legend-cutouts/manifest.json'));
+  assert.equal(manifest.schema,'legend/cutout-library-v7');
+  assert(manifest.assets.length>=30);
+  const names=['hero.png','dragon.png','logo.png','win-frame.png','reel-bezel.png','buy-frame.png','booster-frame.png','credit-frame.png','bet-frame.png','minus.png','plus.png','spin.png'];
+  for(const name of names){
+    const record=manifest.assets.find(x=>x.path==='legend-cutouts/'+name);
+    assert(record,name);
+    assert.deepEqual(record.alphaExtrema[0],0,name+' needs transparent exterior');
+    const bytes=await readFile(resolve(root,'studio/assets',record.path));
+    assert.equal(createHash('sha256').update(bytes).digest('hex'),record.sha256,name);
+  }
+  const studio=await read('studio/index.html');
+  assert.match(studio,/legend-cutouts\/catalog\.js/);
+  const html=await read('play/index.html');
+  assert.match(html,/cutout-v7\.css/);assert.match(html,/cutout-v7\.js/);
 });
 test('Skygate 6x5 settlement, deterministic math and wallet remain byte-for-byte unchanged',async()=>{
   const locked=JSON.parse(await read('game-source-lock.json'));
