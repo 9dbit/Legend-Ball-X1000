@@ -293,7 +293,7 @@ html[data-boot="error"] #bootSplash #bootStatus{display:block!important;}
 .legend-scene[data-layout-version="12"] :is([data-layer="minusbtn"],[data-layer="plusbtn"]) button.round::after{
  position:static!important;display:block!important;background:none!important;
  width:auto!important;height:auto!important;transform:none!important;
- border:0!important;box-shadow:none!important;
+ border:0!important;box-shadow:none!important;font:inherit!important;color:inherit!important;
 }
 .legend-scene[data-layout-version="12"] #minus::after{content:'−'!important}
 .legend-scene[data-layout-version="12"] #plus::after{content:'+'!important}

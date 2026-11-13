@@ -4,9 +4,9 @@ import {mkdir,writeFile} from 'node:fs/promises';
 const base=process.env.LEGEND_URL||'http://127.0.0.1:3118';
 const output='qa-artifacts/unified-v12';await mkdir(output,{recursive:true});
 const reports=[];
-const inspectScene=()=>({boot:document.documentElement.dataset.boot,hidden:document.hidden,reduced:matchMedia('(prefers-reduced-motion: reduce)').matches,battery:document.getElementById('batterySetting')?.checked,motion:window.LegendV10?.getMotionState(),layers:[...document.querySelectorAll('.legend-scene .legend-art')].map(el=>({id:el.dataset.layer,display:getComputedStyle(el).display,visibility:getComputedStyle(el).visibility,opacity:getComputedStyle(el).opacity,images:[...el.querySelectorAll('img')].map(img=>({src:img.src,complete:img.complete,width:img.naturalWidth,display:getComputedStyle(img).display,visibility:getComputedStyle(img).visibility,opacity:getComputedStyle(img).opacity}))}))});
+const inspectScene=()=>({codec:document.createElement('video').canPlayType('video/mp4; codecs="avc1.64001f"'),boot:document.documentElement.dataset.boot,hidden:document.hidden,reduced:matchMedia('(prefers-reduced-motion: reduce)').matches,battery:document.getElementById('batterySetting')?.checked,motion:window.LegendV10?.getMotionState(),layers:[...document.querySelectorAll('.legend-scene .legend-art')].map(el=>({id:el.dataset.layer,display:getComputedStyle(el).display,visibility:getComputedStyle(el).visibility,opacity:getComputedStyle(el).opacity,images:[...el.querySelectorAll('img')].map(img=>({src:img.src,complete:img.complete,width:img.naturalWidth,display:getComputedStyle(img).display,visibility:getComputedStyle(img).visibility,opacity:getComputedStyle(img).opacity}))}))});
 for(const type of [chromium,webkit]){
- const browser=await type.launch({headless:true});
+ const browser=await type.launch({headless:true,...(type===chromium?{channel:'chrome'}:{})});
  try{
   for(const [width,height] of [[320,568],[390,844],[430,932],[1440,900]]){
    const page=await browser.newPage({viewport:{width,height},reducedMotion:'reduce'}),errors=[];
@@ -25,6 +25,7 @@ for(const type of [chromium,webkit]){
    assert.equal(await page.locator('#sound').isVisible(),false);
    assert.equal(await page.locator('[data-layer="provider"]').isVisible(),false);
    const panel=await page.locator('[data-layer="betpanel"]').boundingBox();
+   for(const id of ['minus','plus'])assert(await page.locator('#'+id).evaluate(el=>parseFloat(getComputedStyle(el,'::after').fontSize))>=18,'Bet symbols must remain legible');
    for(const id of ['minus','plus','betText']){
     const b=await page.locator('#'+id).boundingBox();
     assert(b&&b.x>=panel.x-1&&b.y>=panel.y-1&&b.x+b.width<=panel.x+panel.width+1&&b.y+b.height<=panel.y+panel.height+1,id+' must be inside Total Bet');
@@ -38,6 +39,10 @@ for(const type of [chromium,webkit]){
     await page.locator('#soundSetting').uncheck();assert.equal(await page.locator('#soundSetting').isChecked(),false);await page.locator('#closeMenu').click();
     await page.locator('#menu').click();assert.equal(await page.locator('#volumeRange').inputValue(),'50');await page.locator('#closeMenu').click();
     await page.locator('#spin').click();await page.waitForFunction(()=>window.SlotGameTest?.getState().rounds===1&&!window.SlotGameTest?.getState().busy);assert.deepEqual(errors,[]);
+    await page.emulateMedia({reducedMotion:'no-preference'});
+    await page.waitForFunction(()=>{const a=window.LegendV10.getMotionState();return a.length===3&&a.every(v=>v.ready&&!v.paused);});
+    await page.emulateMedia({reducedMotion:'reduce'});
+    await page.waitForFunction(()=>window.LegendV10.getMotionState().every(v=>v.paused&&!v.ready));
    }
    reports.push({browser:type.name(),...info});await page.close();
   }
@@ -59,6 +64,8 @@ for(const type of [chromium,webkit]){
   await motionPage.emulateMedia({reducedMotion:'reduce'});
   await motionPage.waitForFunction(()=>window.LegendV10.getMotionState().every(v=>v.paused&&!v.ready));
   assert.deepEqual(motionErrors,[]);reports.push({browser:type.name(),motionBefore,motionAfter,reducedMotionPaused:true});
+  await motionPage.emulateMedia({reducedMotion:'no-preference'});
+  await motionPage.waitForFunction(()=>window.LegendV10.getMotionState().every(v=>!v.paused&&v.ready));
   await motionContext.close();
   const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto(base+'/studio/universal/?game=legend-ball-x1000');
@@ -73,4 +80,4 @@ for(const type of [chromium,webkit]){
   const download=page.waitForEvent('download');await page.getByTitle('Export project JSON',{exact:true}).click();const file=await download;const path=await file.path();const fs=await import('node:fs/promises');const exported=JSON.parse(await fs.readFile(path));assert.equal(exported.schema,'skygate/studio-v0.3');assert.equal(exported.math.grid_columns,6);assert.equal(exported.math.grid_rows,5);assert.equal(exported.layers.find(x=>x.id==='logo').x,Math.round((previous+12)/390*1080*100)/100);await page.close();
  }finally{await browser.close();}
 }
-await writeFile(output+'/report.json',JSON.stringify(reports,null,2));console.log('PASS V12 Chromium + WebKit 320/390/430/1440, unified Total Bet, menu audio, spin, native Universal Studio preview/edit/export');
+await writeFile(output+'/report.json',JSON.stringify(reports,null,2));console.log('PASS V12 Google Chrome + WebKit 320/390/430/1440, unified Total Bet, menu audio, spin, native Universal Studio preview/edit/export');

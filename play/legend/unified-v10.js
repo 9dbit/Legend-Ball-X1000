@@ -28,8 +28,9 @@
    }callback=video.requestVideoFrameCallback?video.requestVideoFrameCallback(paint):requestAnimationFrame(paint);};
    canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();alive=false;video.pause();canvas.remove();});
    video.addEventListener('error',()=>{alive=false;canvas.remove();});
-   wrap.append(canvas);films.set(layer.id,{video,canvas});
-   const start=()=>{if(reduced())return;video.play().then(()=>{if(!callback)paint();}).catch(()=>{});};
+   wrap.append(canvas);
+   const start=()=>{if(!alive||reduced()||document.documentElement.dataset.boot!=='entered')return;video.play().then(()=>{if(!callback)paint();}).catch(()=>{});};
+   films.set(layer.id,{video,canvas,start});
    document.getElementById('bootPlay')?.addEventListener('click',start,{once:true});
    if(document.documentElement.dataset.boot==='entered')start();
   }catch{canvas.remove();}
@@ -77,9 +78,9 @@
  const orientation=e=>{if(e.gamma==null||e.beta==null)return;targetX=Math.max(-1,Math.min(1,e.gamma/20));targetY=Math.max(-1,Math.min(1,(e.beta-45)/20));};
  async function enableTilt(){try{if(typeof DeviceOrientationEvent==='undefined')return false;if(typeof DeviceOrientationEvent.requestPermission==='function'&&await DeviceOrientationEvent.requestPermission()!=='granted')return false;window.addEventListener('deviceorientation',orientation);return true;}catch{return false;}}
  document.getElementById('bootPlay')?.addEventListener('click',enableTilt,{once:true});
- const refreshMotion=()=>{for(const {video,canvas} of films.values()){if(reduced()){video.pause();canvas.classList.remove('ready');}else video.play().catch(()=>{});}};
+ const refreshMotion=()=>{for(const {video,canvas,start} of films.values()){if(reduced()){video.pause();canvas.classList.remove('ready');}else start();}};
  document.addEventListener('visibilitychange',refreshMotion);
  matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',refreshMotion);
  document.getElementById('batterySetting')?.addEventListener('change',refreshMotion);
- window.LegendV10={apply,enableTilt,getProject:()=>structuredClone(current),getMotionState:()=>[...films].map(([id,{video,canvas}])=>({id,ready:canvas.classList.contains('ready'),connected:canvas.isConnected,readyState:video.readyState,networkState:video.networkState,src:video.currentSrc,time:video.currentTime,duration:video.duration,paused:video.paused,loop:video.loop,error:video.error?.code||null}))};
+ window.LegendV10={apply,enableTilt,getProject:()=>structuredClone(current),getMotionState:()=>[...films].map(([id,{video,canvas}])=>({id,ready:canvas.classList.contains('ready'),connected:canvas.isConnected,readyState:video.readyState,networkState:video.networkState,src:video.currentSrc,time:video.currentTime,duration:video.duration,paused:video.paused,loop:video.loop,error:video.error?.code||null,errorMessage:video.error?.message||null}))};
 })();
