@@ -1,0 +1,55 @@
+name: Legend Ball V5 iPhone Safari boot recovery
+on:
+  push:
+    branches: [fix/iphone-splash-bootstrap-20261113]
+    paths:
+      - '.github/workflows/legend-ios-boot-qa.yml'
+      - 'play/boot.js'
+      - 'play/index.html'
+      - 'scripts/tests/ios-splash-boot.mjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ios-webkit:
+    name: WebKit + Chromium, slow/failed decode, unchanged master UI
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Syntax and source-locked UI and 6x5 math checks
+        run: |
+          node --check play/boot.js
+          node --check play/game.js
+          node --check scripts/tests/ios-splash-boot.mjs
+          node --test scripts/tests/approved-master-v5.test.mjs
+          npm test
+      - name: Prepare source-true game art
+        run: npm run prepare:play
+      - name: Install both browser engines
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps webkit chromium
+      - name: Start isolated staging-equivalent server
+        shell: bash
+        run: |
+          set -euo pipefail
+          PORT=3107 NODE_ENV=development node server.mjs >/tmp/legend-ios-boot.log 2>&1 &
+          for i in $(seq 1 70); do
+            if curl -fsS --max-time 3 http://127.0.0.1:3107/health >/dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/legend-ios-boot.log
+          exit 1
+      - name: Test WebKit and Chromium: normal, rejected and hung image decode
+        run: node scripts/tests/ios-splash-boot.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: legend-ios-boot-v5-evidence
+          path: qa-artifacts/ios-boot/
+          if-no-files-found: ignore
+          retention-days: 14
