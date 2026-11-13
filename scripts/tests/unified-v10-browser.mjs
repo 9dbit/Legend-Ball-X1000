@@ -59,13 +59,15 @@ for(const type of [chromium,webkit]){
   const motionBefore=await motionPage.evaluate(()=>window.LegendV10.getMotionState());
   await motionPage.waitForTimeout(6500);
   const motionAfter=await motionPage.evaluate(()=>window.LegendV10.getMotionState());
-  for(const movie of motionAfter){assert(movie.loop&&!movie.paused&&!movie.error,movie.id);assert(movie.duration>=4&&movie.duration<=6,movie.id+' duration');assert(Math.abs(movie.time-motionBefore.find(v=>v.id===movie.id).time)>.15,movie.id+' must advance across its loop');}
+  for(const movie of motionAfter){assert(movie.loop&&!movie.paused&&!movie.error,movie.id);assert(movie.paintedFrames>motionBefore.find(v=>v.id===movie.id).paintedFrames+2,movie.id+' must render new video frames');assert(movie.duration>=4&&movie.duration<=6,movie.id+' duration');assert(Math.abs(movie.time-motionBefore.find(v=>v.id===movie.id).time)>.15,movie.id+' must advance across its loop');}
   await motionPage.screenshot({path:`${output}/${type.name()}-motion.png`});
   await motionPage.emulateMedia({reducedMotion:'reduce'});
   await motionPage.waitForFunction(()=>window.LegendV10.getMotionState().every(v=>v.paused&&!v.ready));
   assert.deepEqual(motionErrors,[]);reports.push({browser:type.name(),motionBefore,motionAfter,reducedMotionPaused:true});
   await motionPage.emulateMedia({reducedMotion:'no-preference'});
   await motionPage.waitForFunction(()=>window.LegendV10.getMotionState().every(v=>!v.paused&&v.ready));
+  const resumed=await motionPage.evaluate(()=>window.LegendV10.getMotionState());
+  await motionPage.waitForFunction(before=>window.LegendV10.getMotionState().every(v=>v.paintedFrames>before.find(b=>b.id===v.id).paintedFrames+2),resumed);
   await motionContext.close();
   const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto(base+'/studio/universal/?game=legend-ball-x1000');
@@ -76,8 +78,16 @@ for(const type of [chromium,webkit]){
   const input=page.getByLabel('X',{exact:true});const previous=Number(await input.inputValue());await input.fill(String(previous+12));await input.press('Tab');
   await page.waitForFunction(expected=>{const f=document.querySelector('iframe');const l=f?.contentDocument?.querySelector('[data-layer="logo"]');return l&&Math.abs(parseFloat(l.style.left)-expected)<.02;},(previous+12)/390*100);
   const after=await iframe.locator('[data-layer="logo"]').boundingBox();assert(after.x>before.x+6,'Universal Studio edits must move actual game layer');
+  await iframe.locator('.legend-scene').evaluate(scene=>Promise.all([...scene.querySelectorAll('img')].map(img=>img.decode().catch(()=>{}))));
   await page.screenshot({path:`${output}/${type.name()}-universal-studio.png`});assert.deepEqual(errors,[]);
   const download=page.waitForEvent('download');await page.getByTitle('Export project JSON',{exact:true}).click();const file=await download;const path=await file.path();const fs=await import('node:fs/promises');const exported=JSON.parse(await fs.readFile(path));assert.equal(exported.schema,'skygate/studio-v0.3');assert.equal(exported.math.grid_columns,6);assert.equal(exported.math.grid_rows,5);assert.equal(exported.layers.find(x=>x.id==='logo').x,Math.round((previous+12)/390*1080*100)/100);await page.close();
- }finally{await browser.close();}
+ }catch(error){
+  for(const [index,page] of browser.contexts().flatMap(c=>c.pages()).entries()){
+   const state=await page.evaluate(inspectScene).catch(e=>({error:e.message}));console.error('BROWSER_FAILURE',type.name(),JSON.stringify(state));
+   await writeFile(`${output}/${type.name()}-failure-${index}.json`,JSON.stringify(state,null,2));
+   await page.screenshot({path:`${output}/${type.name()}-failure-${index}.png`}).catch(()=>{});
+  }
+  throw error;
+ }finally{await writeFile(output+'/report.json',JSON.stringify(reports,null,2));await browser.close();}
 }
 await writeFile(output+'/report.json',JSON.stringify(reports,null,2));console.log('PASS V12 Google Chrome + WebKit 320/390/430/1440, unified Total Bet, menu audio, spin, native Universal Studio preview/edit/export');
