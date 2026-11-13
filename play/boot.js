@@ -61,7 +61,10 @@
   }
   function safeDecode(image){
     if(image.complete&&image.naturalWidth>0)return Promise.resolve();
-    if(typeof image.decode==='function')return Promise.resolve().then(()=>image.decode());
+    if(typeof image.decode==='function'){
+      try{return Promise.resolve(image.decode());}
+      catch(error){return Promise.reject(error);}
+    }
     return new Promise(resolve=>{
       if(image.complete){resolve();return;}
       image.addEventListener('load',resolve,{once:true});
