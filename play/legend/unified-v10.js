@@ -4,12 +4,12 @@
  const base=window.LegendBallApplyLayout, unit=n=>`${n/10.8}cqw`;
  const set=(el,key,value)=>el.style.setProperty(key,value,'important');
  const motionPreference=matchMedia('(prefers-reduced-motion: reduce)');
- const reduced=()=>motionPreference.matches||document.hidden||!!document.getElementById('batterySetting')?.checked;
+ const reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches||document.hidden||!!document.getElementById('batterySetting')?.checked;
  let current,resolveAsset,scene,frame=0,tiltX=0,tiltY=0,targetX=0,targetY=0;
  const films=new Map();
  function movie(wrap,layer){
   if(!layer.motion||films.has(layer.id)||window.SkygateEditorPreview)return;
-  const video=document.createElement('video');video.className='legend-motion-source';video.setAttribute('aria-hidden','true');video.tabIndex=-1;video.muted=true;video.loop=true;video.playsInline=true;video.preload='none';video.src=resolveAsset(layer.motion.src);
+  const video=document.createElement('video');video.muted=true;video.loop=true;video.playsInline=true;video.preload='none';video.src=resolveAsset(layer.motion.src);
   const canvas=document.createElement('canvas');canvas.className='legend-motion';canvas.setAttribute('aria-hidden','true');
   const gl=canvas.getContext('webgl',{alpha:true,premultipliedAlpha:false,preserveDrawingBuffer:false});
   if(!gl)return;
@@ -31,8 +31,8 @@
    }callback=video.requestVideoFrameCallback?video.requestVideoFrameCallback(paint):requestAnimationFrame(paint);};
    canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();alive=false;stop();canvas.remove();});
    video.addEventListener('error',()=>{alive=false;stop();canvas.remove();});
-   wrap.append(video,canvas);
-   const start=()=>{if(!alive||reduced()||document.documentElement.dataset.boot!=='entered')return;video.preload='auto';video.play().then(()=>{cancelFrame();paint();}).catch(()=>{});};
+   wrap.append(canvas);
+   const start=()=>{if(!alive||reduced()||document.documentElement.dataset.boot!=='entered')return;video.play().then(()=>{cancelFrame();paint();}).catch(()=>{});};
    films.set(layer.id,{video,canvas,start,stop,getPaintedFrames:()=>paintedFrames});
    document.getElementById('bootPlay')?.addEventListener('click',start,{once:true});
    if(document.documentElement.dataset.boot==='entered')start();
