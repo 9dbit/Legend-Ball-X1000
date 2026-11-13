@@ -8,7 +8,7 @@
   function fail(error){
     if(state==='entered'||state==='error')return;
     clearTimeout(timer);state='error';root.dataset.boot=state;
-    status.textContent='Game belum dapat dimuat. Periksa koneksi lalu coba lagi.';
+    status.textContent='Game belum dapat dimuat. Ketuk COBA LAGI atau buka di Safari.';
     play.hidden=true;retry.hidden=false;progress.hidden=true;
     console.error('Skygate loading failed:',error);
   }
@@ -35,24 +35,53 @@
   play.addEventListener('click',enter);
   retry.addEventListener('click',()=>window.location.reload());
   timer=setTimeout(()=>fail(Error('Loading timeout')),30000);
-  // Only first-paint art should gate Play. Offscreen reel banks, lightning and
-  // fireworks are decoded independently by SkygateReels before their first use.
+  // Decode optimization: the GAME runtime is already initialized before
+  // SkygateBoot.ready is invoked. Safari's HTMLImageElement.decode() can reject
+  // for perfectly usable images or remain pending for offscreen/lazy art. It
+  // MUST NEVER block ENTER or credit-safe game startup.
   function critical(images){
     return images.filter(image=>{
       if(image.matches?.('.cascade-fx, .firework-flare'))return false;
       if(image.closest?.('.tile[aria-hidden="true"]'))return false;
-      return image.closest?.('.published-layer')?.style?.display!=='none';
+      const layer=image.closest?.('.published-layer');
+      if(layer?.style?.display==='none')return false;
+      // Decode decorative reel textures asynchronously after boot.
+      if(image.closest?.('.reel-column'))return false;
+      return true;
+    });
+  }
+  function withTimeout(promise,delayMs){
+    return new Promise(resolve=>{
+      const timeout=setTimeout(()=>resolve(false),delayMs);
+      Promise.resolve(promise).then(
+        ()=>{clearTimeout(timeout);resolve(true);},
+        ()=>{clearTimeout(timeout);resolve(false);}
+      );
+    });
+  }
+  function safeDecode(image){
+    if(image.complete&&image.naturalWidth>0)return Promise.resolve();
+    if(typeof image.decode==='function')return Promise.resolve().then(()=>image.decode());
+    return new Promise(resolve=>{
+      if(image.complete){resolve();return;}
+      image.addEventListener('load',resolve,{once:true});
+      image.addEventListener('error',resolve,{once:true});
     });
   }
   window.SkygateBoot={fail,critical,async ready(images,sources=[]){
+    if(state!=='loading')return;
+    // Only a bounded amount of first-paint art is worth waiting for. A slow
+    // image is allowed to finish decoding in the background, without failure.
+    const art=[...new Set(images)].filter(image=>image?.src);
     const extra=[...new Set(sources)].map(src=>{const image=new Image();image.src=src;return image;});
-    // Supplemental art is best-effort prefetch; it never blocks the splash.
-    void Promise.allSettled(extra.map(image=>image.decode()));
-    await Promise.all([...new Set(images)].map(image=>image.decode()));
-    if(document.fonts)await document.fonts.ready;
-    // The stylesheet is render-blocking; its absence means the UI cannot be revealed safely.
-    if(!document.getElementById('gameStyles').sheet)throw Error('Game stylesheet unavailable');
-    if(state!=='loading')throw Error('Loading expired');
+    void Promise.allSettled(extra.map(safeDecode));
+    const settled=await withTimeout(Promise.allSettled(art.map(safeDecode)),5000);
+    if(!settled)console.warn('Legend Ball: decorative image decode exceeded 5s; continuing to interactive game.');
+    // Safari font loading can hang with network/power saver: timebox it too.
+    if(document.fonts?.ready)await withTimeout(document.fonts.ready,1200);
+    if(!document.getElementById('gameStyles')?.sheet)throw Error('Game stylesheet unavailable');
+    if(document.querySelectorAll('.reel-column').length!==6)throw Error('Reel grid did not initialize');
+    if(state!=='loading')return;
     clearTimeout(timer);state='ready';root.dataset.boot=state;
     status.textContent='Siap memasuki LEGEND BALL';progress.hidden=true;play.disabled=false;
     if(window.SkygatePreview)enter();
