@@ -235,13 +235,11 @@ test('original Legend Ball high-resolution touch icons are installed for Safari,
 });
 
 
-test('Skygate splash PLAY is a true luminous SVG, not a Unicode play emoji',()=>{
-  const html=read('play/index.html');
-  const css=read('play/game.css');
-  assert.match(html,/<button id="bootPlay"[^>]*><span class="splash-play-icon" aria-hidden="true"><svg/);
-  assert.match(html,/<span class="splash-play-label">PLAY<\/span>/);
-  assert(!html.includes('<span aria-hidden="true">▶</span> PLAY'));
-  assert(css.includes('skygate-play-emissive'));
-  assert(css.includes('.splash-play .splash-play-icon svg'));
-  assert(css.includes('@media(prefers-reduced-motion:reduce)'));
+test('V9 Play uses approved JPEG and a real accessible button without SVG',()=>{
+ const html=read('play/index.html');
+ const css=read('play/legend/curated-v9.css');
+ assert.match(html,/<button id="bootPlay"[^>]*aria-label="ENTER LEGEND BALL X1000"/);
+ assert.match(css,/legend-master\/splash-master\.jpg/);
+ assert.doesNotMatch(html,/<svg(?:\s|>)/i);
+ assert.match(html,/<span class="splash-play-label">PLAY<\/span>/);
 });

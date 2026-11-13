@@ -110,19 +110,19 @@ test('protected Studio uses the resolved path for authentication', async t => {
       const r = await get(port, path);
       assert.equal(r.status, 200, path);
       assert.equal(r.headers['cache-control'], 'no-store, no-cache, must-revalidate', path);
-      assert.equal(r.headers['x-legend-ui-version'], 'cutout-v8-20261113', path);
+      assert.equal(r.headers['x-legend-ui-version'], 'curated-v9-review', path);
       if(path.startsWith('/play/?') || path==='/play/'){
-        assert.match(r.body, /name="legend-ui-build" content="cutout-v8-20261113"/, path);
-        assert.match(r.body, /legend\/update-guard\.js\?v=cutout-v8-20261113/, path);
+        assert.match(r.body, /name="legend-ui-build" content="curated-v9-review"/, path);
+        assert.match(r.body, /legend\/curated-v9\.js\?v=v9-preview-1/, path);
       }
     }
     const build = await get(port, '/play/ui-version.json');
     assert.equal(build.status, 200);
-    assert.equal(JSON.parse(build.body).ui, 'cutout-v8-20261113');
+    assert.equal(JSON.parse(build.body).ui, 'curated-v9-review');
     assert.match(build.headers['cache-control'], /no-store/);
-    const redirected = await get(port, '/play?ui=cutout-v8-20261113');
+    const redirected = await get(port, '/play?ui=curated-v9-review');
     assert.equal(redirected.status, 308);
-    assert.equal(redirected.headers.location, '/play/?ui=cutout-v8-20261113');
+    assert.equal(redirected.headers.location, '/play/?ui=curated-v9-review');
     const head = await get(port, '/play/ui-version.json', {method:'HEAD'});
     assert.equal(head.status, 200);
     assert.equal(head.body, '');
