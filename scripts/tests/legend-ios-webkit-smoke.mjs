@@ -10,7 +10,9 @@ for(const [name,browserType] of [['Chromium mobile',chromium],['WebKit iPhone vi
       deviceScaleFactor:1,reducedMotion:'no-preference'
     });
     const page=await context.newPage(),errors=[];
-    page.on('pageerror',err=>errors.push(err.message));
+    page.on('pageerror',err=>{errors.push(err.stack||err.message);console.error(name+' PAGE ERROR: '+(err.stack||err.message));});
+    page.on('console',msg=>{if(msg.type()==='error')console.error(name+' CONSOLE: '+msg.text());});
+    page.on('requestfailed',req=>console.error(name+' REQUEST FAIL: '+req.url()+' '+req.failure()?.errorText));
     await page.addInitScript(()=>{
       // Simulate the iOS decode promise that never settles while network assets
       // can still load. Both splash PLAY and first SPIN must remain usable.

@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 const root=dirname(fileURLToPath(import.meta.url));
 const {version}=JSON.parse(await readFile(resolve(root,'package.json'),'utf8'));
 // Public UI build identity is separate from game engine/package version.
-const LEGEND_UI_BUILD='cutout-v8-20261113';
+const LEGEND_UI_BUILD='curated-v9-review';
 const port=Number(process.env.PORT || 3000);
 const types={'.webmanifest':'application/manifest+json; charset=utf-8','.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.jpeg':'image/jpeg','.ogg':'audio/ogg','.mp3':'audio/mpeg','.m4a':'audio/mp4','.wav':'audio/wav','.md':'text/markdown; charset=utf-8'};
 const base={'X-Content-Type-Options':'nosniff','Referrer-Policy':'same-origin','X-Frame-Options':'SAMEORIGIN'};

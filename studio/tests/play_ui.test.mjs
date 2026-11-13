@@ -25,6 +25,16 @@ function boot(project=null){
   return {nodes,window,document,dom,state:()=>window.SlotGameTest.getState(),click:async id=>{nodes.get(id).events.click({target:nodes.get(id)});await new Promise(setImmediate);}};
 }
 
+test('inline public HTML scripts are syntactically valid and line breaks are real',()=>{
+  const html=read('play/index.html');
+  assert.match(html,/^<!doctype html>\r?\n/i,'HTML must contain real newline separators');
+  const scripts=[...html.matchAll(/<script\b(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/gi)];
+  assert(scripts.length>=1,'Expected embedded responsive-viewport bootstrap');
+  for(const [i,match] of scripts.entries()){
+    assert.doesNotThrow(()=>new vm.Script(match[1],{filename:'play/index.html:inline-'+i}));
+  }
+});
+
 test('public game uses standalone illustrated sprites and all assets exist',()=>{
   const ui=boot();
   const board=ui.nodes.get('reels');
@@ -235,13 +245,11 @@ test('original Legend Ball high-resolution touch icons are installed for Safari,
 });
 
 
-test('Skygate splash PLAY is a true luminous SVG, not a Unicode play emoji',()=>{
-  const html=read('play/index.html');
-  const css=read('play/game.css');
-  assert.match(html,/<button id="bootPlay"[^>]*><span class="splash-play-icon" aria-hidden="true"><svg/);
-  assert.match(html,/<span class="splash-play-label">PLAY<\/span>/);
-  assert(!html.includes('<span aria-hidden="true">▶</span> PLAY'));
-  assert(css.includes('skygate-play-emissive'));
-  assert(css.includes('.splash-play .splash-play-icon svg'));
-  assert(css.includes('@media(prefers-reduced-motion:reduce)'));
+test('V9 Play uses approved JPEG and a real accessible button without SVG',()=>{
+ const html=read('play/index.html');
+ const css=read('play/legend/curated-v9.css');
+ assert.match(html,/<button id="bootPlay"[^>]*aria-label="ENTER LEGEND BALL X1000"/);
+ assert.match(css,/legend-master\/splash-master\.jpg/);
+ assert.doesNotMatch(html,/<svg(?:\s|>)/i);
+ assert.match(html,/<span class="splash-play-label">PLAY<\/span>/);
 });

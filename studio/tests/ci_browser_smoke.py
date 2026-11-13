@@ -108,13 +108,11 @@ try:
             # PWA mobile portrait: splash image must paint all the way to the
             # physical viewport edges, with an accessible emissive SVG Play.
             splash = page.locator("#bootSplash").bounding_box()
-            splash_art = page.locator("#bootSplash .splash-background").bounding_box()
             assert abs(splash["y"]) < 1, splash
             assert abs(splash["height"] - height) < 2, (width, splash)
-            assert abs(splash_art["y"]) < 1, splash_art
-            assert abs(splash_art["height"] - height) < 2, (width, splash_art)
-            assert page.locator("#bootPlay .splash-play-icon svg").count() == 1
-            assert page.locator("#bootPlay .splash-play-icon path").count() >= 1
+            assert "splash-master.jpg" in page.locator("#bootSplash").evaluate("(node) => getComputedStyle(node).backgroundImage")
+            assert page.locator("#bootPlay svg").count() == 0
+            assert page.locator("#bootPlay").get_attribute("aria-label") == "ENTER LEGEND BALL X1000"
             assert "▶" not in page.locator("#bootPlay").inner_text()
             if width == 390:
                 page.screenshot(path=str(OUT / "splash-390.png"))
