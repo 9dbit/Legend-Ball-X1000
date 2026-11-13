@@ -114,7 +114,8 @@ if __name__=='__main__':
     build_backdrop()
     build_frame()
     clean_panel('buy-panel.png',[(105,72,344,119)])
-    clean_panel('bonus-panel.png',[(100,60,448,117)])
+    # Cover the old printed top-right 2.50 and bottom ON/OFF, including edge glyphs.
+    clean_panel('bonus-panel.png',[(95,22,449,117)])
     clean_panel('credit-panel.png',[(70,68,310,97)])
     clean_panel('bet-panel.png',[(159,73,326,97)])
     project_layout()
