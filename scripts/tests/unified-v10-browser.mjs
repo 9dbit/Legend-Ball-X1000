@@ -4,6 +4,7 @@ import {mkdir,writeFile} from 'node:fs/promises';
 const base=process.env.LEGEND_URL||'http://127.0.0.1:3118';
 const output='qa-artifacts/unified-v12';await mkdir(output,{recursive:true});
 const reports=[];
+const inspectScene=()=>({boot:document.documentElement.dataset.boot,hidden:document.hidden,reduced:matchMedia('(prefers-reduced-motion: reduce)').matches,battery:document.getElementById('batterySetting')?.checked,motion:window.LegendV10?.getMotionState(),layers:[...document.querySelectorAll('.legend-scene .legend-art')].map(el=>({id:el.dataset.layer,display:getComputedStyle(el).display,visibility:getComputedStyle(el).visibility,opacity:getComputedStyle(el).opacity,images:[...el.querySelectorAll('img')].map(img=>({src:img.src,complete:img.complete,width:img.naturalWidth,display:getComputedStyle(img).display,visibility:getComputedStyle(img).visibility,opacity:getComputedStyle(img).opacity}))}))});
 for(const type of [chromium,webkit]){
  const browser=await type.launch({headless:true});
  try{
@@ -28,6 +29,8 @@ for(const type of [chromium,webkit]){
     const b=await page.locator('#'+id).boundingBox();
     assert(b&&b.x>=panel.x-1&&b.y>=panel.y-1&&b.x+b.width<=panel.x+panel.width+1&&b.y+b.height<=panel.y+panel.height+1,id+' must be inside Total Bet');
    }
+   await page.evaluate(()=>Promise.all([...document.querySelectorAll('.legend-scene img')].map(img=>img.decode().catch(()=>{}))));
+   await writeFile(`${output}/${type.name()}-${width}.json`,JSON.stringify(await page.evaluate(inspectScene),null,2));
    await page.screenshot({path:`${output}/${type.name()}-${width}.png`});
    if(width===390){
     const old=await page.locator('#betText').innerText();await page.locator('#plus').click();assert.notEqual(await page.locator('#betText').innerText(),old);await page.locator('#minus').click();assert.equal(await page.locator('#betText').innerText(),old);
@@ -40,8 +43,14 @@ for(const type of [chromium,webkit]){
   }
   const motionContext=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'no-preference',recordVideo:{dir:output+'/motion',size:{width:390,height:844}}});
   const motionPage=await motionContext.newPage(),motionErrors=[];motionPage.on('pageerror',e=>motionErrors.push(e.message));
+  const motionConsole=[];motionPage.on('console',m=>{if(m.type()==='warning'||m.type()==='error')motionConsole.push(m.text());});
+  motionPage.on('requestfailed',r=>motionConsole.push(r.url()+': '+r.failure()?.errorText));
   await motionPage.goto(base+'/play/',{waitUntil:'domcontentloaded'});await motionPage.locator('#bootPlay:not(:disabled)').waitFor();await motionPage.locator('#bootPlay').click();
-  await motionPage.waitForFunction(()=>{const a=window.LegendV10?.getMotionState();return a?.length===3&&a.every(v=>v.ready&&!v.paused&&v.duration>0);},{},{timeout:30000});
+  try{await motionPage.waitForFunction(()=>{const a=window.LegendV10?.getMotionState();return a?.length===3&&a.every(v=>v.ready&&!v.paused&&v.duration>0);},{},{timeout:30000});}catch(error){
+   const diagnostics={...await motionPage.evaluate(inspectScene),motionErrors,motionConsole};
+   await writeFile(`${output}/${type.name()}-motion-failure.json`,JSON.stringify(diagnostics,null,2));console.error('MOTION_DIAGNOSTICS',JSON.stringify(diagnostics));
+   await motionPage.screenshot({path:`${output}/${type.name()}-motion-failure.png`});await motionContext.close();throw error;
+  }
   const motionBefore=await motionPage.evaluate(()=>window.LegendV10.getMotionState());
   await motionPage.waitForTimeout(6500);
   const motionAfter=await motionPage.evaluate(()=>window.LegendV10.getMotionState());

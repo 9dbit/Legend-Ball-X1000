@@ -81,5 +81,5 @@
  document.addEventListener('visibilitychange',refreshMotion);
  matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',refreshMotion);
  document.getElementById('batterySetting')?.addEventListener('change',refreshMotion);
- window.LegendV10={apply,enableTilt,getProject:()=>structuredClone(current),getMotionState:()=>[...films].map(([id,{video,canvas}])=>({id,ready:canvas.classList.contains('ready'),time:video.currentTime,duration:video.duration,paused:video.paused,loop:video.loop,error:video.error?.code||null}))};
+ window.LegendV10={apply,enableTilt,getProject:()=>structuredClone(current),getMotionState:()=>[...films].map(([id,{video,canvas}])=>({id,ready:canvas.classList.contains('ready'),connected:canvas.isConnected,readyState:video.readyState,networkState:video.networkState,src:video.currentSrc,time:video.currentTime,duration:video.duration,paused:video.paused,loop:video.loop,error:video.error?.code||null}))};
 })();
