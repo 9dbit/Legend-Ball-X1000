@@ -38,6 +38,7 @@ try {
       const rect=id=>{let r=scene.querySelector('[data-layer="'+id+'"]')?.getBoundingClientRect();return r?r.toJSON():null;};
       return {
         imageSource:scene.querySelector('[data-layer=sky] img')?.src,
+        squareMaster:Boolean(document.querySelector('link[href*="square-reels.css"]')),
         skyOpacity:Number(getComputedStyle(scene.querySelector('[data-layer=sky]')).opacity),
         frameSource:scene.querySelector('[data-layer=reelframe] img')?.src,
         spinSource:document.querySelector('#spin .spin-frame')?.src,
@@ -52,13 +53,16 @@ try {
         rects:Object.fromEntries(['autobtn','spinbutton','turbobtn','menubtn','infobtn','reels'].map(id=>[id,rect(id)]))
       };
     });
-    assert(model.imageSource.includes('legend-master/gameplay-backdrop.webp'),'wrong scene');
+    assert(model.imageSource.includes(model.squareMaster?'legend-master/gameplay-square-backdrop.webp':'legend-master/gameplay-backdrop.webp'),'wrong scene');
     assert(model.skyOpacity>.98,width+': approved gameplay hero was hidden under old lightning world');
-    assert(model.frameSource.includes('legend-master/reel-frame.png'),'wrong reel ornament');
+    assert(model.frameSource.includes(model.squareMaster?'legend-master/reel-frame-square.png':'legend-master/reel-frame.png'),'wrong reel ornament');
     assert(model.spinSource.includes('legend-master/spin.png'),'wrong Spin art');
     assert(model.menuImage.includes('legend-master/menu.png'),'wrong footer art');
     assert.equal(model.gameColumns,6);
     assert.equal(model.cells,30);
+    if(model.squareMaster){
+      assert(Math.abs(model.rects.reels.width/model.rects.reels.height-1.2)<.03,width+': not a square-tile 6x5 reel');
+    }
     assert.deepEqual(model.duplicateHeader,[],'legacy composite reappeared');
     assert.deepEqual(model.brokenImages,[],width+': broken images');
     assert(model.overflow<=2,width+': horizontal overflow');
