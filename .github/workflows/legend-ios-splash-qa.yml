@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - fix/legend-ball-ios-splash-20261113
+      - feat/approved-master-ui-v5-20261113
   pull_request:
     branches:
       - feat/approved-master-ui-v5-20261113
