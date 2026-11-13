@@ -3,19 +3,20 @@
  'use strict';
  const base=window.LegendBallApplyLayout, unit=n=>`${n/10.8}cqw`;
  const set=(el,key,value)=>el.style.setProperty(key,value,'important');
- const reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches||document.hidden||!!document.getElementById('batterySetting')?.checked;
+ const motionPreference=matchMedia('(prefers-reduced-motion: reduce)');
+ const reduced=()=>motionPreference.matches||document.hidden||!!document.getElementById('batterySetting')?.checked;
  let current,resolveAsset,scene,frame=0,tiltX=0,tiltY=0,targetX=0,targetY=0;
  const films=new Map();
  function movie(wrap,layer){
   if(!layer.motion||films.has(layer.id)||window.SkygateEditorPreview)return;
-  const video=document.createElement('video');video.muted=true;video.loop=true;video.playsInline=true;video.preload='none';video.src=resolveAsset(layer.motion.src);
+  const video=document.createElement('video');video.className='legend-motion-source';video.setAttribute('aria-hidden','true');video.tabIndex=-1;video.muted=true;video.loop=true;video.playsInline=true;video.preload='none';video.src=resolveAsset(layer.motion.src);
   const canvas=document.createElement('canvas');canvas.className='legend-motion';canvas.setAttribute('aria-hidden','true');
   const gl=canvas.getContext('webgl',{alpha:true,premultipliedAlpha:false,preserveDrawingBuffer:false});
   if(!gl)return;
   const shader=(type,source)=>{const s=gl.createShader(type);gl.shaderSource(s,source);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error('Movie compositor unavailable');return s;};
   try{
    const program=gl.createProgram();gl.attachShader(program,shader(gl.VERTEX_SHADER,'attribute vec2 p;varying vec2 uv;void main(){uv=vec2((p.x+1.0)*.5,(1.0-p.y)*.5);gl_Position=vec4(p,0.,1.);}'));
-   // Black matte only. A retained transparent poster protects deep hair tones.
+   // Black matte only. The transparent poster remains the paused/error fallback.
    gl.attachShader(program,shader(gl.FRAGMENT_SHADER,'precision mediump float;uniform sampler2D movie;varying vec2 uv;void main(){vec3 c=texture2D(movie,uv).rgb;float m=max(max(c.r,c.g),c.b);float a=smoothstep(.015,.07,m);gl_FragColor=vec4(c,a);}'));
    gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))return;gl.useProgram(program);
    gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
@@ -30,8 +31,8 @@
    }callback=video.requestVideoFrameCallback?video.requestVideoFrameCallback(paint):requestAnimationFrame(paint);};
    canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();alive=false;stop();canvas.remove();});
    video.addEventListener('error',()=>{alive=false;stop();canvas.remove();});
-   wrap.append(canvas);
-   const start=()=>{if(!alive||reduced()||document.documentElement.dataset.boot!=='entered')return;video.play().then(()=>{cancelFrame();paint();}).catch(()=>{});};
+   wrap.append(video,canvas);
+   const start=()=>{if(!alive||reduced()||document.documentElement.dataset.boot!=='entered')return;video.preload='auto';video.play().then(()=>{cancelFrame();paint();}).catch(()=>{});};
    films.set(layer.id,{video,canvas,start,stop,getPaintedFrames:()=>paintedFrames});
    document.getElementById('bootPlay')?.addEventListener('click',start,{once:true});
    if(document.documentElement.dataset.boot==='entered')start();
@@ -82,7 +83,7 @@
  document.getElementById('bootPlay')?.addEventListener('click',enableTilt,{once:true});
  const refreshMotion=()=>{for(const {start,stop} of films.values()){if(reduced())stop();else start();}};
  document.addEventListener('visibilitychange',refreshMotion);
- matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change',refreshMotion);
+ motionPreference.addEventListener('change',refreshMotion);
  document.getElementById('batterySetting')?.addEventListener('change',refreshMotion);
- window.LegendV10={apply,enableTilt,getProject:()=>structuredClone(current),getMotionState:()=>[...films].map(([id,{video,canvas,getPaintedFrames}])=>({id,paintedFrames:getPaintedFrames(),ready:canvas.classList.contains('ready'),connected:canvas.isConnected,readyState:video.readyState,networkState:video.networkState,src:video.currentSrc,time:video.currentTime,duration:video.duration,paused:video.paused,loop:video.loop,error:video.error?.code||null,errorMessage:video.error?.message||null}))};
+ window.LegendV10={apply,enableTilt,getProject:()=>structuredClone(current),getMotionState:()=>[...films].map(([id,{video,canvas,getPaintedFrames}])=>({id,paintedFrames:getPaintedFrames(),ready:canvas.classList.contains('ready'),connected:canvas.isConnected,readyState:video.readyState,networkState:video.networkState,src:video.currentSrc,time:video.currentTime,duration:video.duration,paused:video.paused,seeking:video.seeking,ended:video.ended,rate:video.playbackRate,bufferedEnd:video.buffered.length?video.buffered.end(video.buffered.length-1):0,loop:video.loop,error:video.error?.code||null,errorMessage:video.error?.message||null}))};
 })();

@@ -56,6 +56,7 @@ for(const type of [chromium,webkit]){
    await writeFile(`${output}/${type.name()}-motion-failure.json`,JSON.stringify(diagnostics,null,2));console.error('MOTION_DIAGNOSTICS',JSON.stringify(diagnostics));
    await motionPage.screenshot({path:`${output}/${type.name()}-motion-failure.png`});await motionContext.close();throw error;
   }
+  for(const id of ['guardian','dragon'])assert.equal(await motionPage.locator(`[data-layer="${id}"] > img`).evaluate(img=>getComputedStyle(img).visibility),'hidden','Playing character must replace its poster');
   const motionBefore=await motionPage.evaluate(()=>window.LegendV10.getMotionState());
   await motionPage.waitForTimeout(6500);
   const motionAfter=await motionPage.evaluate(()=>window.LegendV10.getMotionState());
@@ -63,6 +64,7 @@ for(const type of [chromium,webkit]){
   await motionPage.screenshot({path:`${output}/${type.name()}-motion.png`});
   await motionPage.emulateMedia({reducedMotion:'reduce'});
   await motionPage.waitForFunction(()=>window.LegendV10.getMotionState().every(v=>v.paused&&!v.ready));
+  for(const id of ['guardian','dragon'])assert.equal(await motionPage.locator(`[data-layer="${id}"] > img`).evaluate(img=>getComputedStyle(img).visibility),'visible','Paused character must restore its poster');
   assert.deepEqual(motionErrors,[]);reports.push({browser:type.name(),motionBefore,motionAfter,reducedMotionPaused:true});
   await motionPage.emulateMedia({reducedMotion:'no-preference'});
   await motionPage.waitForFunction(()=>window.LegendV10.getMotionState().every(v=>!v.paused&&v.ready));
