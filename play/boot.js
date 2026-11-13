@@ -76,11 +76,12 @@
     const extra=[...new Set(sources)].map(src=>{const image=new Image();image.src=src;return image;});
     void Promise.allSettled(extra.map(safeDecode));
     const settled=await withTimeout(Promise.allSettled(art.map(safeDecode)),5000);
-    if(!settled)console.warn('Legend Ball: decorative image decode exceeded 5s; continuing to interactive game.');
+    if(!settled)console.warn?.('Legend Ball: decorative image decode exceeded 5s; continuing to interactive game.');
     // Safari font loading can hang with network/power saver: timebox it too.
     if(document.fonts?.ready)await withTimeout(document.fonts.ready,1200);
     if(!document.getElementById('gameStyles')?.sheet)throw Error('Game stylesheet unavailable');
-    if(document.querySelectorAll('.reel-column').length!==6)throw Error('Reel grid did not initialize');
+    if(document.querySelectorAll && document.querySelectorAll('.reel-column').length!==6)throw Error('Reel grid did not initialize');
+    if(state==='error')throw Error('Loading expired');
     if(state!=='loading')return;
     clearTimeout(timer);state='ready';root.dataset.boot=state;
     status.textContent='Siap memasuki LEGEND BALL';progress.hidden=true;play.disabled=false;
