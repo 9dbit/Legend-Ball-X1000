@@ -9,6 +9,11 @@
         const {project,assets}=event.data;
         if(!project||!Array.isArray(project.layers)||!project.math)return;
         window.removeEventListener('message',receive);
+        if(project.layers.some(l=>l.asset==='legend-v10/background.webp'))window.addEventListener('message',e=>{
+          if(e.source!==window.parent||e.origin!==location.origin||e.data?.type!=='legend-layout-update'||!Array.isArray(e.data.layers))return;
+          const original=window.LegendV10?.getProject();
+          if(original)window.LegendV10.apply({...original,layers:e.data.layers});
+        });
         window.SKY_PREVIEW_ASSETS=assets||{};
         window.SkygateActiveRelease={id:'editor-draft',createdAt:new Date().toISOString(),project,overrides:{}};
         resolve();

@@ -16,6 +16,7 @@ for (const file of files) {
   await mkdir(dirname(target),{recursive:true});
   await copyFile(resolve(root,'studio/assets',file),target);
 }
+for(const version of ['legend-v10','legend-v12'])await copyFile(resolve(root,'studio/assets',version,'manifest.json'),resolve(root,'play/assets',version,'manifest.json'));
 await copyFile(resolve(root,'studio/audio_engine.js'),resolve(root,'play/audio_engine.js'));
 await copyFile(resolve(root,'studio/math/studio_math.js'),resolve(root,'play/studio_math.js'));
 await mkdir(resolve(root,'play/icons'),{recursive:true});
@@ -29,4 +30,5 @@ for(const target of ['apple-touch-icon.png','studio/apple-touch-icon.png','play/
 const project=JSON.parse(await readFile(resolve(root,'studio/project.json'),'utf8'));
 await writeFile(resolve(root,'play/legend/default-project.js'),'window.LEGEND_DEFAULT_PROJECT = '+JSON.stringify(project)+';\n');
 await writeFile(resolve(root,'studio/project-data.js'),'window.SKY_PROJECT_DEFAULT = '+JSON.stringify(project)+';\n');
+await writeFile(resolve(root,'play/layout.json'),JSON.stringify(project,null,2)+'\n');
 console.log(`Prepared ${files.length} original Skygate-source game assets plus Legend Ball PWA icons and mixer.`);

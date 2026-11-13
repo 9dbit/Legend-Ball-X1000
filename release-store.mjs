@@ -127,7 +127,9 @@ export const legendV9Assets = [
   "legend-v9/scatter-6.png",
   "legend-v9/multiplier.png"
 ];
-export const shippedAssets = [  ...legendV9Assets,
+export const legendV10Assets = ["legend-v10/auto.webp", "legend-v10/background.webp", "legend-v10/bet-frame.webp", "legend-v10/bonus-frame.webp", "legend-v10/buy-frame.webp", "legend-v10/clouds.webp", "legend-v10/credit-frame.webp", "legend-v10/dragon-720.mp4", "legend-v10/dragon.webp", "legend-v10/energy-720.mp4", "legend-v10/hero-720.mp4", "legend-v10/hero-poster.webp", "legend-v10/hero.webp", "legend-v10/info.webp", "legend-v10/logo.webp", "legend-v10/menu.webp", "legend-v10/minus.webp", "legend-v10/plus.webp", "legend-v10/reel-frame.webp", "legend-v10/sound.webp", "legend-v10/spin.webp", "legend-v10/symbol-amber.webp", "legend-v10/symbol-amethyst.webp", "legend-v10/symbol-chalice.webp", "legend-v10/symbol-crown.webp", "legend-v10/symbol-emerald.webp", "legend-v10/symbol-hourglass.webp", "legend-v10/symbol-multiplier.webp", "legend-v10/symbol-pearl.webp", "legend-v10/symbol-ring.webp", "legend-v10/symbol-ruby.webp", "legend-v10/symbol-sapphire.webp", "legend-v10/symbol-scatter.webp", "legend-v10/symbol-topaz.webp", "legend-v10/temple.webp", "legend-v10/thunder.webp", "legend-v10/turbo.webp", "legend-v10/win-frame.webp"];
+export const legendV12Assets = ['win-frame','scatter-banner','reel-frame','buy-frame','bonus-frame','credit-frame','bet-frame','lava-ground'].map(x=>'legend-v12/'+x+'.webp');
+export const shippedAssets = [ ...legendV12Assets, ...legendV10Assets,  ...legendV9Assets,
   ...legendCutoutAssets,
 
   ...legendRasterAssets,
@@ -163,6 +165,8 @@ export function validateProject(input, overrideKeys=[]){
       if(!allowed.has(l.asset)&&!(typeof l.asset==='string'&&/^custom\/[a-zA-Z0-9_.-]{1,160}$/.test(l.asset)&&keys.has('asset:'+l.asset)))fail(`Missing or unsupported image: ${l.id}`);
       out.asset=l.asset;
     }
+    if(l.parallax){out.parallax={x:num(l.parallax.x,0,40,'parallax X'),y:num(l.parallax.y,0,40,'parallax Y')};}
+    if(l.motion){if(!legendV10Assets.includes(l.motion.src)||!l.motion.src.endsWith('.mp4')||!legendV10Assets.includes(l.motion.poster))fail('Unsupported animation');out.motion={src:l.motion.src,poster:l.motion.poster,mode:'black-matte',loop:true};}
     if(l.crop&&out.asset){
       const c=l.crop;out.crop={x:num(c.x,0,.99,'crop x'),y:num(c.y,0,.99,'crop y'),w:num(c.w,.01,1,'crop width'),h:num(c.h,.01,1,'crop height')};
       if(c.x+c.w>1.000001||c.y+c.h>1.000001)fail('Crop must stay inside its source image');
@@ -171,13 +175,23 @@ export function validateProject(input, overrideKeys=[]){
     if(l.kind==='grid'&&l.id!=='reels')fail('Only one live reel grid is supported');
     return out;
   });
-  for(const [id,kind] of Object.entries({reels:'grid',spinbutton:'image',winamount:'text',credits:'text',betlabel:'text',autobtn:'circle',turbobtn:'circle',menubtn:'circle',soundbtn:'circle',infobtn:'circle'})){
+  const menuAudio=p.presentation==='legend-raster-v2'&&layers.some(l=>l.id==='betpanel'&&l.asset==='legend-v12/bet-frame.webp');
+  for(const [id,kind] of Object.entries({reels:'grid',spinbutton:'image',winamount:'text',credits:'text',betlabel:'text',autobtn:'circle',turbobtn:'circle',menubtn:'circle',...(!menuAudio?{soundbtn:'circle'}:{}),infobtn:'circle'})){
     const l=layers.find(l=>l.id===id);
     if(!l||l.kind!==kind||!l.visible||l.opacity<20||l.x<0||l.y<0||l.x+l.w>1081||l.y+l.h>1921)fail(`Keep ${id} visible and inside the canvas`);
     if(['spinbutton','autobtn','turbobtn','menubtn','soundbtn','infobtn'].includes(id)&&(l.w<90||l.h<90))fail(`${id} is too small for touch`);
   }
   for(const id of ['minusbtn','plusbtn']){
     const l=layers.find(l=>l.id===id);if(l&&(l.kind!=='circle'||!l.visible||l.opacity<20||l.w<90||l.h<90||l.x<0||l.y<0||l.x+l.w>1081||l.y+l.h>1921))fail(`Keep ${id} usable and inside the canvas`);
+  }
+  if(menuAudio){
+    const panel=layers.find(l=>l.id==='betpanel');
+    if(!panel.visible||panel.opacity<20)fail('Keep the Total Bet panel visible');
+    for(const id of ['minusbtn','plusbtn','betlabel']){
+      const child=layers.find(l=>l.id===id);
+      if(!child||child.x<panel.x||child.y<panel.y||child.x+child.w>panel.x+panel.w||child.y+child.h>panel.y+panel.h)fail('Keep Total Bet controls inside their panel');
+    }
+    if(layers.find(l=>l.id==='soundbtn')?.visible)fail('Use the Menu sound controls for Legend V12');
   }
 
   if(!Array.isArray(p.grid)||p.grid.length!==30||p.grid.some(x=>!symbols.includes(x)))fail('Expected 30 valid symbols');

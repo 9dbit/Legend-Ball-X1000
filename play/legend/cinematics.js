@@ -23,6 +23,7 @@
   }
   function mount(){
     const host=loadScene();
+    if(host?.dataset.uiVersion==='unified-v10')return;
     if(!host || host.querySelector('.legend-world-stack'))return;
     stack=document.createElement('div');
     stack.className='legend-world-stack';

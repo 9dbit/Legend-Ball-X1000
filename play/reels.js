@@ -80,6 +80,11 @@ window.SkygateReels = class {
       cell.kind = symbol.kind;
       img.src = window.LegendBallArt?.sprite(symbol.kind, cell.column, this.asset) || this.asset('symbols/' + (this.art[symbol.kind] || 'ruby') + '.png');
       scatter.hidden = symbol.kind !== 'scatter';
+      if(window.LegendV10){
+        let tier=tile.querySelector('.symbol-tier');
+        if(!tier){tier=document.createElement('small');tier.className='symbol-tier';cell.motion.append(tier);}
+        tier.textContent=({crown:'I',ruby:'II',topaz:'III'}[symbol.kind]||'');tier.hidden=!tier.textContent;
+      }
     }
     const info = `${this.label[symbol.kind] || symbol.kind}${symbol.multiplier ? ' x' + symbol.multiplier : ''}`;
     if(cell.info!==info){tile.setAttribute('aria-label', info);tile.title = info;cell.info=info;}

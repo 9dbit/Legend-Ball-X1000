@@ -2,7 +2,7 @@
 <html lang="id" data-boot="loading">
 <head>
 <!-- No stale Safari app snapshots: the build ID is independent of game math. -->
-<meta name="legend-ui-build" content="curated-v9-review">
+<meta name="legend-ui-build" content="unified-v12">
 <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -14,7 +14,7 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="description" content="LEGEND BALL X1000 master UI staging preview. Fictional credits only; not a commercial release.">
-<meta property="og:title" content="LEGEND BALL X1000 · Soft Tech">
+<meta property="og:title" content="LEGEND BALL X1000 · XDPLAY">
 <meta property="og:description" content="Six runes. One legend. A cosmic virtual-credit adventure.">
 <link rel="icon" type="image/png" sizes="48x48" href="icons/legend-raster-v2-48.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icons/legend-raster-v2-180.png">
@@ -62,6 +62,7 @@ html:not([data-boot="entered"]) .game{visibility:hidden!important;pointer-events
 <link rel="stylesheet" href="legend/spin-controls.css?v=spin-v4">
 
 <link rel="stylesheet" href="legend/curated-v9.css?v=v9-preview-1">
+<link rel="stylesheet" href="legend/unified-v10.css?v=12">
 </head>
 <body>
 <section id="bootSplash" class="boot-splash" aria-label="LEGEND BALL X1000 loading">
@@ -104,7 +105,7 @@ html:not([data-boot="entered"]) .game{visibility:hidden!important;pointer-events
       <button class="round mode-control" id="turbo" aria-label="Kecepatan spin" aria-pressed="false"><small id="turboStatus">NORMAL</small></button>
     </div>
   </section>
-  <footer class="footer"><button class="round utility" id="menu" aria-label="Menu permainan"></button><span class="demo-label"><i></i> VIRTUAL PLAY<small>LEGEND BALL · V1</small></span><button class="round utility" id="sound" aria-label="Volume tersedia di menu" aria-pressed="false"><i id="muteMark" aria-hidden="true"></i></button><button class="round utility" id="help" aria-label="Buka aturan"></button></footer>
+  <footer class="footer"><button class="round utility" id="menu" aria-label="Menu permainan"></button><button class="round utility" id="sound" aria-label="Volume tersedia di menu" aria-pressed="false"><i id="muteMark" aria-hidden="true"></i></button><button class="round utility" id="help" aria-label="Buka aturan"></button></footer>
   <div id="winToast" class="win-toast" hidden aria-live="polite"><small id="toastTitle"></small><strong id="toastAmount"></strong></div><span id="previewBadge" class="preview-badge" hidden>PRIVATE PREVIEW</span>
 </main>
 <dialog id="modal" aria-labelledby="modalTitle"><div class="dialog-head"><h2 id="modalTitle">GAME RULES</h2><button class="close" id="closeModal" aria-label="Tutup aturan">×</button></div><div class="dialog-body"><p>Semua permainan memakai kredit virtual yang tidak memiliki nilai uang.</p><section id="tumbleRules"><h3>TUMBLE FEATURE</h3><p>8 atau lebih simbol yang sama membayar di posisi mana pun. Kemenangan setiap jenis simbol dijumlahkan. Simbol pemenang menghilang, simbol di atasnya turun, lalu posisi kosong diisi. Tumble berlanjut sampai tidak ada kemenangan atau batas kemenangan tercapai.</p><p>Di akhir rangkaian, semua orb dijumlahkan dan mengalikan total kemenangan simbol. SCATTER membayar terpisah tanpa pengali orb.</p><p id="orbRules"></p></section><section id="bonusRules"><h3>Free spins</h3><p id="bonusRulesText">4 atau lebih simbol bola rune SCATTER memicu 15 free spins. Di dalam bonus, 3 atau lebih SCATTER menambah 5 putaran. Orb mengalikan kemenangan simbol; pengalinya terkumpul selama bonus.</p></section><section id="payRules"><h3>Win table</h3><p>8+ simbol yang sama di mana saja menang. Simbol pemenang menghilang lalu simbol baru jatuh. Nilai tabel adalah kemenangan aktual berdasarkan base bet dan tampilan nilai atau koin.</p><div class="paytable-wrap"><table><thead><tr><th>Simbol</th><th>8–9</th><th>10–11</th><th>12+</th></tr></thead><tbody id="paytable"></tbody></table></div></section><section><h3>BONUS BOOSTER & BUY SPIN</h3><p>Base bet = BET × COIN VALUE × 20. Bonus Booster menggunakan pengali bet 25×, sehingga biaya spin naik 25% sementara pembayaran tetap memakai base bet. BUY SPIN membeli paket Free Spins dengan harga 100× base bet dan hanya tersedia ketika Bonus Booster OFF. Pembelian harus dikonfirmasi sebelum kredit dikurangi.</p><p id="anteRulesNote"></p></section>
@@ -124,5 +125,5 @@ html:not([data-boot="entered"]) .game{visibility:hidden!important;pointer-events
 <dialog id="buyDialog" aria-labelledby="buyTitle"><div class="dialog-head"><h2 id="buyTitle">BUY SPIN</h2><button class="close" id="closeBuy" aria-label="Tutup pembelian">×</button></div><div class="dialog-body"><div class="purchase-panel"><h3>BUY SPIN</h3><strong id="confirmBuyPrice">200.00</strong><small id="buyBundleInfo">15 FREE SPINS · 100× BASE BET · KREDIT VIRTUAL</small><div class="confirm-actions"><button id="cancelBuy" aria-label="Batal pembelian">BATAL</button><button id="confirmBuy" aria-label="Konfirmasi beli free spins">KONFIRMASI</button></div></div><p id="buyMessage" role="status"></p><label>TOTAL BASE BET</label><div class="stepper"><button id="buyMinus" aria-label="Kurangi base bet pembelian">−</button><output id="buyBaseBet">2.00</output><button id="buyPlus" aria-label="Tambah base bet pembelian">+</button></div></div></dialog>
 <dialog id="historyDialog" aria-labelledby="historyTitle"><div class="dialog-head"><h2 id="historyTitle">GAME HISTORY</h2><button class="close" id="closeHistory" aria-label="Tutup riwayat">×</button></div><div class="dialog-body"><div id="historyRows">Belum ada putaran.</div></div></dialog>
 <dialog id="featureDialog" aria-labelledby="featureTitle"><div class="dialog-head"><h2 id="featureTitle">LEGEND BALL X1000</h2></div><div class="dialog-body"><strong id="featureAmount"></strong><p id="featureDescription"></p><button id="featureContinue" class="primary-action">LANJUT</button></div></dialog>
-<script src="settings-model.js?v=0.14.3"></script><script src="config.js?v=0.14.3"></script><script src="engine.js?v=0.14.3"></script><script src="audio_engine.js?v=0.14.3"></script><script src="studio_math.js?v=0.14.3"></script><script src="text-fit.js?v=0.14.3"></script><script src="cascade-art.js?v=0.14.3"></script><script src="legend/art.js?v=master-v5"></script><script src="reels.js?v=legend-ios-splash-20261113"></script><script src="release.js?v=0.14.3-raster2"></script><script src="legend/default-project.js?v=cutout-v8-20261113"></script><script src="legend/raster-layout.js?v=cutout-v8-20261113"></script><script src="legend/curated-v9.js?v=v9-preview-1"></script><script src="legend/cinematics.js?v=cinematic1"></script><script src="game.js?v=cutout-v8-20261113"></script>
+<script src="settings-model.js?v=0.14.3"></script><script src="config.js?v=0.14.3"></script><script src="engine.js?v=0.14.3"></script><script src="audio_engine.js?v=0.14.3"></script><script src="studio_math.js?v=0.14.3"></script><script src="text-fit.js?v=0.14.3"></script><script src="cascade-art.js?v=0.14.3"></script><script src="legend/art.js?v=master-v5"></script><script src="reels.js?v=legend-ios-splash-20261113"></script><script src="release.js?v=0.14.3-raster2"></script><script src="legend/default-project.js?v=cutout-v8-20261113"></script><script src="legend/raster-layout.js?v=cutout-v8-20261113"></script><script src="legend/curated-v9.js?v=v9-preview-1"></script><script src="legend/unified-v10.js?v=12"></script><script src="legend/cinematics.js?v=cinematic1"></script><script src="game.js?v=cutout-v8-20261113"></script>
 </body></html>

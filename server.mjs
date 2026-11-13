@@ -9,9 +9,9 @@ import { fileURLToPath } from 'node:url';
 const root=dirname(fileURLToPath(import.meta.url));
 const {version}=JSON.parse(await readFile(resolve(root,'package.json'),'utf8'));
 // Public UI build identity is separate from game engine/package version.
-const LEGEND_UI_BUILD='curated-v9-review';
+const LEGEND_UI_BUILD='unified-v12';
 const port=Number(process.env.PORT || 3000);
-const types={'.webmanifest':'application/manifest+json; charset=utf-8','.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.jpeg':'image/jpeg','.ogg':'audio/ogg','.mp3':'audio/mpeg','.m4a':'audio/mp4','.wav':'audio/wav','.md':'text/markdown; charset=utf-8'};
+const types={'.mp4':'video/mp4','.webmanifest':'application/manifest+json; charset=utf-8','.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.jpeg':'image/jpeg','.ogg':'audio/ogg','.mp3':'audio/mpeg','.m4a':'audio/mp4','.wav':'audio/wav','.md':'text/markdown; charset=utf-8'};
 const base={'X-Content-Type-Options':'nosniff','Referrer-Policy':'same-origin','X-Frame-Options':'SAMEORIGIN'};
 const authUser=process.env.SKYGATE_STUDIO_USER || 'studio';
 const authPassword=process.env.SKYGATE_STUDIO_PASSWORD || '';
@@ -51,7 +51,7 @@ createServer(async(req,res)=>{
   if(!['GET','HEAD'].includes(req.method||'')&&!(api&&req.method==='POST')){res.writeHead(405,{...base,Allow:'GET, HEAD'});res.end();return;}
   if(raw==='/health') {res.writeHead(200,{...base,'Content-Type':'application/json','Cache-Control':'no-store'});res.end(req.method==='HEAD'?'':JSON.stringify({ok:true,service:'skygate-studio',version}));return;}
   if(raw==='/play/ui-version.json'){
-    const payload=JSON.stringify({ui:LEGEND_UI_BUILD,layout:'cutout-modular-v7',commit:(process.env.RAILWAY_GIT_COMMIT_SHA||'').slice(0,12)});
+    const payload=JSON.stringify({ui:LEGEND_UI_BUILD,layout:'unified-v12',commit:(process.env.RAILWAY_GIT_COMMIT_SHA||'').slice(0,12)});
     res.writeHead(200,{...base,'Content-Type':'application/json; charset=utf-8','Content-Length':Buffer.byteLength(payload),'Cache-Control':'no-store, no-cache, must-revalidate','Pragma':'no-cache','Expires':'0','X-Legend-UI-Version':LEGEND_UI_BUILD});
     res.end(req.method==='HEAD'?'':payload);return;
   }
@@ -104,7 +104,16 @@ createServer(async(req,res)=>{
   // by their stable paths. Content-addressed published media remains immutable.
   const freshPublicUI=raw.startsWith('/play/')&&(type.startsWith('text/')||extname(target)==='.webmanifest'||extname(target)==='.json'||raw.startsWith('/play/assets/legend-cutouts/'));
   const policy=privateRoute?'private, no-store':freshPublicUI?'no-store, no-cache, must-revalidate':'public, max-age=3600';
-  res.writeHead(200,{...base,...(privateRoute?{'X-Robots-Tag':'noindex, nofollow, noarchive'}:{}),
+  // Byte ranges let Safari load metadata and seek without fetching a full MP4.
+  if(type==='video/mp4'&&req.headers.range){
+    const m=/^bytes=(\d*)-(\d*)$/.exec(req.headers.range);
+    let start=m&&m[1]?Number(m[1]):0,end=m&&m[2]?Number(m[2]):info.size-1;
+    if(m&&!m[1]&&m[2]){start=Math.max(0,info.size-Number(m[2]));end=info.size-1;}
+    if(!m||(!m[1]&&!m[2])||start>end||start>=info.size){res.writeHead(416,{...base,'Content-Range':`bytes */${info.size}`});res.end();return;}
+    end=Math.min(end,info.size-1);res.writeHead(206,{...base,'Content-Type':type,'Content-Length':end-start+1,'Content-Range':`bytes ${start}-${end}/${info.size}`,'Accept-Ranges':'bytes','Cache-Control':policy});
+    if(req.method==='HEAD'){res.end();return;}createReadStream(target,{start,end}).on('error',()=>res.destroy()).pipe(res);return;
+  }
+  res.writeHead(200,{...base,...(type==='video/mp4'?{'Accept-Ranges':'bytes'}:{}),...(privateRoute?{'X-Robots-Tag':'noindex, nofollow, noarchive'}:{}),
     'Content-Type':type,'Content-Length':info.size,'Cache-Control':policy,
     ...(freshPublicUI?{'Pragma':'no-cache','Expires':'0','X-Legend-UI-Version':LEGEND_UI_BUILD}:{})});
   if(req.method==='HEAD'){res.end();return;}createReadStream(target).on('error',()=>res.destroy()).pipe(res);

@@ -1,0 +1,29 @@
+name: Legend unified layout and Universal Studio QA
+on:
+  push:
+    branches: [feat/unified-assets-layout-v10]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  responsive-studio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm test
+      - run: npm install --no-save --package-lock=false playwright@1.56.1
+      - run: npx playwright install --with-deps chromium webkit
+      - run: |
+          PORT=3118 node server.mjs > /tmp/legend-server.log 2>&1 &
+          for n in $(seq 1 30); do curl -fsS http://127.0.0.1:3118/health && break; sleep 1; done
+          node scripts/tests/unified-v10-browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: legend-unified-v12-browser-evidence
+          path: qa-artifacts/unified-v12/
+          retention-days: 14

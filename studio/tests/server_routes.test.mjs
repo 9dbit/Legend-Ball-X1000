@@ -96,7 +96,7 @@ test('protected Studio uses the resolved path for authentication', async t => {
     assert.equal(health.status, 200);
     assert.equal(JSON.parse(health.body).version, JSON.parse(readFileSync(new URL('../../package.json', import.meta.url), 'utf8')).version);
     assert.equal((await get(port, '/play/')).status, 200);
-    for (const path of ['/play/game.js', '/play/assets/symbols/ruby.png', '/play/assets/audio/bgm_celestial_loop.mp3', '/play/assets/scene/hero_composite_reference.jpg']) assert.equal((await get(port, path)).status, 200, path);
+    for (const path of ['/play/game.js', '/play/assets/legend-v12/manifest.json', '/play/assets/legend-v12/bet-frame.webp', '/play/assets/symbols/ruby.png', '/play/assets/audio/bgm_celestial_loop.mp3', '/play/assets/scene/hero_composite_reference.jpg']) assert.equal((await get(port, path)).status, 200, path);
     assert.equal((await get(port, '/play/assets/project.json')).status, 404);
     for (const path of ['/health', '/play/', '/studio/']) {
       const res = await get(port, path, { method: 'HEAD', auth: authorization });
@@ -110,19 +110,19 @@ test('protected Studio uses the resolved path for authentication', async t => {
       const r = await get(port, path);
       assert.equal(r.status, 200, path);
       assert.equal(r.headers['cache-control'], 'no-store, no-cache, must-revalidate', path);
-      assert.equal(r.headers['x-legend-ui-version'], 'curated-v9-review', path);
+      assert.equal(r.headers['x-legend-ui-version'], 'unified-v12', path);
       if(path.startsWith('/play/?') || path==='/play/'){
-        assert.match(r.body, /name="legend-ui-build" content="curated-v9-review"/, path);
+        assert.match(r.body, /name="legend-ui-build" content="unified-v12"/, path);
         assert.match(r.body, /legend\/curated-v9\.js\?v=v9-preview-1/, path);
       }
     }
     const build = await get(port, '/play/ui-version.json');
     assert.equal(build.status, 200);
-    assert.equal(JSON.parse(build.body).ui, 'curated-v9-review');
+    assert.equal(JSON.parse(build.body).ui, 'unified-v12');
     assert.match(build.headers['cache-control'], /no-store/);
-    const redirected = await get(port, '/play?ui=curated-v9-review');
+    const redirected = await get(port, '/play?ui=unified-v10');
     assert.equal(redirected.status, 308);
-    assert.equal(redirected.headers.location, '/play/?ui=curated-v9-review');
+    assert.equal(redirected.headers.location, '/play/?ui=unified-v10');
     const head = await get(port, '/play/ui-version.json', {method:'HEAD'});
     assert.equal(head.status, 200);
     assert.equal(head.body, '');
