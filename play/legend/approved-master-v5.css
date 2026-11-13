@@ -261,3 +261,6 @@ html[data-boot=error] #bootSplash #bootStatus {display:block!important;}
 }
 .legend-scene .feature>span{position:relative;z-index:3!important}
 .legend-scene .feature:after{z-index:0!important}
+
+/* The approved gold banner already has WIN engraved in the original art. Do not print it twice. */
+.legend-scene .legend-winamount > .legend-value-caption{display:none!important}
