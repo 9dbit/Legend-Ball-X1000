@@ -66,7 +66,13 @@ window.SkygateReels = class {
       const img = document.createElement('img'); img.src = src;
       return img;
     });
-    this.ready = Promise.allSettled([...this.textures,this.flares[0]].map(img => img.decode?.()));
+    // Decoding is an optimization, not a gameplay gate: Safari sometimes
+    // never resolves a decoded texture, even after the file is fetched.
+    this.ready = new Promise(resolve=>{
+      const timer=setTimeout(resolve,2500);
+      void Promise.allSettled([...this.textures,this.flares[0]].map(img=>
+        Promise.resolve().then(()=>img.decode?.()))).then(()=>{clearTimeout(timer);resolve();});
+    });
   }
   update(cell, symbol, win = false) {
     const {tile, img, multiplier, scatter} = cell;
