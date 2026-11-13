@@ -44,7 +44,7 @@ jobs:
           done
           cat /tmp/legend-ios-boot.log
           exit 1
-      - name: Test WebKit and Chromium: normal, rejected and hung image decode
+      - name: Test WebKit and Chromium with normal rejected and hung image decode
         run: node scripts/tests/ios-splash-boot.mjs
       - uses: actions/upload-artifact@v4
         if: always()
