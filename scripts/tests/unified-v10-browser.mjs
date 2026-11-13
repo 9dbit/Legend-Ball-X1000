@@ -78,14 +78,14 @@ for(const type of [chromium,webkit]){
   await iframe.locator('.legend-scene[data-layout-version="12"]').waitFor();
   const before=await iframe.locator('[data-layer="logo"]').boundingBox();
   const input=page.getByLabel('X',{exact:true});const previous=Number(await input.inputValue());await input.fill(String(previous+12));await input.press('Tab');
-  await page.waitForFunction(expected=>{const f=document.querySelector('iframe');const l=f?.contentDocument?.querySelector('[data-layer="logo"]');return l&&Math.abs(parseFloat(l.style.left)-expected)<.02;},(previous+12)/390*100);
+  await page.waitForFunction(expected=>{const f=document.querySelector('iframe');const doc=f?.contentDocument,l=doc?.querySelector('[data-layer="logo"]'),scene=doc?.querySelector('.legend-scene');return l&&scene&&Math.abs(l.getBoundingClientRect().x-scene.getBoundingClientRect().x-expected*scene.getBoundingClientRect().width)<1;},(previous+12)/390);
   const after=await iframe.locator('[data-layer="logo"]').boundingBox();assert(after.x>before.x+6,'Universal Studio edits must move actual game layer');
   await iframe.locator('.legend-scene').evaluate(scene=>Promise.all([...scene.querySelectorAll('img')].map(img=>img.decode().catch(()=>{}))));
   await page.screenshot({path:`${output}/${type.name()}-universal-studio.png`});assert.deepEqual(errors,[]);
   const download=page.waitForEvent('download');await page.getByTitle('Export project JSON',{exact:true}).click();const file=await download;const path=await file.path();const fs=await import('node:fs/promises');const exported=JSON.parse(await fs.readFile(path));assert.equal(exported.schema,'skygate/studio-v0.3');assert.equal(exported.math.grid_columns,6);assert.equal(exported.math.grid_rows,5);assert.equal(exported.layers.find(x=>x.id==='logo').x,Math.round((previous+12)/390*1080*100)/100);await page.close();
  }catch(error){
   for(const [index,page] of browser.contexts().flatMap(c=>c.pages()).entries()){
-   const state=await page.evaluate(inspectScene).catch(e=>({error:e.message}));console.error('BROWSER_FAILURE',type.name(),JSON.stringify(state));
+   const state=await page.evaluate(inspectScene).catch(e=>({error:e.message}));state.frames=await Promise.all(page.frames().filter(f=>f!==page.mainFrame()).map(f=>f.evaluate(()=>{const l=document.querySelector('[data-layer="logo"]');return {logoStyle:l?.getAttribute('style'),logoBox:l?.getBoundingClientRect().toJSON(),projectX:window.LegendV10?.getProject()?.layers.find(x=>x.id==='logo')?.x};}).catch(e=>({error:e.message}))));console.error('BROWSER_FAILURE',type.name(),JSON.stringify(state));
    await writeFile(`${output}/${type.name()}-failure-${index}.json`,JSON.stringify(state,null,2));
    await page.screenshot({path:`${output}/${type.name()}-failure-${index}.png`}).catch(()=>{});
   }
