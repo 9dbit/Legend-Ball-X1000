@@ -20,52 +20,52 @@
       "opacity": 100,
       "visible": true,
       "locked": false,
-      "asset": "legend-master/gameplay-square-backdrop.webp"
+      "asset": "legend-cutouts/scene-sky.webp"
     },
     {
       "id": "guardian",
       "name": "Approved anime hero",
       "kind": "image",
-      "x": -5,
-      "y": 7,
-      "w": 420,
-      "h": 640,
-      "z": 3,
+      "x": 0,
+      "y": 0,
+      "w": 460,
+      "h": 580,
+      "z": 4,
       "rotate": 0,
       "opacity": 100,
-      "visible": false,
+      "visible": true,
       "locked": false,
-      "asset": "legend-raster/hero.png"
+      "asset": "legend-cutouts/hero.png"
     },
     {
       "id": "dragon",
       "name": "Approved blue dragon",
       "kind": "image",
-      "x": 510,
-      "y": 8,
-      "w": 580,
-      "h": 350,
-      "z": 2,
+      "x": 335,
+      "y": 0,
+      "w": 745,
+      "h": 296,
+      "z": 3,
       "rotate": 0,
       "opacity": 100,
-      "visible": false,
+      "visible": true,
       "locked": false,
-      "asset": "legend-raster/dragon.png"
+      "asset": "legend-cutouts/dragon.png"
     },
     {
       "id": "logo",
       "name": "LEGEND BALL X1000 title",
       "kind": "image",
-      "x": 288,
-      "y": 218,
-      "w": 780,
-      "h": 257,
-      "z": 5,
+      "x": 342,
+      "y": 94,
+      "w": 630,
+      "h": 260,
+      "z": 6,
       "rotate": 0,
       "opacity": 100,
-      "visible": false,
+      "visible": true,
       "locked": false,
-      "asset": "legend-raster/logo.png"
+      "asset": "legend-cutouts/logo.png"
     },
     {
       "id": "winbanner",
@@ -74,22 +74,22 @@
       "x": 202,
       "y": 354,
       "w": 676,
-      "h": 96,
-      "z": 14,
+      "h": 112,
+      "z": 12,
       "rotate": 0,
       "opacity": 100,
       "visible": true,
       "locked": false,
-      "asset": "legend-master/win-panel.png"
+      "asset": "legend-cutouts/win-frame.png"
     },
     {
       "id": "winamount",
       "name": "Live round win",
       "kind": "text",
-      "x": 276,
-      "y": 367,
-      "w": 528,
-      "h": 70,
+      "x": 266,
+      "y": 360,
+      "w": 548,
+      "h": 86,
       "z": 15,
       "rotate": 0,
       "opacity": 100,
@@ -103,10 +103,10 @@
       "id": "bonuscopy",
       "name": "Source rules reminder",
       "kind": "text",
-      "x": 238,
-      "y": 454,
-      "w": 604,
-      "h": 23,
+      "x": 250,
+      "y": 463,
+      "w": 580,
+      "h": 25,
       "z": 15,
       "rotate": 0,
       "opacity": 100,
@@ -123,13 +123,13 @@
       "x": 12,
       "y": 481,
       "w": 1056,
-      "h": 851,
+      "h": 848,
       "z": 12,
       "rotate": 0,
       "opacity": 100,
       "visible": true,
       "locked": false,
-      "asset": "legend-master/reel-frame-square.png"
+      "asset": "legend-cutouts/reel-bezel.png"
     },
     {
       "id": "reels",
@@ -158,7 +158,7 @@
       "opacity": 100,
       "visible": true,
       "locked": false,
-      "asset": "legend-master/buy-panel-clean.png"
+      "asset": "legend-cutouts/buy-frame.png"
     },
     {
       "id": "antebtn",
@@ -173,7 +173,7 @@
       "opacity": 100,
       "visible": true,
       "locked": false,
-      "asset": "legend-master/bonus-panel-clean.png"
+      "asset": "legend-cutouts/booster-frame.png"
     },
     {
       "id": "hint",
@@ -186,7 +186,7 @@
       "z": 15,
       "rotate": 0,
       "opacity": 100,
-      "visible": true,
+      "visible": false,
       "locked": false,
       "text": "",
       "font": 24,
@@ -205,7 +205,7 @@
       "opacity": 100,
       "visible": true,
       "locked": false,
-      "asset": "legend-master/credit-panel-clean.png"
+      "asset": "legend-cutouts/credit-frame.png"
     },
     {
       "id": "betpanel",
@@ -220,16 +220,16 @@
       "opacity": 100,
       "visible": true,
       "locked": false,
-      "asset": "legend-master/bet-panel-clean.png"
+      "asset": "legend-cutouts/bet-frame.png"
     },
     {
       "id": "credits",
       "name": "Live virtual credits",
       "kind": "text",
-      "x": 50,
-      "y": 1468,
-      "w": 420,
-      "h": 84,
+      "x": 59,
+      "y": 1470,
+      "w": 396,
+      "h": 80,
       "z": 15,
       "rotate": 0,
       "opacity": 100,
@@ -243,10 +243,10 @@
       "id": "betlabel",
       "name": "Live total bet",
       "kind": "text",
-      "x": 638,
-      "y": 1468,
-      "w": 260,
-      "h": 84,
+      "x": 643,
+      "y": 1470,
+      "w": 236,
+      "h": 80,
       "z": 15,
       "rotate": 0,
       "opacity": 100,
@@ -260,10 +260,10 @@
       "id": "minusbtn",
       "name": "Decrease bet",
       "kind": "circle",
-      "x": 502,
-      "y": 1470,
-      "w": 96,
-      "h": 96,
+      "x": 504,
+      "y": 1471,
+      "w": 101,
+      "h": 101,
       "z": 16,
       "rotate": 0,
       "opacity": 100,
@@ -271,16 +271,17 @@
       "locked": false,
       "text": "-",
       "font": 38,
-      "color": "#fff0c0"
+      "color": "#fff0c0",
+      "asset": "legend-cutouts/minus.png"
     },
     {
       "id": "plusbtn",
       "name": "Increase bet",
       "kind": "circle",
-      "x": 936,
-      "y": 1470,
-      "w": 96,
-      "h": 96,
+      "x": 933,
+      "y": 1471,
+      "w": 101,
+      "h": 101,
       "z": 16,
       "rotate": 0,
       "opacity": 100,
@@ -288,7 +289,8 @@
       "locked": false,
       "text": "+",
       "font": 38,
-      "color": "#fff0c0"
+      "color": "#fff0c0",
+      "asset": "legend-cutouts/plus.png"
     },
     {
       "id": "autobtn",
@@ -306,7 +308,7 @@
       "text": "AUTO",
       "font": 24,
       "color": "#fff0c0",
-      "asset": "legend-master/auto.png"
+      "asset": "legend-cutouts/auto.png"
     },
     {
       "id": "spinbutton",
@@ -321,7 +323,7 @@
       "opacity": 100,
       "visible": true,
       "locked": false,
-      "asset": "legend-master/spin.png"
+      "asset": "legend-cutouts/spin.png"
     },
     {
       "id": "turbobtn",
@@ -339,7 +341,7 @@
       "text": "NORMAL",
       "font": 23,
       "color": "#fff0c0",
-      "asset": "legend-master/turbo.png"
+      "asset": "legend-cutouts/turbo.png"
     },
     {
       "id": "menubtn",
@@ -357,7 +359,7 @@
       "text": "MENU",
       "font": 24,
       "color": "#fff0c0",
-      "asset": "legend-master/menu.png"
+      "asset": "legend-cutouts/menu.png"
     },
     {
       "id": "soundbtn",
@@ -392,7 +394,7 @@
       "text": "RULES",
       "font": 24,
       "color": "#fff0c0",
-      "asset": "legend-master/rules.png"
+      "asset": "legend-cutouts/info.png"
     },
     {
       "id": "provider",
@@ -733,7 +735,7 @@
     "theme": "gold-purple",
     "showReference": false,
     "showGridGuides": false,
-    "layout": "square-6x5-raster-mobile-v6"
+    "layout": "cutout-modular-v7"
   },
   "spinMotion": {
     "normalMs": 1800,
