@@ -1,8 +1,14 @@
-/* Layered V12 splash: approved original composition, independent source assets. */
-#bootSplash.layered-ready{
- background-color:#070b1b!important;background-image:none!important;
+/* Legend Ball V12 | Seamless animation on the original approved artwork.
+   Each sprite shares the 864 x 1536 pixel grid with splash-master.jpg.
+   Soft nonrectangular mattes and subpixel movement avoid exposed crop seams.
+   The full-resolution, unblurred original is always the backing plate. */
+#bootSplash.layered-ready {
+ background-color:#061026!important;
+ background-image:radial-gradient(ellipse at 50% 8%,#102f5b 0%,transparent 65%),
+                   radial-gradient(ellipse at 50% 94%,#a64912 0%,#25102b 50%,transparent 75%),
+                   linear-gradient(180deg,#061329 0%,#091832 38%,#301220 72%,#54200c 100%)!important;
 }
-#bootSplash.layered-ready::before{background:none!important;}
+#bootSplash.layered-ready::before,
 #bootSplash.layered-ready::after{background:none!important;}
 #bootSplash .legend-layered-stage{
  --splash-stage-width:var(--legend-frame-width,min(100vw,calc((100dvh - 20px) * .5625)));
@@ -10,42 +16,73 @@
  left:var(--legend-safe-center-x,50%);top:var(--legend-safe-center-y,50%);
  width:var(--splash-stage-width);height:auto;aspect-ratio:9/16;
  transform:translate(-50%,-50%);
- pointer-events:none;opacity:0;visibility:hidden;transition:opacity .18s linear;
+ pointer-events:none;opacity:0;visibility:hidden;transition:opacity .16s linear;
 }
 #bootSplash.layered-ready .legend-layered-stage{opacity:1;visibility:visible}
-#bootSplash .legend-layered-stage img{position:absolute;max-width:none;display:block;object-fit:fill;pointer-events:none;user-select:none;-webkit-user-drag:none;}
-#bootSplash .legend-splash-background{z-index:0;inset:-2%;width:104%;height:104%;object-fit:cover!important;animation:legend-splash-cloud 17s ease-in-out infinite alternate;}
-#bootSplash .legend-splash-dragon{z-index:2;left:27%;top:26%;width:69%;height:49%;transform-origin:55% 46%;animation:legend-splash-dragon 6.4s ease-in-out infinite;}
-#bootSplash .legend-splash-character{z-index:3;left:0%;top:29%;width:84%;height:66%;transform-origin:40% 80%;animation:legend-splash-character 5.1s ease-in-out infinite;}
-#bootSplash .legend-splash-thunder{z-index:4;inset:0;width:100%;height:100%;object-fit:fill!important;mix-blend-mode:screen;opacity:0;animation:legend-splash-flash 8.2s linear infinite;}
-#bootSplash .legend-splash-logo{z-index:5;left:1%;top:7.4%;width:98%;height:25.1%;filter:drop-shadow(0 4px 8px #090215a0);animation:none!important;}
-#bootSplash .legend-splash-enter{z-index:6;left:8.5%;top:77.5%;width:83%;height:19%;transition:transform .12s ease,filter .12s ease;transform-origin:center;}
+#bootSplash .legend-layered-stage img{
+ position:absolute!important;inset:0!important;
+ left:0!important;top:0!important;width:100%!important;height:100%!important;
+ max-width:none!important;display:block!important;
+ object-fit:fill!important;pointer-events:none;user-select:none;-webkit-user-drag:none;
+}
+#bootSplash .legend-splash-background{z-index:0;animation:legend-storm-glow 12s ease-in-out infinite!important;}
+#bootSplash .legend-splash-dragon{z-index:2;transform-origin:75% 52%;animation:legend-dragon-breathe 6.8s ease-in-out infinite!important;}
+#bootSplash .legend-splash-character{z-index:3;transform-origin:35% 70%;animation:legend-character-breathe 5.7s ease-in-out infinite!important;}
+#bootSplash .legend-splash-thunder{z-index:4;mix-blend-mode:screen;opacity:0;animation:legend-splash-flash 8.2s linear infinite!important;}
+#bootSplash .legend-splash-logo{z-index:5;animation:none!important;transform:none!important;}
+#bootSplash .legend-splash-enter{
+ z-index:7;animation:none!important;transform-origin:50% 89%;
+ transition:transform .115s ease-out,filter .115s ease-out;
+}
+#bootSplash .legend-layered-stage::before{
+ content:"";position:absolute;z-index:6;left:5%;top:77%;width:90%;height:20%;
+ pointer-events:none;background:radial-gradient(ellipse at center,#250900b8 0%,#19090062 56%,transparent 76%);
+ opacity:0;transition:opacity .09s ease-out;
+}
 #bootSplash.layered-ready .splash-footer{z-index:10!important}
 #bootSplash.layered-ready #bootPlay{
  opacity:1!important;left:8.5%!important;top:77.5%!important;width:83%!important;height:19%!important;
- cursor:pointer!important;
- background:transparent!important;color:transparent!important;
+ cursor:pointer!important;background:transparent!important;color:transparent!important;
  -webkit-tap-highlight-color:transparent!important;
 }
 #bootSplash.layered-ready #bootPlay:focus-visible{
  opacity:1!important;outline:2px solid #fbdf90!important;outline-offset:-4px!important;border-radius:20px!important;
 }
-/* Keep audio activation synchronous in the click handler: press feedback begins
-   at pointerdown and exits after a 130ms visual acknowledgment. */
 #bootSplash.layered-ready:has(#bootPlay:active) .legend-splash-enter,
 #bootSplash.layered-ready.enter-pressed .legend-splash-enter{
- transform:translateY(3px) scale(.945);filter:brightness(1.35) drop-shadow(0 0 22px #ffd575cc);
+ transform:translateY(3px) scale(.963)!important;
+ filter:brightness(1.30) saturate(1.07) drop-shadow(0 0 12px #ffd575b5)!important;
 }
-#bootSplash.layered-ready:has(#bootPlay:active) .legend-splash-background,
-#bootSplash.layered-ready.enter-pressed .legend-splash-background{filter:brightness(1.08);}
+#bootSplash.layered-ready:has(#bootPlay:active) .legend-layered-stage::before,
+#bootSplash.layered-ready.enter-pressed .legend-layered-stage::before{opacity:1;}
 #bootSplash.layered-ready #bootPlay:disabled{opacity:0!important;cursor:progress!important;}
 #bootSplash.layered-ready #bootPlay:disabled:focus-visible{opacity:1!important;}
-@keyframes legend-splash-cloud{0%{transform:translate3d(-.7%,-.4%,0) scale(1.015)}100%{transform:translate3d(.8%,.6%,0) scale(1.04)}}
-@keyframes legend-splash-dragon{0%,100%{transform:translate3d(0,0,0) rotate(-.6deg)}50%{transform:translate3d(-1.1%,-1.35%,0) rotate(.5deg)}}
-@keyframes legend-splash-character{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(.35%,-.35%,0) scale(1.012)}}
-@keyframes legend-splash-flash{0%,9%,32%,53%,80%,100%{opacity:0}10%,11%,33%,34%{opacity:.68}12%,35%{opacity:.12}55%,56%{opacity:.4}57%{opacity:0}}
+/* Movement stays within a fraction of a display pixel at phone sizes.
+   No character or dragon bounding box is ever rendered. */
+@keyframes legend-storm-glow{
+ 0%,100%{filter:brightness(1) saturate(1)}
+ 50%{filter:brightness(1.018) saturate(1.012)}
+}
+@keyframes legend-dragon-breathe{
+ 0%,100%{transform:translate3d(0,0,0) scale(1)}
+ 50%{transform:translate3d(-.12%,-.10%,0) scale(1.0017)}
+}
+@keyframes legend-character-breathe{
+ 0%,100%{transform:translate3d(0,0,0) scale(1)}
+ 50%{transform:translate3d(.12%,-.09%,0) scale(1.0016)}
+}
+@keyframes legend-splash-flash{
+ 0%,9%,32%,53%,80%,100%{opacity:0}
+ 10%,11%,33%,34%{opacity:.63}
+ 12%,35%{opacity:.08}
+ 55%,56%{opacity:.36}
+ 57%{opacity:0}
+}
 @media(prefers-reduced-motion:reduce){
- #bootSplash .legend-splash-background,#bootSplash .legend-splash-dragon,#bootSplash .legend-splash-character,#bootSplash .legend-splash-thunder{animation:none!important;transform:none!important;}
+ #bootSplash .legend-splash-background,
+ #bootSplash .legend-splash-dragon,
+ #bootSplash .legend-splash-character,
+ #bootSplash .legend-splash-thunder{animation:none!important;transform:none!important;filter:none!important;}
  #bootSplash .legend-splash-thunder{opacity:0!important;}
- #bootSplash.layered-ready.enter-pressed .legend-splash-enter{transform:translateY(2px) scale(.95)!important;}
+ #bootSplash.layered-ready.enter-pressed .legend-splash-enter{transform:translateY(2px) scale(.963)!important;}
 }

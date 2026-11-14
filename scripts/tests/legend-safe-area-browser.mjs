@@ -47,7 +47,7 @@ for (const engine of (process.env.LEGEND_BROWSER==='webkit'?[webkit]:process.env
    assert(splash.button.x>=splash.frame.x&&splash.button.right<=splash.frame.right,id+' button horizontal bounds');
    assert(splash.button.y>=splash.frame.y&&splash.button.bottom<=splash.frame.bottom,id+' button vertical bounds');
    assert(Math.abs(parseFloat(splash.art.width)-splash.frame.width)<1,id+' art and button frame share width');
-   await page.screenshot({path:output+'/'+engine.name()+'-'+id+'-splash.png'});
+   if(process.env.LEGEND_CAPTURE_SCREENSHOTS==='1')await page.screenshot({path:output+'/'+engine.name()+'-'+id+'-splash.png'});
    await page.locator('#bootPlay').click();
    await page.locator('.legend-scene[data-layout-version="12"]').waitFor({timeout:30000});
    const game=await page.evaluate(()=>{
@@ -63,7 +63,7 @@ for (const engine of (process.env.LEGEND_BROWSER==='webkit'?[webkit]:process.env
    assert(game.stage.x>=-1&&game.stage.right<=width+1,id+' game scene horizontal bounds');
    assert(game.spin&&game.spin.top>=game.stage.top&&game.spin.bottom<=game.stage.bottom+1,id+' spin inside scene');
    assert.deepEqual(errors,[],id+' JavaScript console errors');
-   await page.screenshot({path:output+'/'+engine.name()+'-'+id+'-game.png'});
+   if(process.env.LEGEND_CAPTURE_SCREENSHOTS==='1')await page.screenshot({path:output+'/'+engine.name()+'-'+id+'-game.png'});
    report.push({browser:engine.name(),id,width,height,safeTop,safeBottom,splash,game});
    await context.close();
   }

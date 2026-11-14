@@ -1,54 +1,11 @@
 {
-  "version": "splash-layered-v1",
+  "version": "splash-layered-v2-sharp",
   "base_size": [
     864,
     1536
   ],
+  "composition": "pixel-aligned feathered mattes over pristine master",
   "layers": {
-    "logo": {
-      "file": "sources/logo.webp",
-      "box": [
-        0,
-        0,
-        864,
-        385
-      ],
-      "width": 864,
-      "height": 385
-    },
-    "dragon": {
-      "file": "sources/dragon.webp",
-      "box": [
-        270,
-        290,
-        864,
-        1040
-      ],
-      "width": 594,
-      "height": 750
-    },
-    "character": {
-      "file": "sources/character.webp",
-      "box": [
-        0,
-        280,
-        800,
-        1300
-      ],
-      "width": 800,
-      "height": 1020
-    },
-    "enter-button": {
-      "file": "sources/enter-button.webp",
-      "box": [
-        85,
-        1200,
-        790,
-        1510
-      ],
-      "width": 705,
-      "height": 310
-    },
     "background": {
       "file": "sources/background.webp",
       "box": [
@@ -58,7 +15,84 @@
         1536
       ],
       "width": 864,
-      "height": 1536
+      "height": 1536,
+      "render": "sharp original master"
+    },
+    "character": {
+      "file": "sources/character.webp",
+      "box": [
+        0,
+        0,
+        864,
+        1536
+      ],
+      "width": 864,
+      "height": 1536,
+      "alpha_bbox": [
+        0,
+        276,
+        772,
+        1326
+      ],
+      "edge": "soft-feather",
+      "feather_px": 30
+    },
+    "dragon": {
+      "file": "sources/dragon.webp",
+      "box": [
+        0,
+        0,
+        864,
+        1536
+      ],
+      "width": 864,
+      "height": 1536,
+      "alpha_bbox": [
+        271,
+        297,
+        864,
+        1263
+      ],
+      "edge": "soft-feather",
+      "feather_px": 34
+    },
+    "logo": {
+      "file": "sources/logo.webp",
+      "box": [
+        0,
+        0,
+        864,
+        1536
+      ],
+      "width": 864,
+      "height": 1536,
+      "alpha_bbox": [
+        0,
+        0,
+        864,
+        421
+      ],
+      "edge": "soft-feather",
+      "feather_px": 15
+    },
+    "enter-button": {
+      "file": "sources/enter-button.webp",
+      "box": [
+        0,
+        0,
+        864,
+        1536
+      ],
+      "width": 864,
+      "height": 1536,
+      "alpha_bbox": [
+        0,
+        1146,
+        864,
+        1536
+      ],
+      "edge": "soft-feather",
+      "feather_px": 22
     },
     "thunder": {
       "file": "sources/thunder.webp",
