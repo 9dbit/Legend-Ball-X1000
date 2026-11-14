@@ -33,7 +33,7 @@ for(const type of (process.env.LEGEND_BROWSER==='chromium'?[chromium]:[chromium,
    const hud=await page.evaluate(()=>{
     const box=id=>document.querySelector(`[data-layer="${id}"]`).getBoundingClientRect().toJSON();
     const stage=document.querySelector('.legend-scene').getBoundingClientRect();
-    const boxes=Object.fromEntries(['buybtn','antebtn','creditpanel','betpanel','logo','spinbutton'].map(id=>[id,box(id)]));
+    const boxes=Object.fromEntries(['buybtn','antebtn','creditpanel','betpanel','logo','winbanner','winamount','spinbutton'].map(id=>[id,box(id)]));
     const text=[['buybtn','#buyFeature > span'],['antebtn','#anteFeature > span'],['creditpanel','.legend-credits'],['betpanel','.legend-betlabel']].map(([id,selector])=>{const el=document.querySelector(selector);return {id,box:el.getBoundingClientRect().toJSON(),overflow:el.scrollWidth>el.clientWidth+1||el.scrollHeight>el.clientHeight+1};});
     const skins=[['creditpanel','img',940,242,39,23,903,215],['betpanel','img',940,226,40,14,897,200],['buybtn','.feature',940,282,22,43,910,262],['antebtn','.feature',940,252,19,18,912,228]].map(([id,selector,w,h,x1,y1,x2,y2])=>{
      const parent=document.querySelector(`[data-layer="${id}"]`),el=parent.querySelector(selector),s=getComputedStyle(el,selector==='.feature'?'::after':null),origin=(selector==='.feature'?el:parent).getBoundingClientRect(),ew=parseFloat(s.width),eh=parseFloat(s.height);
@@ -49,6 +49,7 @@ for(const type of (process.env.LEGEND_BROWSER==='chromium'?[chromium]:[chromium,
    for(const t of hud.text){const p=hud.boxes[t.id];assert(!t.overflow,t.id+' complete HUD text must fit');assert(t.box.x>=p.x+2&&t.box.y>=p.y+2&&t.box.x+t.box.width<=p.x+p.width-2&&t.box.y+t.box.height<=p.y+p.height-2,t.id+' text must stay inside its frame');}
    for(const p of hud.plain){assert.equal(p.border,0);assert.equal(p.background,'none');assert.equal(p.color,'rgba(0, 0, 0, 0)');assert.equal(p.shadow,'none');}
    assert(Math.abs(hud.boxes.logo.x+hud.boxes.logo.width/2-hud.stage.x-hud.stage.width/2)<1,'Logo centered on page');
+   for(const id of ['winbanner','winamount'])assert(Math.abs(hud.boxes[id].x+hud.boxes[id].width/2-hud.stage.x-hud.stage.width/2)<1,id+' centered on page');
    assert(Math.abs(hud.sprite.width/hud.stage.width*1080-312)<1&&Math.abs(hud.sprite.height/hud.stage.width*1080-286)<1,'SPIN artwork exactly 30% larger');
    assert(hud.spin.y>=hud.boxes.betpanel.y+hud.boxes.betpanel.height-1,'SPIN touch target must clear HUD');
    assert(hud.boxes.spinbutton.y+hud.boxes.spinbutton.height<=hud.stage.y+hud.stage.height+1,'SPIN stays within scene');
