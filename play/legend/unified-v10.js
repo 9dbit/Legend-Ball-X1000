@@ -52,7 +52,7 @@
    for(const [k,v] of Object.entries({position:'absolute',display:l.visible===false?'none':'flex',left:unit(l.x),top:unit(l.y),right:'auto',bottom:'auto',width:unit(l.w),height:unit(l.id==='reels'?l.w*5/6:l.h),'min-width':'0','min-height':'0','max-width':'none','max-height':'none',margin:'0',padding:'0','z-index':String(l.z),opacity:String(l.opacity/100),transform:`rotate(${l.rotate||0}deg)`,overflow:l.id==='reels'?'hidden':'visible'}))set(wrap,k,v);
    wrap.dataset.parallaxX=l.parallax?.x||0;wrap.dataset.parallaxY=l.parallax?.y||0;
    const img=wrap.querySelector(':scope > img');
-   if(img&&l.asset){if(img.getAttribute('src')!==asset(l.asset))img.src=asset(l.asset);set(img,'width','100%');set(img,'height','100%');set(img,'object-fit',l.id==='sky'?'cover':scene.dataset.layoutVersion==='12'&&['winbanner','creditpanel','betpanel','lavaground'].includes(l.id)?'fill':'contain');}
+   if(img&&l.asset){if(img.getAttribute('src')!==asset(l.asset))img.src=asset(l.asset);const panel=scene.dataset.layoutVersion==='12'&&['creditpanel','betpanel'].includes(l.id);set(img,'width',panel?'var(--panel-w)':'100%');set(img,'height',panel?'var(--panel-h)':'100%');set(img,'object-fit',l.id==='sky'?'cover':scene.dataset.layoutVersion==='12'&&['winbanner','creditpanel','betpanel','lavaground'].includes(l.id)?'fill':'contain');}
    const control=wrap.querySelector('button');
    if(['minusbtn','plusbtn'].includes(l.id)&&!l.asset){wrap.classList.remove('legend-master-control');wrap.querySelector('.legend-master-control-image')?.remove();}
    if(control&&['buybtn','antebtn'].includes(l.id))control.style.setProperty('--legend-panel',`url(${JSON.stringify(asset(l.asset))})`);

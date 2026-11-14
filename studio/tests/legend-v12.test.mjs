@@ -34,11 +34,12 @@ test('V12 rejects detached or missing bet controls and hidden panel',()=>{
 test('Native Studio transforms Total Bet as one group and remains publishable',()=>{
  const p=fresh(),original=structuredClone(p),window={};
  vm.runInNewContext(read('studio/layout-groups.js').toString(),{window});
- const affected=window.LegendLayoutGroups.patch(p,'betpanel',{x:500,y:1575,w:503*1.1,h:132});
+ const originalPanel=layer(original,'betpanel');
+ const affected=window.LegendLayoutGroups.patch(p,'betpanel',{x:500,y:1575,w:originalPanel.w*1.1,h:originalPanel.h*1.1});
  assert.equal(affected.length,4);
  for(const id of ['minusbtn','plusbtn','betlabel']){
   const l=layer(p,id),old=layer(original,id);
-  assert(Math.abs(l.x-(500+(old.x-555)*1.1))<1e-8);assert(Math.abs(l.w-old.w*1.1)<1e-8);
+  assert(Math.abs(l.x-(500+(old.x-originalPanel.x)*1.1))<1e-8);assert(Math.abs(l.w-old.w*1.1)<1e-8);
  }
  assert.deepEqual(layer(p,'guardian'),layer(original,'guardian'));assert.deepEqual(p.math,original.math);
  assert.doesNotThrow(()=>validateProject(p));

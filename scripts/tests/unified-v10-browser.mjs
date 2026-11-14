@@ -30,6 +30,28 @@ for(const type of [chromium,webkit]){
     const b=await page.locator('#'+id).boundingBox();
     assert(b&&b.x>=panel.x-1&&b.y>=panel.y-1&&b.x+b.width<=panel.x+panel.width+1&&b.y+b.height<=panel.y+panel.height+1,id+' must be inside Total Bet');
    }
+   const hud=await page.evaluate(()=>{
+    const box=id=>document.querySelector(`[data-layer="${id}"]`).getBoundingClientRect().toJSON();
+    const stage=document.querySelector('.legend-scene').getBoundingClientRect();
+    const boxes=Object.fromEntries(['buybtn','antebtn','creditpanel','betpanel','logo','spinbutton'].map(id=>[id,box(id)]));
+    const text=[...document.querySelectorAll('.feature > span,.legend-credits,.legend-betlabel')].map(el=>({box:el.getBoundingClientRect().toJSON(),overflow:el.scrollWidth>el.clientWidth+1||el.scrollHeight>el.clientHeight+1}));
+    const skins=[['creditpanel','img',940,242,39,23,903,215],['betpanel','img',940,226,40,14,897,200],['buybtn','.feature',940,282,22,43,910,262],['antebtn','.feature',940,252,19,18,912,228]].map(([id,selector,w,h,x1,y1,x2,y2])=>{
+     const parent=document.querySelector(`[data-layer="${id}"]`),el=parent.querySelector(selector),s=getComputedStyle(el,selector==='.feature'?'::after':null),origin=(selector==='.feature'?el:parent).getBoundingClientRect(),ew=parseFloat(s.width),eh=parseFloat(s.height);
+     return {id,x:origin.x+parseFloat(s.left)+ew*x1/w,y:origin.y+parseFloat(s.top)+eh*y1/h,width:ew*(x2-x1)/w,height:eh*(y2-y1)/h};
+    });
+    const plain=['minus','plus'].map(id=>{const s=getComputedStyle(document.getElementById(id));return {id,border:parseFloat(s.borderTopWidth),background:s.backgroundImage,color:s.backgroundColor,shadow:s.boxShadow};});
+    return {boxes,text,skins,plain,stage:stage.toJSON(),spin:document.getElementById('spin').getBoundingClientRect().toJSON(),sprite:document.querySelector('#spin .spin-frame').getBoundingClientRect().toJSON()};
+   });
+   for(const id of ['antebtn','creditpanel','betpanel']){assert(Math.abs(hud.boxes[id].width-hud.boxes.buybtn.width)<1,id+' equal width');assert(Math.abs(hud.boxes[id].height-hud.boxes.buybtn.height)<1,id+' equal height');}
+   for(const [a,b,axis] of [['buybtn','antebtn','y'],['creditpanel','betpanel','y'],['buybtn','creditpanel','x'],['antebtn','betpanel','x']])assert(Math.abs(hud.boxes[a][axis]-hud.boxes[b][axis])<1,'HUD alignment');
+   for(const s of hud.skins)for(const k of ['x','y','width','height'])assert(Math.abs(s[k]-hud.boxes[s.id][k])<1,s.id+' visible skin '+k+' must match its panel');
+   for(const [i,t] of hud.text.entries()){const p=hud.boxes[['buybtn','antebtn','creditpanel','betpanel'][i]];assert(!t.overflow,'Complete HUD text must fit');assert(t.box.x>=p.x+2&&t.box.y>=p.y+2&&t.box.x+t.box.width<=p.x+p.width-2&&t.box.y+t.box.height<=p.y+p.height-2,'Text must stay inside its frame');}
+   for(const p of hud.plain){assert.equal(p.border,0);assert.equal(p.background,'none');assert.equal(p.color,'rgba(0, 0, 0, 0)');assert.equal(p.shadow,'none');}
+   assert(Math.abs(hud.boxes.logo.x+hud.boxes.logo.width/2-hud.stage.x-hud.stage.width/2)<1,'Logo centered on page');
+   assert(Math.abs(hud.sprite.width/hud.stage.width*1080-312)<1&&Math.abs(hud.sprite.height/hud.stage.width*1080-286)<1,'SPIN artwork exactly 30% larger');
+   assert(hud.spin.y>=hud.boxes.betpanel.y+hud.boxes.betpanel.height-1,'SPIN touch target must clear HUD');
+   assert(hud.boxes.spinbutton.y+hud.boxes.spinbutton.height<=hud.stage.y+hud.stage.height+1,'SPIN stays within scene');
+   info.hud=hud;
    await page.evaluate(()=>Promise.all([...document.querySelectorAll('.legend-scene img')].map(img=>img.decode().catch(()=>{}))));
    await writeFile(`${output}/${type.name()}-${width}.json`,JSON.stringify(await page.evaluate(inspectScene),null,2));
    await page.screenshot({path:`${output}/${type.name()}-${width}.png`});
@@ -57,6 +79,13 @@ for(const type of [chromium,webkit]){
    await motionPage.screenshot({path:`${output}/${type.name()}-motion-failure.png`});await motionContext.close();throw error;
   }
   for(const id of ['guardian','dragon'])assert.equal(await motionPage.locator(`[data-layer="${id}"] > img`).evaluate(img=>getComputedStyle(img).visibility),'hidden','Playing character must replace its poster');
+  await motionPage.locator('#spin').click();
+  await motionPage.locator('#reels.rolling').waitFor();
+  const spinning=await motionPage.evaluate(()=>({filters:[...document.querySelectorAll('#reels .symbol')].map(el=>getComputedStyle(el).filter),streaks:[...document.querySelectorAll('#reels .reel-column')].map(el=>getComputedStyle(el,'::after').display)}));
+  assert(spinning.filters.every(f=>f==='none'),'Spinning symbols must remain sharp');
+  assert(spinning.streaks.every(s=>s==='none'),'No speed-streak overlay while spinning');
+  await motionPage.screenshot({path:`${output}/${type.name()}-spinning.png`});
+  await motionPage.waitForFunction(()=>window.SlotGameTest?.getState().rounds===1&&!window.SlotGameTest?.getState().busy);
   const motionBefore=await motionPage.evaluate(()=>window.LegendV10.getMotionState());
   await motionPage.waitForTimeout(6500);
   const motionAfter=await motionPage.evaluate(()=>window.LegendV10.getMotionState());

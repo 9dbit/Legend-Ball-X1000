@@ -287,9 +287,9 @@ html[data-boot="error"] #bootSplash #bootStatus{display:block!important;}
  position:relative!important;display:grid!important;place-items:center!important;
  width:100%!important;height:100%!important;min-width:0!important;min-height:0!important;
  padding:0!important;margin:0!important;clip-path:none!important;
- border:.18cqw solid #f7cc78!important;border-radius:50%!important;
- background:radial-gradient(circle at 50% 15%,#733641,#2b102a 80%)!important;
- box-shadow:inset 0 0 1.3cqw #f4a94b30!important;color:#ffe6a0!important;
+ border:0!important;border-radius:0!important;
+ background:transparent!important;
+ box-shadow:none!important;color:#ffe6a0!important;
  font:500 6cqw/1 system-ui!important;
 }
 .legend-scene[data-layout-version="12"] :is([data-layer="minusbtn"],[data-layer="plusbtn"]) button.round::before{display:none!important;content:none!important}
@@ -300,3 +300,51 @@ html[data-boot="error"] #bootSplash #bootStatus{display:block!important;}
 }
 .legend-scene[data-layout-version="12"] #minus::after{content:'−'!important}
 .legend-scene[data-layout-version="12"] #plus::after{content:'+'!important}
+
+/* Normalize the approved HUD skins to the same visible border rectangle.
+   The source WebPs have different transparent margins; retain the original
+   images and glow while mapping each solid frame into its Studio layer. */
+.legend-scene[data-layout-version="12"] [data-layer="buybtn"]{--panel-x:-2.477477%;--panel-y:-19.634703%;--panel-w:105.855856%;--panel-h:128.767123%}
+.legend-scene[data-layout-version="12"] [data-layer="antebtn"]{--panel-x:-2.127660%;--panel-y:-8.571429%;--panel-w:105.263158%;--panel-h:120%}
+.legend-scene[data-layout-version="12"] [data-layer="creditpanel"]{--panel-x:-4.513889%;--panel-y:-11.979167%;--panel-w:108.796296%;--panel-h:126.041667%}
+.legend-scene[data-layout-version="12"] [data-layer="betpanel"]{--panel-x:-4.667445%;--panel-y:-7.526882%;--panel-w:109.684947%;--panel-h:121.505376%}
+.legend-scene[data-layout-version="12"] :is([data-layer="buybtn"],[data-layer="antebtn"]) .feature::after,
+.legend-scene[data-layout-version="12"] :is([data-layer="creditpanel"],[data-layer="betpanel"]) > img{
+ position:absolute!important;inset:auto!important;
+ left:var(--panel-x)!important;top:var(--panel-y)!important;
+ width:var(--panel-w)!important;height:var(--panel-h)!important;
+ max-width:none!important;max-height:none!important;object-fit:fill!important;
+}
+.legend-scene[data-layout-version="12"] .feature{
+ min-height:0!important;max-height:100%!important;box-sizing:border-box!important;
+}
+.legend-scene[data-layout-version="12"] .feature > span{
+ width:76%!important;max-width:76%!important;max-height:76%!important;
+ gap:.2cqw!important;font-size:2.15cqw!important;line-height:1!important;
+}
+.legend-scene[data-layout-version="12"] .feature-buy strong{
+ font-size:3.5cqw!important;line-height:1!important;
+}
+.legend-scene[data-layout-version="12"] .feature-ante > span{
+ width:76%!important;max-width:76%!important;
+ grid-template-columns:minmax(0,1fr) auto!important;
+ column-gap:1cqw!important;row-gap:.4cqw!important;
+ font-size:2cqw!important;line-height:1!important;
+}
+.legend-scene[data-layout-version="12"] .feature-ante > span > b{font-size:3.5cqw!important;line-height:1!important}
+.legend-scene[data-layout-version="12"] .feature-ante small{font-size:1.5cqw!important;line-height:1!important}
+.legend-scene[data-layout-version="12"] :is(.legend-credits,.legend-betlabel){gap:.2cqw!important}
+.legend-scene[data-layout-version="12"] :is(.legend-credits,.legend-betlabel) .legend-value-caption{font-size:2.15cqw!important;line-height:1!important}
+.legend-scene[data-layout-version="12"] :is(.legend-credits #credits,.legend-betlabel #betText){font-size:3.5cqw!important;line-height:1!important}
+/* The enlarged sprite has a transparent top margin. Keep its touch target
+   below the HUD without changing the 30% larger rendered image. */
+.legend-scene[data-layout-version="12"] #spin{
+ position:absolute!important;left:0!important;top:15%!important;height:85%!important;
+}
+.legend-scene[data-layout-version="12"] #spin .spin-frame{
+ position:absolute!important;left:0!important;top:-17.647059%!important;
+ width:100%!important;height:117.647059%!important;max-height:none!important;pointer-events:none!important;
+}
+/* Spin movement stays sharp; neither blur nor speed-streak overlays are used. */
+.legend-scene[data-layout-version="12"] .reels.rolling .tile .symbol{filter:none!important}
+.legend-scene[data-layout-version="12"] .reels.rolling .reel-column::after{display:none!important;content:none!important;animation:none!important}
