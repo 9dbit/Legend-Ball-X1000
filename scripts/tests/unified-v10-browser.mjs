@@ -142,7 +142,9 @@ for(const type of (process.env.LEGEND_BROWSER==='chromium'?[chromium]:[chromium,
    for(const video of document.querySelectorAll('video.legend-motion-source')){
     const requestFrame=video.requestVideoFrameCallback,load=video.load;
     // Stall frame delivery, including native loop restarts in WebKit.
-    video.requestVideoFrameCallback=function(){return requestFrame.call(this,()=>{});};
+    video.requestVideoFrameCallback=function(){
+     return requestFrame ? requestFrame.call(this,()=>{}) : requestAnimationFrame(()=>{});
+    };
     video.load=function(){this.requestVideoFrameCallback=requestFrame;this.load=load;return load.call(this);};
    }
   });
@@ -178,6 +180,7 @@ for(const type of (process.env.LEGEND_BROWSER==='chromium'?[chromium]:[chromium,
   assert.deepEqual(motionErrors,[]);
   reports.push({browser:type.name(),lifecycle,recovered,energyBounds,gamePreserved:true});
   await motionContext.close();
+  if(process.env.LEGEND_PUBLIC_ONLY!=='1'){
   const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto(base+'/studio/universal/?game=legend-ball-x1000');
   await page.locator('iframe[title="Legend Ball shared game renderer"]').waitFor();
@@ -192,13 +195,14 @@ for(const type of (process.env.LEGEND_BROWSER==='chromium'?[chromium]:[chromium,
   await iframe.locator('.legend-scene').evaluate(scene=>Promise.all([...scene.querySelectorAll('img')].map(img=>img.decode().catch(()=>{}))));
   await page.screenshot({path:`${output}/${type.name()}-universal-studio.png`});assert.deepEqual(errors,[]);
   const download=page.waitForEvent('download');await page.getByTitle('Export project JSON',{exact:true}).click();const file=await download;const path=await file.path();const fs=await import('node:fs/promises');const exported=JSON.parse(await fs.readFile(path));assert.equal(exported.schema,'skygate/studio-v0.3');assert.equal(exported.math.grid_columns,6);assert.equal(exported.math.grid_rows,5);assert.equal(exported.layers.find(x=>x.id==='logo').x,Math.round((previous+12)/390*1080*100)/100);await page.close();
+  }
  }catch(error){
   for(const [index,page] of browser.contexts().flatMap(c=>c.pages()).entries()){
-   const state=await page.evaluate(inspectScene).catch(e=>({error:e.message}));state.studio=await page.evaluate(()=>({messages:window.__legendMessages,storedLogo:JSON.parse(localStorage.getItem('universal-legend-layout-v12')||'null')?.layers?.find(l=>l.id==='logo'),inputs:[...document.querySelectorAll('input[type=number]')].map(i=>({value:i.value,step:i.step,valid:i.validity.valid}))}));state.frames=await Promise.all(page.frames().filter(f=>f!==page.mainFrame()).map(f=>f.evaluate(()=>{const l=document.querySelector('[data-layer="logo"]');return {logoStyle:l?.getAttribute('style'),logoBox:l?.getBoundingClientRect().toJSON(),projectX:window.LegendV10?.getProject()?.layers.find(x=>x.id==='logo')?.x};}).catch(e=>({error:e.message}))));console.error('BROWSER_FAILURE',type.name(),JSON.stringify(state));
+   const state=await page.evaluate(inspectScene).catch(e=>({error:e.message}));state.studio=await page.evaluate(()=>({messages:window.__legendMessages,storedLogo:JSON.parse(localStorage.getItem('universal-legend-layout-v12')||'null')?.layers?.find(l=>l.id==='logo'),inputs:[...document.querySelectorAll('input[type=number]')].map(i=>({value:i.value,step:i.step,valid:i.validity.valid}))})).catch(e=>({error:e.message}));state.frames=await Promise.all(page.frames().filter(f=>f!==page.mainFrame()).map(f=>f.evaluate(()=>{const l=document.querySelector('[data-layer="logo"]');return {logoStyle:l?.getAttribute('style'),logoBox:l?.getBoundingClientRect().toJSON(),projectX:window.LegendV10?.getProject()?.layers.find(x=>x.id==='logo')?.x};}).catch(e=>({error:e.message}))));console.error('BROWSER_FAILURE',type.name(),JSON.stringify(state));
    await writeFile(`${output}/${type.name()}-failure-${index}.json`,JSON.stringify(state,null,2));
    await page.screenshot({path:`${output}/${type.name()}-failure-${index}.png`}).catch(()=>{});
   }
   throw error;
  }finally{await writeFile(output+'/report.json',JSON.stringify(reports,null,2));await browser.close();}
 }
-await writeFile(output+'/report.json',JSON.stringify(reports,null,2));console.log('PASS V12 Chrome + WebKit responsive HUD, complete energy bounds, repeated lifecycle/GPU/decoder/gesture recovery, unchanged game state, Universal Studio edit/export');
+await writeFile(output+'/report.json',JSON.stringify(reports,null,2));console.log('PASS V12 Chrome + WebKit responsive HUD, complete energy bounds, repeated lifecycle/GPU/decoder/gesture recovery, unchanged game state; '+(process.env.LEGEND_PUBLIC_ONLY==='1'?'public game only (Studio skipped)':'Universal Studio edit/export'));
