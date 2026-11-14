@@ -135,14 +135,15 @@ for(const type of (process.env.LEGEND_BROWSER==='chromium'?[chromium]:[chromium,
    await motionPage.waitForFunction(before=>window.LegendV10.getMotionState().every(v=>v.connected&&v.ready&&!v.paused&&!v.contextLost&&v.paintedFrames>before.find(b=>b.id===v.id).paintedFrames+3),before,{timeout:20000});
    lifecycle.push(await motionPage.evaluate(()=>window.LegendV10.getMotionState()));
   }
-  // A stuck decoder may resolve play() without producing a frame. Verify the
+  // A stuck decoder may keep playing without delivering a frame. Verify the
   // watchdog reloads only the media and recovers without a click or game reset.
   const beforeStall=await motionPage.evaluate(()=>window.LegendV10.getMotionState());
   await motionPage.evaluate(()=>{
    for(const video of document.querySelectorAll('video.legend-motion-source')){
-    const play=video.play,load=video.load;video.pause();
-    video.play=()=>Promise.resolve();
-    video.load=function(){this.play=play;this.load=load;return load.call(this);};
+    const requestFrame=video.requestVideoFrameCallback,load=video.load;
+    // Stall frame delivery, including native loop restarts in WebKit.
+    video.requestVideoFrameCallback=function(){return requestFrame.call(this,()=>{});};
+    video.load=function(){this.requestVideoFrameCallback=requestFrame;this.load=load;return load.call(this);};
    }
   });
   await motionPage.waitForFunction(before=>window.LegendV10.getMotionState().every(v=>v.ready&&!v.paused&&v.reloads>before.find(b=>b.id===v.id).reloads&&v.paintedFrames>before.find(b=>b.id===v.id).paintedFrames+3),beforeStall,{timeout:20000});
