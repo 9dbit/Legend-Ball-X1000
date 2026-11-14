@@ -6,37 +6,99 @@
  const motionPreference=matchMedia('(prefers-reduced-motion: reduce)');
  const reduced=()=>matchMedia('(prefers-reduced-motion: reduce)').matches||document.hidden||!!document.getElementById('batterySetting')?.checked;
  let current,resolveAsset,scene,frame=0,tiltX=0,tiltY=0,targetX=0,targetY=0;
+ let pageSuspended=false;
  const films=new Map();
  function movie(wrap,layer){
   if(!layer.motion||films.has(layer.id)||window.SkygateEditorPreview)return;
-  const video=document.createElement('video');video.muted=true;video.loop=true;video.playsInline=true;video.preload='none';video.src=resolveAsset(layer.motion.src);
+  const video=document.createElement('video');video.muted=true;video.defaultMuted=true;video.loop=true;video.playsInline=true;video.preload='none';video.src=resolveAsset(layer.motion.src);
+  // Keep the inline decoder in the document so Safari can resume its media pipeline.
+  video.className='legend-motion-source';video.setAttribute('aria-hidden','true');video.setAttribute('playsinline','');video.setAttribute('webkit-playsinline','');video.tabIndex=-1;
   const canvas=document.createElement('canvas');canvas.className='legend-motion';canvas.setAttribute('aria-hidden','true');
   const gl=canvas.getContext('webgl',{alpha:true,premultipliedAlpha:false,preserveDrawingBuffer:false});
   if(!gl)return;
+  let contextLost=false,callback=0,watchdog=0,generation=0,pending=false,needsGesture=false;
+  let paintedFrames=0,restores=0,reloads=0,retries=0,lastMediaTime=-1,lastProgress=0;
+  const allowed=()=>!pageSuspended&&!reduced()&&document.documentElement.dataset.boot==='entered';
   const shader=(type,source)=>{const s=gl.createShader(type);gl.shaderSource(s,source);gl.compileShader(s);if(!gl.getShaderParameter(s,gl.COMPILE_STATUS))throw Error('Movie compositor unavailable');return s;};
-  try{
-   const program=gl.createProgram();gl.attachShader(program,shader(gl.VERTEX_SHADER,'attribute vec2 p;varying vec2 uv;void main(){uv=vec2((p.x+1.0)*.5,(1.0-p.y)*.5);gl_Position=vec4(p,0.,1.);}'));
+  function initGraphics(){
+   const program=gl.createProgram();
+   const vertex=shader(gl.VERTEX_SHADER,'attribute vec2 p;varying vec2 uv;void main(){uv=vec2((p.x+1.0)*.5,(1.0-p.y)*.5);gl_Position=vec4(p,0.,1.);}');
    // Black matte only. The transparent poster remains the paused/error fallback.
-   gl.attachShader(program,shader(gl.FRAGMENT_SHADER,'precision mediump float;uniform sampler2D movie;varying vec2 uv;void main(){vec3 c=texture2D(movie,uv).rgb;float m=max(max(c.r,c.g),c.b);float a=smoothstep(.015,.07,m);gl_FragColor=vec4(c,a);}'));
-   gl.linkProgram(program);if(!gl.getProgramParameter(program,gl.LINK_STATUS))return;gl.useProgram(program);
+   const fragment=shader(gl.FRAGMENT_SHADER,'precision mediump float;uniform sampler2D movie;varying vec2 uv;void main(){vec3 c=texture2D(movie,uv).rgb;float m=max(max(c.r,c.g),c.b);float a=smoothstep(.015,.07,m);gl_FragColor=vec4(c,a);}');
+   gl.attachShader(program,vertex);gl.attachShader(program,fragment);gl.linkProgram(program);
+   gl.deleteShader(vertex);gl.deleteShader(fragment);
+   if(!gl.getProgramParameter(program,gl.LINK_STATUS))throw Error('Movie compositor unavailable');
+   gl.useProgram(program);
    gl.bindBuffer(gl.ARRAY_BUFFER,gl.createBuffer());gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,1,1]),gl.STATIC_DRAW);
    const p=gl.getAttribLocation(program,'p');gl.enableVertexAttribArray(p);gl.vertexAttribPointer(p,2,gl.FLOAT,false,0,0);
-   gl.bindTexture(gl.TEXTURE_2D,gl.createTexture());gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
-   let alive=true,callback=0,paintedFrames=0;
-   const cancelFrame=()=>{if(!callback)return;if(video.cancelVideoFrameCallback)video.cancelVideoFrameCallback(callback);else cancelAnimationFrame(callback);callback=0;};
-   const stop=()=>{video.pause();cancelFrame();canvas.classList.remove('ready');};
-   const paint=()=>{callback=0;if(!alive||reduced()||video.paused)return;if(video.readyState>=2){
-    if(canvas.width!==video.videoWidth){canvas.width=video.videoWidth;canvas.height=video.videoHeight;gl.viewport(0,0,canvas.width,canvas.height);}
-    gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,video);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);canvas.classList.add('ready');paintedFrames++;
-   }callback=video.requestVideoFrameCallback?video.requestVideoFrameCallback(paint):requestAnimationFrame(paint);};
-   canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();alive=false;stop();canvas.remove();});
-   video.addEventListener('error',()=>{alive=false;stop();canvas.remove();});
-   wrap.append(canvas);
-   const start=()=>{if(!alive||reduced()||document.documentElement.dataset.boot!=='entered')return;video.play().then(()=>{cancelFrame();paint();}).catch(()=>{});};
-   films.set(layer.id,{video,canvas,start,stop,getPaintedFrames:()=>paintedFrames});
-   document.getElementById('bootPlay')?.addEventListener('click',start,{once:true});
-   if(document.documentElement.dataset.boot==='entered')start();
-  }catch{canvas.remove();}
+   gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,gl.createTexture());gl.uniform1i(gl.getUniformLocation(program,'movie'),0);
+   gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE);gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+   // Restored contexts have fresh state even when the canvas dimensions did not change.
+   gl.viewport(0,0,canvas.width,canvas.height);
+  }
+  const cancelFrame=()=>{if(!callback)return;if(video.cancelVideoFrameCallback)video.cancelVideoFrameCallback(callback);else cancelAnimationFrame(callback);callback=0;};
+  const clearWatchdog=()=>{clearTimeout(watchdog);watchdog=0;};
+  const stop=()=>{generation++;pending=false;clearWatchdog();cancelFrame();video.pause();canvas.classList.remove('ready');};
+  const queueFrame=()=>{if(!callback&&allowed()&&!contextLost&&!video.paused)callback=video.requestVideoFrameCallback?video.requestVideoFrameCallback(paint):requestAnimationFrame(paint);};
+  function paint(){
+   callback=0;if(!allowed()||contextLost||gl.isContextLost()||video.paused)return;
+   if(video.readyState>=2&&video.videoWidth&&video.videoHeight){
+    if(canvas.width!==video.videoWidth||canvas.height!==video.videoHeight){canvas.width=video.videoWidth;canvas.height=video.videoHeight;gl.viewport(0,0,canvas.width,canvas.height);}
+    try{
+     gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,video);gl.drawArrays(gl.TRIANGLE_STRIP,0,4);
+     if(!gl.isContextLost()){
+      canvas.classList.add('ready');paintedFrames++;
+      if(video.currentTime!==lastMediaTime){lastMediaTime=video.currentTime;lastProgress=performance.now();retries=0;}
+     }
+    }catch{canvas.classList.remove('ready');}
+   }
+   queueFrame();
+  }
+  function requestPlayback(){
+   if(pending||!allowed()||contextLost)return;
+   pending=true;const ticket=generation;
+   video.play().then(()=>{
+    if(ticket!==generation)return;
+    pending=false;if(!allowed()||contextLost)return;
+    needsGesture=false;queueFrame();
+   }).catch(error=>{
+    if(ticket!==generation)return;
+    pending=false;
+    if(error.name==='NotAllowedError'){needsGesture=true;clearWatchdog();}
+   });
+  }
+  function watch(){
+   watchdog=0;if(!allowed()||contextLost||needsGesture)return;
+   // A resolved play() is not proof of animation: suspended decoders can stop
+   // delivering frames after unlock. Retry, then reload only that video stream.
+   if(performance.now()-lastProgress>2600){
+    canvas.classList.remove('ready');cancelFrame();generation++;pending=false;
+    video.pause();retries++;
+    if(retries>3){needsGesture=true;clearWatchdog();return;}
+    if(retries>1||video.error){video.load();reloads++;}
+    lastProgress=performance.now();requestPlayback();
+   }
+   armWatchdog();
+  }
+  function armWatchdog(){if(!watchdog&&allowed()&&!contextLost&&!needsGesture)watchdog=setTimeout(watch,1000);}
+  function start(){
+   if(!allowed()||contextLost||gl.isContextLost())return;
+   if(watchdog&&!video.paused&&callback&&!needsGesture)return;
+   needsGesture=false;retries=0;lastProgress=performance.now();
+   requestPlayback();queueFrame();armWatchdog();
+  }
+  canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();contextLost=true;stop();});
+  canvas.addEventListener('webglcontextrestored',()=>{
+   try{initGraphics();contextLost=false;restores++;lastMediaTime=-1;start();}catch{canvas.classList.remove('ready');}
+  });
+  video.addEventListener('playing',queueFrame);
+  video.addEventListener('pause',()=>{cancelFrame();canvas.classList.remove('ready');armWatchdog();});
+  video.addEventListener('error',()=>{canvas.classList.remove('ready');armWatchdog();});
+  try{initGraphics();}catch{return;}
+  wrap.append(video,canvas);
+  films.set(layer.id,{video,canvas,start,stop,needsResume:()=>needsGesture||video.paused,getPaintedFrames:()=>paintedFrames,getRecovery:()=>({contextLost,restores,reloads,needsGesture})});
+  document.getElementById('bootPlay')?.addEventListener('click',start,{once:true});
+  start();
  }
  function apply(project,asset=resolveAsset){
   if(!project.layers.some(l=>l.asset==='legend-v10/background.webp'))return;
@@ -81,9 +143,20 @@
  const orientation=e=>{if(e.gamma==null||e.beta==null)return;targetX=Math.max(-1,Math.min(1,e.gamma/20));targetY=Math.max(-1,Math.min(1,(e.beta-45)/20));};
  async function enableTilt(){try{if(typeof DeviceOrientationEvent==='undefined')return false;if(typeof DeviceOrientationEvent.requestPermission==='function'&&await DeviceOrientationEvent.requestPermission()!=='granted')return false;window.addEventListener('deviceorientation',orientation);return true;}catch{return false;}}
  document.getElementById('bootPlay')?.addEventListener('click',enableTilt,{once:true});
- const refreshMotion=()=>{for(const {start,stop} of films.values()){if(reduced())stop();else start();}};
- document.addEventListener('visibilitychange',refreshMotion);
+ const refreshMotion=()=>{for(const {start,stop} of films.values()){if(pageSuspended||reduced())stop();else start();}};
+ const suspendMotion=()=>{pageSuspended=true;refreshMotion();};
+ const resumeMotion=()=>{if(document.hidden)return;pageSuspended=false;refreshMotion();};
+ document.addEventListener('visibilitychange',()=>document.hidden?suspendMotion():resumeMotion());
+ window.addEventListener('pagehide',suspendMotion);
+ window.addEventListener('pageshow',resumeMotion);
+ window.addEventListener('focus',resumeMotion);
+ document.addEventListener('freeze',suspendMotion);
+ document.addEventListener('resume',resumeMotion);
+ // If Safari requires a new gesture, recover on the next normal interaction.
+ const gestureResume=()=>{if(!pageSuspended&&!reduced())for(const film of films.values())if(film.needsResume())film.start();};
+ document.addEventListener('pointerdown',gestureResume,{passive:true});
+ document.addEventListener('keydown',gestureResume);
  motionPreference.addEventListener('change',refreshMotion);
  document.getElementById('batterySetting')?.addEventListener('change',refreshMotion);
- window.LegendV10={apply,enableTilt,getProject:()=>structuredClone(current),getMotionState:()=>[...films].map(([id,{video,canvas,getPaintedFrames}])=>({id,paintedFrames:getPaintedFrames(),ready:canvas.classList.contains('ready'),connected:canvas.isConnected,readyState:video.readyState,networkState:video.networkState,src:video.currentSrc,time:video.currentTime,duration:video.duration,paused:video.paused,seeking:video.seeking,ended:video.ended,rate:video.playbackRate,bufferedEnd:video.buffered.length?video.buffered.end(video.buffered.length-1):0,loop:video.loop,error:video.error?.code||null,errorMessage:video.error?.message||null}))};
+ window.LegendV10={apply,enableTilt,getProject:()=>structuredClone(current),getMotionState:()=>[...films].map(([id,{video,canvas,getPaintedFrames,getRecovery}])=>({id,...getRecovery(),paintedFrames:getPaintedFrames(),ready:canvas.classList.contains('ready'),connected:canvas.isConnected,readyState:video.readyState,networkState:video.networkState,src:video.currentSrc,time:video.currentTime,duration:video.duration,paused:video.paused,seeking:video.seeking,ended:video.ended,rate:video.playbackRate,bufferedEnd:video.buffered.length?video.buffered.end(video.buffered.length-1):0,loop:video.loop,error:video.error?.code||null,errorMessage:video.error?.message||null}))};
 })();

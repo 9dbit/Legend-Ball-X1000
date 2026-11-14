@@ -5,8 +5,8 @@ const base=process.env.LEGEND_URL||'http://127.0.0.1:3118';
 const output='qa-artifacts/unified-v12';await mkdir(output,{recursive:true});
 const reports=[];
 const inspectScene=()=>({codec:document.createElement('video').canPlayType('video/mp4; codecs="avc1.64001f"'),boot:document.documentElement.dataset.boot,hidden:document.hidden,reduced:matchMedia('(prefers-reduced-motion: reduce)').matches,battery:document.getElementById('batterySetting')?.checked,motion:window.LegendV10?.getMotionState(),layers:[...document.querySelectorAll('.legend-scene .legend-art')].map(el=>({id:el.dataset.layer,display:getComputedStyle(el).display,visibility:getComputedStyle(el).visibility,opacity:getComputedStyle(el).opacity,images:[...el.querySelectorAll('img')].map(img=>({src:img.src,complete:img.complete,width:img.naturalWidth,display:getComputedStyle(img).display,visibility:getComputedStyle(img).visibility,opacity:getComputedStyle(img).opacity}))}))});
-for(const type of [chromium,webkit]){
- const browser=await type.launch({headless:true,...(type===chromium?{channel:'chrome'}:{})});
+for(const type of (process.env.LEGEND_BROWSER==='chromium'?[chromium]:[chromium,webkit])){
+ const browser=await type.launch({headless:true,...(type===chromium?(process.env.LEGEND_CHROMIUM_PATH?{executablePath:process.env.LEGEND_CHROMIUM_PATH}:{channel:'chrome'}):{})});
  try{
   for(const [width,height] of [[320,568],[390,844],[430,932],[1440,900]]){
    const page=await browser.newPage({viewport:{width,height},reducedMotion:'reduce'}),errors=[];
@@ -100,6 +100,82 @@ for(const type of [chromium,webkit]){
   await motionPage.waitForFunction(()=>window.LegendV10.getMotionState().every(v=>!v.paused&&v.ready));
   const resumed=await motionPage.evaluate(()=>window.LegendV10.getMotionState());
   await motionPage.waitForFunction(before=>window.LegendV10.getMotionState().every(v=>v.paintedFrames>before.find(b=>b.id===v.id).paintedFrames+2),resumed);
+  const gameBefore=await motionPage.evaluate(()=>{const {credits,bet,rounds,spent,paid}=window.SlotGameTest.getState();return {credits,bet,rounds,spent,paid};});
+  const lifecycle=[];
+  for(let cycle=0;cycle<3;cycle++){
+   const before=await motionPage.evaluate(()=>window.LegendV10.getMotionState());
+   await motionPage.evaluate(()=>{
+    Object.defineProperty(document,'hidden',{configurable:true,value:true});
+    document.dispatchEvent(new Event('visibilitychange'));
+    window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true}));
+    document.dispatchEvent(new Event('freeze'));
+   });
+   await motionPage.waitForFunction(()=>window.LegendV10.getMotionState().every(v=>v.paused&&!v.ready));
+   if(cycle<2){
+    assert(await motionPage.evaluate(()=>{
+     window.__lostContexts=[...document.querySelectorAll('canvas.legend-motion')].map(c=>c.getContext('webgl').getExtension('WEBGL_lose_context'));
+     if(window.__lostContexts.some(e=>!e))return false;
+     for(const ext of window.__lostContexts)ext.loseContext();return true;
+    }),'Context-loss extension must be available for recovery regression');
+    await motionPage.waitForFunction(()=>window.LegendV10.getMotionState().every(v=>v.contextLost&&v.connected&&!v.ready));
+    for(const id of ['guardian','dragon'])assert.equal(await motionPage.locator(`[data-layer="${id}"] > img`).evaluate(img=>getComputedStyle(img).visibility),'visible','Lost GPU restores poster');
+    if(cycle===0){
+     await motionPage.evaluate(()=>window.__lostContexts.forEach(ext=>ext.restoreContext()));
+     await motionPage.waitForFunction(before=>window.LegendV10.getMotionState().every(v=>!v.contextLost&&v.restores>before.find(b=>b.id===v.id).restores&&v.paused&&!v.ready),before);
+    }
+   }
+   await motionPage.evaluate(()=>{
+    delete document.hidden;
+    document.dispatchEvent(new Event('visibilitychange'));
+    window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}));
+    document.dispatchEvent(new Event('resume'));
+    window.dispatchEvent(new Event('focus'));
+   });
+   if(cycle===1)await motionPage.evaluate(()=>window.__lostContexts.forEach(ext=>ext.restoreContext()));
+   await motionPage.waitForFunction(before=>window.LegendV10.getMotionState().every(v=>v.connected&&v.ready&&!v.paused&&!v.contextLost&&v.paintedFrames>before.find(b=>b.id===v.id).paintedFrames+3),before,{timeout:20000});
+   lifecycle.push(await motionPage.evaluate(()=>window.LegendV10.getMotionState()));
+  }
+  // A stuck decoder may resolve play() without producing a frame. Verify the
+  // watchdog reloads only the media and recovers without a click or game reset.
+  const beforeStall=await motionPage.evaluate(()=>window.LegendV10.getMotionState());
+  await motionPage.evaluate(()=>{
+   for(const video of document.querySelectorAll('video.legend-motion-source')){
+    const play=video.play,load=video.load;video.pause();
+    video.play=()=>Promise.resolve();
+    video.load=function(){this.play=play;this.load=load;return load.call(this);};
+   }
+  });
+  await motionPage.waitForFunction(before=>window.LegendV10.getMotionState().every(v=>v.ready&&!v.paused&&v.reloads>before.find(b=>b.id===v.id).reloads&&v.paintedFrames>before.find(b=>b.id===v.id).paintedFrames+3),beforeStall,{timeout:20000});
+  const recovered=await motionPage.evaluate(()=>window.LegendV10.getMotionState());
+  // Browser autoplay rejection remains recoverable through the next normal tap.
+  await motionPage.evaluate(()=>{
+   window.dispatchEvent(new PageTransitionEvent('pagehide',{persisted:true}));
+   const video=document.querySelector('video.legend-motion-source'),play=video.play;
+   video.play=()=>Promise.reject(new DOMException('Gesture required','NotAllowedError'));
+   video.__restorePlay=()=>{video.play=play;};
+   window.dispatchEvent(new PageTransitionEvent('pageshow',{persisted:true}));
+  });
+  await motionPage.waitForFunction(()=>window.LegendV10.getMotionState().some(v=>v.needsGesture));
+  await motionPage.evaluate(()=>document.querySelector('video.legend-motion-source').__restorePlay());
+  await motionPage.mouse.click(3,3);
+  await motionPage.waitForFunction(()=>window.LegendV10.getMotionState().every(v=>v.ready&&!v.paused&&!v.needsGesture));
+  const gameAfter=await motionPage.evaluate(()=>{const {credits,bet,rounds,spent,paid}=window.SlotGameTest.getState();return {credits,bet,rounds,spent,paid};});
+  assert.deepEqual(gameAfter,gameBefore,'Animation recovery must not change credits or start a round');
+  const energyBounds=[];
+  for(const [width,height] of [[320,568],[390,844],[430,932],[1440,900]]){
+   await motionPage.setViewportSize({width,height});
+   const bounds=await motionPage.evaluate(()=>({
+    stage:document.querySelector('.legend-scene').getBoundingClientRect().toJSON(),
+    energy:document.querySelector('[data-layer="spinbutton"] .legend-motion').getBoundingClientRect().toJSON()
+   }));
+   const {stage,energy}=bounds;
+   assert(energy.x>=stage.x&&energy.y>=stage.y&&energy.right<=stage.right&&energy.bottom<=stage.bottom-2,'Full SPIN energy canvas must fit with bottom clearance');
+   energyBounds.push({width,height,...bounds});
+  }
+  await motionPage.setViewportSize({width:390,height:844});
+  await motionPage.screenshot({path:`${output}/${type.name()}-resumed.png`});
+  assert.deepEqual(motionErrors,[]);
+  reports.push({browser:type.name(),lifecycle,recovered,energyBounds,gamePreserved:true});
   await motionContext.close();
   const page=await browser.newPage({viewport:{width:1440,height:1000}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
   await page.goto(base+'/studio/universal/?game=legend-ball-x1000');
@@ -124,4 +200,4 @@ for(const type of [chromium,webkit]){
   throw error;
  }finally{await writeFile(output+'/report.json',JSON.stringify(reports,null,2));await browser.close();}
 }
-await writeFile(output+'/report.json',JSON.stringify(reports,null,2));console.log('PASS V12 Google Chrome + WebKit 320/390/430/1440, unified Total Bet, menu audio, spin, native Universal Studio preview/edit/export');
+await writeFile(output+'/report.json',JSON.stringify(reports,null,2));console.log('PASS V12 Chrome + WebKit responsive HUD, complete energy bounds, repeated lifecycle/GPU/decoder/gesture recovery, unchanged game state, Universal Studio edit/export');

@@ -248,6 +248,7 @@
 html[data-boot="error"] #bootSplash #bootStatus{display:block!important;}
 
 /* V10 source artwork, bounded motion and physical touch areas. */
+.legend-scene[data-ui-version="unified-v10"] .legend-motion-source{position:absolute;inset:0;width:100%;height:100%;opacity:.001;pointer-events:none}
 .legend-scene[data-ui-version="unified-v10"] .legend-motion{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;pointer-events:none}
 .legend-scene[data-ui-version="unified-v10"] .legend-motion.ready{opacity:1}
 /* A playing character replaces its poster; stacking both creates a second jaw

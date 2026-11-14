@@ -22,7 +22,7 @@ jobs:
           for n in $(seq 1 30); do curl -fsS http://127.0.0.1:3118/health && break; sleep 1; done
           node scripts/tests/unified-v10-browser.mjs
         env:
-          # The visible WebGL canvas uses a detached video decoder. WebKitGTK's
+          # The visible WebGL canvas uses a transparent inline decoder. WebKitGTK's
           # offscreen-media suspension is Linux-specific; WebKit's own GLib
           # test driver enables this setting for equivalent media tests.
           WEBKIT_GST_ALLOW_PLAYBACK_OF_INVISIBLE_VIDEOS: '1'
