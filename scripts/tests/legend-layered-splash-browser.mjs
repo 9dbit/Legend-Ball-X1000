@@ -18,9 +18,11 @@ for(const engine of [chromium,webkit]){
     const splash=document.getElementById('bootSplash'),stage=document.getElementById('legendLayeredStage');
     const rect=stage.getBoundingClientRect(),btn=document.getElementById('bootPlay').getBoundingClientRect();
     const l=[...stage.querySelectorAll('img')].map(e=>({name:e.className,width:e.naturalWidth,complete:e.complete,opacity:getComputedStyle(e).opacity}));
-    return {ready:splash.classList.contains('layered-ready'),frame:rect.toJSON(),button:btn.toJSON(),layers:l,overflow:document.documentElement.scrollWidth>innerWidth+1};
+    return {ready:splash.classList.contains('layered-ready'),frame:rect.toJSON(),button:btn.toJSON(),layers:l,stageOpacity:getComputedStyle(stage).opacity,stageVisibility:getComputedStyle(stage).visibility,overflow:document.documentElement.scrollWidth>innerWidth+1};
    });
    assert.equal(before.layers.length,6,'six layers required');
+   assert.equal(before.stageOpacity,'1','approved art must be visible without a blank transition frame');
+   assert.equal(before.stageVisibility,'visible','layered scene must be visible');
    assert(before.layers.every(x=>x.complete&&x.width>0),'all layers decoded');
    assert(!before.overflow,'no horizontal overflow');
    assert(before.frame.top>=safeTop-1&&before.frame.bottom<=height-safeBottom+1,'stage inside safe area');

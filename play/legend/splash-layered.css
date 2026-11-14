@@ -16,7 +16,7 @@
  left:var(--legend-safe-center-x,50%);top:var(--legend-safe-center-y,50%);
  width:var(--splash-stage-width);height:auto;aspect-ratio:9/16;
  transform:translate(-50%,-50%);
- pointer-events:none;opacity:0;visibility:hidden;transition:opacity .16s linear;
+ pointer-events:none;opacity:0;visibility:hidden;transition:none!important;
 }
 #bootSplash.layered-ready .legend-layered-stage{opacity:1;visibility:visible}
 #bootSplash .legend-layered-stage img{
