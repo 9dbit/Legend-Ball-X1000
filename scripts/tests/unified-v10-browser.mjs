@@ -34,7 +34,7 @@ for(const type of [chromium,webkit]){
     const box=id=>document.querySelector(`[data-layer="${id}"]`).getBoundingClientRect().toJSON();
     const stage=document.querySelector('.legend-scene').getBoundingClientRect();
     const boxes=Object.fromEntries(['buybtn','antebtn','creditpanel','betpanel','logo','spinbutton'].map(id=>[id,box(id)]));
-    const text=[...document.querySelectorAll('.feature > span,.legend-credits,.legend-betlabel')].map(el=>({box:el.getBoundingClientRect().toJSON(),overflow:el.scrollWidth>el.clientWidth+1||el.scrollHeight>el.clientHeight+1}));
+    const text=[['buybtn','#buyFeature > span'],['antebtn','#anteFeature > span'],['creditpanel','.legend-credits'],['betpanel','.legend-betlabel']].map(([id,selector])=>{const el=document.querySelector(selector);return {id,box:el.getBoundingClientRect().toJSON(),overflow:el.scrollWidth>el.clientWidth+1||el.scrollHeight>el.clientHeight+1};});
     const skins=[['creditpanel','img',940,242,39,23,903,215],['betpanel','img',940,226,40,14,897,200],['buybtn','.feature',940,282,22,43,910,262],['antebtn','.feature',940,252,19,18,912,228]].map(([id,selector,w,h,x1,y1,x2,y2])=>{
      const parent=document.querySelector(`[data-layer="${id}"]`),el=parent.querySelector(selector),s=getComputedStyle(el,selector==='.feature'?'::after':null),origin=(selector==='.feature'?el:parent).getBoundingClientRect(),ew=parseFloat(s.width),eh=parseFloat(s.height);
      return {id,x:origin.x+parseFloat(s.left)+ew*x1/w,y:origin.y+parseFloat(s.top)+eh*y1/h,width:ew*(x2-x1)/w,height:eh*(y2-y1)/h};
@@ -45,7 +45,8 @@ for(const type of [chromium,webkit]){
    for(const id of ['antebtn','creditpanel','betpanel']){assert(Math.abs(hud.boxes[id].width-hud.boxes.buybtn.width)<1,id+' equal width');assert(Math.abs(hud.boxes[id].height-hud.boxes.buybtn.height)<1,id+' equal height');}
    for(const [a,b,axis] of [['buybtn','antebtn','y'],['creditpanel','betpanel','y'],['buybtn','creditpanel','x'],['antebtn','betpanel','x']])assert(Math.abs(hud.boxes[a][axis]-hud.boxes[b][axis])<1,'HUD alignment');
    for(const s of hud.skins)for(const k of ['x','y','width','height'])assert(Math.abs(s[k]-hud.boxes[s.id][k])<1,s.id+' visible skin '+k+' must match its panel');
-   for(const [i,t] of hud.text.entries()){const p=hud.boxes[['buybtn','antebtn','creditpanel','betpanel'][i]];assert(!t.overflow,'Complete HUD text must fit');assert(t.box.x>=p.x+2&&t.box.y>=p.y+2&&t.box.x+t.box.width<=p.x+p.width-2&&t.box.y+t.box.height<=p.y+p.height-2,'Text must stay inside its frame');}
+   await writeFile(`${output}/${type.name()}-${width}-hud.json`,JSON.stringify(hud,null,2));
+   for(const t of hud.text){const p=hud.boxes[t.id];assert(!t.overflow,t.id+' complete HUD text must fit');assert(t.box.x>=p.x+2&&t.box.y>=p.y+2&&t.box.x+t.box.width<=p.x+p.width-2&&t.box.y+t.box.height<=p.y+p.height-2,t.id+' text must stay inside its frame');}
    for(const p of hud.plain){assert.equal(p.border,0);assert.equal(p.background,'none');assert.equal(p.color,'rgba(0, 0, 0, 0)');assert.equal(p.shadow,'none');}
    assert(Math.abs(hud.boxes.logo.x+hud.boxes.logo.width/2-hud.stage.x-hud.stage.width/2)<1,'Logo centered on page');
    assert(Math.abs(hud.sprite.width/hud.stage.width*1080-312)<1&&Math.abs(hud.sprite.height/hud.stage.width*1080-286)<1,'SPIN artwork exactly 30% larger');
