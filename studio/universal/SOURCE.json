@@ -1,7 +1,7 @@
 {
   "repository": "https://github.com/9dbit/Soft-Tech",
   "branch": "feat/legend-ball-linked-layout-v10",
-  "commit": "53e44afbfd7657037c4b3cafb78bf6c61824fe64",
+  "commit": "a2eb4bbb4e6a94f6ab3265343bd341e97c33f0a9",
   "path": "game-studio",
   "build": "LEGEND_EMBEDDED=1 npm run build",
   "integration": "Same-origin Legend V12 renderer; grouped Total Bet controls; native JSON export; live gameplay settings preserved in visual draft"
