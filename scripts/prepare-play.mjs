@@ -26,7 +26,8 @@ for(const size of [48,180,192,512]){
 }
 await copyFile(resolve(root,'studio/assets/legend-raster/icons/legend-touch-maskable-512.png'),resolve(root,'play/icons/legend-touch-maskable-512.png'));
 await copyFile(resolve(root,'play/icons/legend-touch-maskable-512.png'),resolve(root,'play/icons/legend-raster-v2-maskable-512.png'));
-for(const target of ['apple-touch-icon.png','studio/apple-touch-icon.png','play/apple-touch-icon.png'])await copyFile(resolve(root,'play/icons/legend-touch-180.png'),resolve(root,target));
+// Preserve the approved V12 iPhone branding across every preparation/build.
+for(const target of ['apple-touch-icon.png','studio/apple-touch-icon.png','play/apple-touch-icon.png'])await copyFile(resolve(root,'play/icons/legend-brand-v12-180.png'),resolve(root,target));
 const project=JSON.parse(await readFile(resolve(root,'studio/project.json'),'utf8'));
 await writeFile(resolve(root,'play/legend/default-project.js'),'window.LEGEND_DEFAULT_PROJECT = '+JSON.stringify(project)+';\n');
 await writeFile(resolve(root,'studio/project-data.js'),'window.SKY_PROJECT_DEFAULT = '+JSON.stringify(project)+';\n');
