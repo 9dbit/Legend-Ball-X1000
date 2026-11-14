@@ -210,38 +210,45 @@ test('Bonus Booster label and accessible description agree with the unchanged +2
   assert.match(ui.nodes.get('anteRulesNote').textContent,/Bonus Booster/);
 });
 
-test('original Legend Ball high-resolution touch icons are installed for Safari, Android and PWA',()=>{
+test('approved Legend Ball V12 branding renders correctly on OG cards, Safari and PWA',()=>{
   const variants=[['48',48],['180',180],['192',192],['512',512],['maskable-512',512]];
   for(const [name,size] of variants){
-    const filename=`legend-touch-${name}.png`;
+    const filename=`legend-brand-v12-${name}.png`;
     const bytes=readFileSync(resolve(root,'play/icons',filename));
     assert.deepEqual([...bytes.subarray(0,8)],[137,80,78,71,13,10,26,10],filename);
     assert.equal(bytes.readUInt32BE(16),size,filename+' width');
     assert.equal(bytes.readUInt32BE(20),size,filename+' height');
     assert(bytes.length>(size===48?800:5000),'Unexpected placeholder image '+filename);
   }
+  const approvedTouch=readFileSync(resolve(root,'play/icons/legend-brand-v12-180.png'));
   for(const path of ['apple-touch-icon.png','play/apple-touch-icon.png','studio/apple-touch-icon.png']){
-    const bytes=readFileSync(resolve(root,path));
-    assert.equal(bytes.readUInt32BE(16),180,path);
-    assert.equal(bytes.readUInt32BE(20),180,path);
+    assert.deepEqual(readFileSync(resolve(root,path)),approvedTouch,path+' differs from approved touch icon');
   }
+  const ogImage=readFileSync(resolve(root,'play/assets/legend-brand/og-legend-v12.png'));
+  assert.deepEqual([...ogImage.subarray(0,8)],[137,80,78,71,13,10,26,10]);
+  assert.equal(ogImage.readUInt32BE(16),1200,'OG width');
+  assert.equal(ogImage.readUInt32BE(20),630,'OG height');
   const game=read('play/index.html'),studio=read('studio/index.html');
-  assert.match(game,/rel="apple-touch-icon" sizes="180x180" href="icons\/legend-raster-v2-180.png"/);
-  const version=JSON.parse(read('package.json')).version;
-  assert(game.includes(`rel="manifest" href="manifest.webmanifest?v=${version}"`));
-  assert.match(studio,/rel="apple-touch-icon" sizes="180x180" href="\/play\/icons\/legend-raster-v2-180.png"/);
-  assert(studio.includes(`rel="manifest" href="/studio/manifest.webmanifest?v=${version}"`));
+  const ogUrl='https://legend-ball-web-staging.up.railway.app/play/assets/legend-brand/og-legend-v12.png';
+  assert(game.includes(`<meta property="og:image" content="${ogUrl}">`));
+  assert(game.includes(`<meta name="twitter:image" content="${ogUrl}">`));
+  assert(game.includes('<meta property="og:image:width" content="1200">'));
+  assert(game.includes('<meta property="og:image:height" content="630">'));
+  assert(game.includes('rel="apple-touch-icon" sizes="180x180" href="icons/legend-brand-v12-180.png?v=20261114"'));
+  assert(game.includes('rel="manifest" href="manifest.webmanifest?v=brand-v12-20261114"'));
+  assert(studio.includes('rel="apple-touch-icon" sizes="180x180" href="/play/icons/legend-brand-v12-180.png?v=20261114"'));
+  assert(studio.includes('rel="manifest" href="/studio/manifest.webmanifest?v=brand-v12-20261114"'));
   const gameManifest=JSON.parse(read('play/manifest.webmanifest'));
   assert.equal(gameManifest.id,'/play/');
   assert.equal(gameManifest.start_url,'/play/');
-  assert(gameManifest.icons.some(icon=>icon.sizes==='192x192'&&icon.src.includes('legend-raster-v2-192.png')));
-  assert(gameManifest.icons.some(icon=>icon.sizes==='512x512'&&icon.purpose==='any'));
-  assert(gameManifest.icons.some(icon=>icon.sizes==='512x512'&&icon.purpose==='maskable'));
+  assert(gameManifest.icons.some(icon=>icon.sizes==='192x192'&&icon.src==='icons/legend-brand-v12-192.png'));
+  assert(gameManifest.icons.some(icon=>icon.sizes==='512x512'&&icon.src==='icons/legend-brand-v12-512.png'&&icon.purpose==='any'));
+  assert(gameManifest.icons.some(icon=>icon.sizes==='512x512'&&icon.src==='icons/legend-brand-v12-maskable-512.png'&&icon.purpose==='maskable'));
   const studioManifest=JSON.parse(read('studio/manifest.webmanifest'));
   assert.equal(studioManifest.id,'/studio/');
   assert.equal(studioManifest.start_url,'/studio/');
-  assert(studioManifest.icons.some(icon=>icon.sizes==='192x192'));
-  assert(studioManifest.icons.some(icon=>icon.sizes==='512x512'));
+  assert(studioManifest.icons.some(icon=>icon.sizes==='192x192'&&icon.src==='/play/icons/legend-brand-v12-192.png'));
+  assert(studioManifest.icons.some(icon=>icon.sizes==='512x512'&&icon.src==='/play/icons/legend-brand-v12-512.png'));
 });
 
 
