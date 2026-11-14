@@ -356,6 +356,9 @@ html[data-boot="error"] #bootSplash #bootStatus{display:block!important;}
    retaining a dimmed full-bleed backdrop outside the safe image frame. */
 @media (max-width:960px){
  #bootSplash{
+  height:var(--sg-pwa-full-height,100dvh)!important;
+  min-height:var(--sg-pwa-full-height,100dvh)!important;
+  max-height:var(--sg-pwa-full-height,100dvh)!important;
   background-image:none!important;background-color:#050711!important;
   --legend-safe-top:var(--legend-test-safe-top,env(safe-area-inset-top,0px));
   --legend-safe-bottom:var(--legend-test-safe-bottom,env(safe-area-inset-bottom,0px));
