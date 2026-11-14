@@ -349,3 +349,80 @@ html[data-boot="error"] #bootSplash #bootStatus{display:block!important;}
 /* Spin movement stays sharp; neither blur nor speed-streak overlays are used. */
 .legend-scene[data-layout-version="12"] .reels.rolling .tile .symbol{filter:none!important}
 .legend-scene[data-layout-version="12"] .reels.rolling .reel-column::after{display:none!important;content:none!important;animation:none!important}
+
+/* Mobile/standalone/PWA safe frames.
+   The approved 864x1536 splash JPEG contains its logo and ENTER artwork.
+   Keep the entire image visible within the usable safe viewport, while
+   retaining a dimmed full-bleed backdrop outside the safe image frame. */
+@media (max-width:960px){
+ #bootSplash{
+  background-image:none!important;background-color:#050711!important;
+  --legend-safe-top:var(--legend-test-safe-top,env(safe-area-inset-top,0px));
+  --legend-safe-bottom:var(--legend-test-safe-bottom,env(safe-area-inset-bottom,0px));
+  --legend-device-height:var(--sg-pwa-full-height,100dvh);
+  --legend-frame-width:min(
+   calc(100vw - env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)),
+   calc((var(--legend-device-height) - var(--legend-safe-top) - var(--legend-safe-bottom) - 20px) * 0.5625)
+  );
+  --legend-safe-center-y:calc(50% + (var(--legend-safe-top) - var(--legend-safe-bottom)) / 2);
+  --legend-safe-center-x:calc(50% + (env(safe-area-inset-left,0px) - env(safe-area-inset-right,0px)) / 2);
+ }
+ #bootSplash::after{
+  content:"";position:absolute;inset:-30px;z-index:0;
+  background:url('/play/assets/legend-master/splash-master.jpg') center/cover no-repeat;
+  filter:blur(24px) brightness(.45);pointer-events:none;
+ }
+ #bootSplash::before{
+  content:"";position:absolute;z-index:1;pointer-events:none;
+  left:var(--legend-safe-center-x);top:var(--legend-safe-center-y);
+  width:var(--legend-frame-width);height:auto;aspect-ratio:9/16;
+  transform:translate(-50%,-50%);
+  background:url('/play/assets/legend-master/splash-master.jpg') center/100% 100% no-repeat;
+ }
+ #bootSplash .splash-footer{
+  position:absolute!important;inset:auto!important;
+  left:var(--legend-safe-center-x)!important;top:var(--legend-safe-center-y)!important;
+  width:var(--legend-frame-width)!important;height:auto!important;
+  aspect-ratio:9/16!important;max-width:none!important;max-height:none!important;
+  transform:translate(-50%,-50%)!important;z-index:8!important;
+  pointer-events:none!important;
+ }
+ #bootSplash #bootPlay{
+  left:10.5%!important;top:79.3%!important;width:79%!important;height:15.6%!important;
+ }
+ .game.has-published-scene{
+  background:radial-gradient(ellipse at 50% 32%,#23375c,#0b122a 62%,#050711 100%)!important;
+  --legend-safe-top:var(--legend-test-safe-top,env(safe-area-inset-top,0px));
+  --legend-safe-bottom:var(--legend-test-safe-bottom,env(safe-area-inset-bottom,0px));
+  --legend-device-height:var(--sg-pwa-full-height,100dvh);
+  --legend-game-width:min(
+   100%,
+   calc((var(--legend-device-height) - var(--legend-safe-top) - var(--legend-safe-bottom) - 20px) * 0.5625)
+  );
+  --legend-safe-center-y:calc(50% + (var(--legend-safe-top) - var(--legend-safe-bottom)) / 2);
+ }
+ .game.has-published-scene > .legend-scene[data-ui-version="unified-v10"]{
+  left:50%!important;top:var(--legend-safe-center-y)!important;
+  width:var(--legend-game-width)!important;height:auto!important;aspect-ratio:9/16!important;
+  transform:translate(-50%,-50%)!important;
+ }
+}
+
+
+/* Landscape browsers retain the portrait game instead of clipping a
+   desktop-width 9:16 stage below the short viewport. */
+@media (max-width:960px) and (orientation:landscape){
+ html,body{
+  width:100%!important;height:100dvh!important;min-height:100dvh!important;
+  margin:0!important;overflow:hidden!important;
+ }
+ body{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  padding:0!important;
+ }
+ .game{
+  width:min(100vw,calc((100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)) * 0.5625))!important;
+  max-width:none!important;height:auto!important;min-height:0!important;
+  aspect-ratio:9/16!important;flex:none!important;box-shadow:none!important;
+ }
+}
