@@ -66,6 +66,7 @@ html:not([data-boot="entered"]) .game{visibility:hidden!important;pointer-events
 
 <link rel="stylesheet" href="legend/curated-v9.css?v=v9-preview-1">
 <link rel="stylesheet" href="legend/unified-v10.css?v=14-pwa-height-20261114">
+<link rel="stylesheet" href="legend/splash-layered.css?v=v12-layered-1">
 </head>
 <body>
 <section id="bootSplash" class="boot-splash" aria-label="LEGEND BALL X1000 loading">
@@ -74,6 +75,15 @@ html:not([data-boot="entered"]) .game{visibility:hidden!important;pointer-events
 <img class="splash-dragon" src="/play/assets/legend-raster/dragon.png" alt="">
     <img class="splash-background" src="/play/assets/legend-cinematics/scene-ember-warrior.webp" alt="" fetchpriority="high">
 
+  </div>
+
+  <div class="legend-layered-stage" id="legendLayeredStage" aria-hidden="true">
+    <img class="legend-splash-background" src="/play/assets/legend-splash/sources/background.webp" alt="" fetchpriority="high">
+    <img class="legend-splash-dragon" src="/play/assets/legend-splash/sources/dragon.webp" alt="" decoding="async">
+    <img class="legend-splash-character" src="/play/assets/legend-splash/sources/character.webp" alt="" decoding="async">
+    <img class="legend-splash-thunder" src="/play/assets/legend-splash/sources/thunder.webp" alt="" decoding="async">
+    <img class="legend-splash-logo" src="/play/assets/legend-splash/sources/logo.webp" alt="" fetchpriority="high">
+    <img class="legend-splash-enter" src="/play/assets/legend-splash/sources/enter-button.webp" alt="" decoding="async">
   </div>
   <div class="splash-shade" aria-hidden="true"></div>
   <header class="splash-title"><h1 class="sr-only">LEGEND BALL X1000</h1><div class="shared-brand splash-brand legend-splash-brand" data-game-brand><span class="brand-top"><img src="/play/assets/legend-raster/logo.png" alt="LEGEND BALL X1000" fetchpriority="high"></span></div><span>RISE OF THE SIX RUNES</span></header>
@@ -87,7 +97,7 @@ html:not([data-boot="entered"]) .game{visibility:hidden!important;pointer-events
     <noscript>Aktifkan JavaScript untuk memuat game.</noscript>
   </div>
 </section>
-<script src="boot.js?v=legend-ios-splash-20261113"></script>
+<script src="boot.js?v=v12-layered-1"></script>
 <main inert class="game" aria-label="LEGEND BALL X1000 — permainan kredit virtual">
   <header class="hero"><img class="legend-hero-art" src="/play/assets/legend-raster/background.png" alt="Aster Varn, rune knight, facing the crystalline leviathan Veylorn"><img class="legend-hero-logo" src="/play/assets/legend-raster/logo.png" alt="LEGEND BALL X1000"><h1 class="sr-only">LEGEND BALL X1000</h1></header>
   <section class="win-banner" aria-label="Kemenangan ronde"><span class="win-star" aria-hidden="true">✦</span><div class="win-value"><strong id="win">0.00</strong></div></section>

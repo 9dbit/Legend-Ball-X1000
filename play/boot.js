@@ -5,6 +5,12 @@
   const play=document.getElementById('bootPlay'), retry=document.getElementById('bootRetry');
   const status=document.getElementById('bootStatus'), progress=document.getElementById('bootProgress');
   let state='loading', timer;
+  // Retain the approved fallback poster until all six composited layers decode.
+  const layerImages=[...(splash.querySelectorAll?.('.legend-layered-stage img')||[])];
+  if(layerImages.length===6){
+    void Promise.all(layerImages.map(img=>img.decode().then(()=>img.naturalWidth>0).catch(()=>false)))
+      .then(ok=>{if(ok.every(Boolean)&&state!=='entered')splash.classList.add('layered-ready');});
+  }
   function fail(error){
     if(state==='entered'||state==='error')return;
     clearTimeout(timer);state='error';root.dataset.boot=state;
@@ -14,7 +20,12 @@
   }
   function enter(event){
     if(state!=='ready')return;
-    state='entered';root.dataset.boot=state;splash.hidden=true;
+    state='entered';root.dataset.boot=state;
+    const realTap=event?.isTrusted&&!window.SkygatePreview;
+    if(realTap&&splash.classList?.contains('layered-ready')){
+      splash.classList.add('enter-pressed');
+      setTimeout(()=>{splash.hidden=true;splash.classList.remove('enter-pressed');},145);
+    }else splash.hidden=true;
     document.querySelector('.game').inert=false;
     // A real splash tap starts the existing game audio path synchronously.
     // Its handler unlocks Web Audio before fetching/decoding the Studio BGM.
