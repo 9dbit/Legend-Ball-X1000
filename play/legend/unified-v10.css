@@ -2,7 +2,16 @@
    1080x1920 scaled uniformly. Presentation values from Studio JSON only.
    No CSS positions/widths/heights for individual layers.
  */
-.game.has-published-scene{background:#0b081b!important}
+/* Extend the existing artwork behind the fixed-ratio game stage.
+   The reels/panels stay in their approved 9:16 safe frame while the
+   atmospheric source image fills spare PWA/browser viewport space. */
+.game.has-published-scene{
+ background-color:#0b1026!important;
+ background-image:url('/play/assets/legend-v10/background.webp')!important;
+ background-position:center center!important;
+ background-size:cover!important;
+ background-repeat:no-repeat!important;
+}
 .game.has-published-scene > .legend-scene[data-ui-version="unified-v10"]{
  position:absolute!important;
  left:50%!important;top:50%!important;right:auto!important;bottom:auto!important;
@@ -12,7 +21,11 @@
  margin:0!important;transform:translate(-50%,-50%)!important;
  transform-origin:center center!important;
  overflow:hidden!important;container-type:inline-size!important;
- isolation:isolate!important;background:#0f0a26!important;
+ isolation:isolate!important;background:transparent!important;
+ /* Fade only the outermost scene pixels into the matching viewport art.
+    All HUD controls stay opaque in the central 94%+ of the frame. */
+ -webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 4%,#000 98%,transparent 100%)!important;
+ mask-image:linear-gradient(to bottom,transparent 0%,#000 4%,#000 98%,transparent 100%)!important;
 }
 .legend-scene[data-ui-version="unified-v10"] .published-layer{
  border:0!important;border-radius:0!important;box-shadow:none!important;
@@ -394,7 +407,7 @@ html[data-boot="error"] #bootSplash #bootStatus{display:block!important;}
   left:10.5%!important;top:79.3%!important;width:79%!important;height:15.6%!important;
  }
  .game.has-published-scene{
-  background:radial-gradient(ellipse at 50% 32%,#23375c,#0b122a 62%,#050711 100%)!important;
+  /* Keep existing illustrated backdrop visible above/below the safe-area stage. */
   --legend-safe-top:var(--legend-test-safe-top,env(safe-area-inset-top,0px));
   --legend-safe-bottom:var(--legend-test-safe-bottom,env(safe-area-inset-bottom,0px));
   --legend-device-height:var(--sg-pwa-full-height,100dvh);

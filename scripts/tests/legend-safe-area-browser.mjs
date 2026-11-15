@@ -59,10 +59,12 @@ for (const engine of (process.env.LEGEND_BROWSER==='webkit'?[webkit]:process.env
      const stage=document.querySelector('.legend-scene'),g=document.querySelector('.game'),
        e=stage.getBoundingClientRect(),b=g.getBoundingClientRect(),spin=document.querySelector('[data-layer="spinbutton"]')?.getBoundingClientRect();
      return {stage:e.toJSON(),game:b.toJSON(),spin:spin?.toJSON(),overflow:document.documentElement.scrollWidth>innerWidth+1,
-       topStyle:getComputedStyle(stage).top,widthStyle:getComputedStyle(stage).width};
+       topStyle:getComputedStyle(stage).top,widthStyle:getComputedStyle(stage).width,
+       backdropImage:getComputedStyle(g).backgroundImage};
    });
    if(process.env.LEGEND_DEBUG==='1')console.log('CASE_BOUNDS',engine.name(),id,JSON.stringify({splash,game}));
    assert(!game.overflow,id+' game horizontal overflow');
+   assert(game.backdropImage.includes('/play/assets/legend-v10/background.webp'),id+' full-viewport game backdrop present');
    assert(game.stage.y>=safeTop+5,id+' game scene below safe top');
    assert(game.stage.bottom<=height-safeBottom-5,id+' game scene above bottom safe');
    assert(game.stage.x>=-1&&game.stage.right<=width+1,id+' game scene horizontal bounds');
