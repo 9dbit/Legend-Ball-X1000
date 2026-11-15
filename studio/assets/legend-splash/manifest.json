@@ -1,109 +1,146 @@
 {
-  "version": "splash-layered-v2-sharp",
+  "version": "splash-fullbleed-v3",
   "base_size": [
-    864,
-    1536
+    941,
+    2160
   ],
-  "composition": "pixel-aligned feathered mattes over pristine master",
+  "approved_reference": "originals/legend-ball-storm-of-legends-approved.png",
+  "original_size": [
+    941,
+    1672
+  ],
+  "extension": {
+    "top_px": 258,
+    "bottom_px": 230
+  },
+  "rules": {
+    "display": "background art full-bleed with cover, centered",
+    "foreground": "source-aligned soft mattes, micro-motion",
+    "logo": "static",
+    "enter": "touch press feedback"
+  },
   "layers": {
     "background": {
       "file": "sources/background.webp",
       "box": [
         0,
         0,
-        864,
-        1536
+        941,
+        2160
       ],
-      "width": 864,
-      "height": 1536,
-      "render": "sharp original master"
+      "size": [
+        941,
+        2160
+      ],
+      "source": "pixel-preserved approved image with atmospheric extensions"
     },
     "character": {
       "file": "sources/character.webp",
       "box": [
         0,
         0,
-        864,
-        1536
+        941,
+        2160
       ],
-      "width": 864,
-      "height": 1536,
+      "size": [
+        941,
+        2160
+      ],
       "alpha_bbox": [
         0,
-        276,
-        772,
-        1326
+        549,
+        880,
+        1781
       ],
-      "edge": "soft-feather",
-      "feather_px": 30
+      "feather": 38
     },
     "dragon": {
       "file": "sources/dragon.webp",
       "box": [
         0,
         0,
-        864,
-        1536
+        941,
+        2160
       ],
-      "width": 864,
-      "height": 1536,
+      "size": [
+        941,
+        2160
+      ],
       "alpha_bbox": [
-        271,
-        297,
-        864,
-        1263
+        250,
+        543,
+        941,
+        1453
       ],
-      "edge": "soft-feather",
-      "feather_px": 34
+      "feather": 38
     },
     "logo": {
       "file": "sources/logo.webp",
       "box": [
         0,
         0,
-        864,
-        1536
+        941,
+        2160
       ],
-      "width": 864,
-      "height": 1536,
+      "size": [
+        941,
+        2160
+      ],
       "alpha_bbox": [
         0,
-        0,
-        864,
-        421
+        295,
+        941,
+        776
       ],
-      "edge": "soft-feather",
-      "feather_px": 15
+      "feather": 21
     },
     "enter-button": {
       "file": "sources/enter-button.webp",
       "box": [
         0,
         0,
-        864,
-        1536
+        941,
+        2160
       ],
-      "width": 864,
-      "height": 1536,
+      "size": [
+        941,
+        2160
+      ],
       "alpha_bbox": [
         0,
-        1146,
-        864,
-        1536
+        1377,
+        941,
+        1825
       ],
-      "edge": "soft-feather",
-      "feather_px": 22
+      "feather": 20
     },
     "thunder": {
       "file": "sources/thunder.webp",
       "box": [
         0,
         0,
-        864,
-        1536
+        941,
+        2160
       ],
-      "width": 864,
-      "height": 1536
+      "size": [
+        941,
+        2160
+      ],
+      "alpha": "transparent"
+    },
+    "landscape-atmosphere": {
+      "file": "sources/landscape-atmosphere.webp",
+      "box": [
+        0,
+        0,
+        1600,
+        900
+      ],
+      "size": [
+        1600,
+        900
+      ],
+      "purpose": "sidefill with only sky and volcanic clouds, no duplicated logo or character"
     }
   }
 }

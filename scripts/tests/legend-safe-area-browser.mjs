@@ -40,15 +40,20 @@ for (const engine of (process.env.LEGEND_BROWSER==='webkit'?[webkit]:process.env
    });
    assert(!splash.overflow,id+' splash horizontal overflow');
    assert(splash.frame.width>0&&splash.frame.height>0,id+' visible frame');
-   assert(Math.abs(splash.frame.width*16/9-splash.frame.height)<2,id+' splash aspect ratio');
-   assert(splash.frame.y>=safeTop+5,id+' logo image starts below safe top: '+JSON.stringify(splash));
-   assert(splash.frame.bottom<=height-safeBottom-5,id+' splash below bottom safe area');
-   assert(splash.frame.x>=-1&&splash.frame.right<=width+1,id+' splash horizontal bounds');
+   assert(Math.abs(splash.frame.width*2160/941-splash.frame.height)<3,id+' source aspect ratio');
+   if(height>=width){
+     assert(splash.frame.x<=1&&splash.frame.right>=width-1,id+' full-bleed width coverage');
+     assert(splash.frame.y<=1&&splash.frame.bottom>=height-1,id+' full-bleed height coverage');
+     assert(splash.button.y>=safeTop,id+' ENTER below status/notch');
+     assert(splash.button.bottom<=height-safeBottom,id+' ENTER above home indicator');
+     assert(splash.frame.y+splash.frame.height*.16>=safeTop,id+' logo safe above');
+   }else{
+     assert(splash.button.top>=0&&splash.button.bottom<=height,id+' landscape ENTER visible');
+   }
    assert(splash.button.x>=splash.frame.x&&splash.button.right<=splash.frame.right,id+' button horizontal bounds');
-   assert(splash.button.y>=splash.frame.y&&splash.button.bottom<=splash.frame.bottom,id+' button vertical bounds');
-   assert(Math.abs(parseFloat(splash.art.width)-splash.frame.width)<1,id+' art and button frame share width');
    if(process.env.LEGEND_CAPTURE_SCREENSHOTS==='1')await page.screenshot({path:output+'/'+engine.name()+'-'+id+'-splash.png'});
    await page.locator('#bootPlay').click();
+   await page.waitForFunction(()=>document.documentElement.dataset.boot==='entered'&&document.getElementById('bootSplash')?.hidden,{timeout:30000});
    await page.locator('.legend-scene[data-layout-version="12"]').waitFor({timeout:30000});
    const game=await page.evaluate(()=>{
      const stage=document.querySelector('.legend-scene'),g=document.querySelector('.game'),

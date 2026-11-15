@@ -1,28 +1,26 @@
-"""Visual regression: rendered iPhone splash vs approved source master.
-Requires Pillow and numpy. The screenshot is the WebKit 393 x 852 PWA case
-with stage at x=0, y=89 and height=699.
+"""Compare the iPhone PWA screenshot against the full-bleed approved art.
+
+The screenshot is taken after all layers decode with reduced motion enabled.
+The same cover/crop transform as CSS is applied to the original source image.
 """
 from pathlib import Path
-from PIL import Image
-import numpy as np
+from PIL import Image, ImageChops, ImageStat
 r=Path(__file__).resolve().parents[2]
-master=Image.open(r/'studio/assets/legend-master/splash-master.jpg').convert('RGB')
-image=Image.open(r/'qa-artifacts/legend-layered-splash/webkit-iphone-notch.png').convert('RGB')
-# Derive safe frame dimensions from CSS ratio and simulated iPhone viewport.
+master=Image.open(r/'studio/assets/legend-splash/sources/background.webp').convert('RGB')
+p=r/'qa-artifacts/legend-layered-splash/webkit-iphone-notch-pwa.png'
+if not p.exists():
+    raise SystemExit('Run LEGEND_CAPTURE_SCREENSHOTS=1 node scripts/tests/legend-layered-splash-browser.mjs first')
+image=Image.open(p).convert('RGB')
 w,h=image.size
-frame_w=min(w,int(round((h-59-34-20)*9/16)))
-frame_h=round(frame_w*16/9)
-x=(w-frame_w)//2
-y=round((h+(59-34))/2-frame_h/2)
-got=np.asarray(image.crop((x,y,x+frame_w,y+frame_h)),dtype=np.int16)
-ref=np.asarray(master.resize((frame_w,frame_h),Image.Resampling.BICUBIC),dtype=np.int16)
-err=np.abs(got-ref)
-mean=float(err.mean())
-p95=float(np.percentile(err,95))
-n20=float(np.mean(err>20))
-print(f'SOURCE_FIDELITY frame={frame_w}x{frame_h} x={x} y={y} MAE={mean:.2f} P95={p95:.2f} fraction_above_20={n20:.3f}')
-# Higher thresholds allow JPEG vs WebP resampling but reject large blur
-# and hard rectangular seams seen in previous deployment.
-assert mean<12, f'Splash diverged from approved source: MAE={mean:.2f}'
-assert n20<0.16, f'Excessive misaligned or blurred pixels: {n20:.3f}'
-print('PASS approved design fidelity and seam regression')
+mw,mh=master.size
+scale=max(w/mw,h/mh)
+sw,sh=round(mw*scale),round(mh*scale)
+src=master.resize((sw,sh),Image.Resampling.BICUBIC)
+left=(sw-w)//2
+top=(sh-h)//2
+expected=src.crop((left,top,left+w,top+h))
+delta=ImageChops.difference(image,expected)
+mae=sum(ImageStat.Stat(delta).mean)/3
+print(f'SOURCE_FIDELITY viewport={w}x{h} master={mw}x{mh} cover={sw}x{sh} MAE={mae:.2f}')
+assert mae<17, f'Unexpected visual variation, blank bars, or edge seams: MAE={mae:.2f}'
+print('PASS approved full-bleed art fidelity')

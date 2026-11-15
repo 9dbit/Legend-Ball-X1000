@@ -29,13 +29,13 @@ for (const browserType of [chromium, webkit]) {
     const a=await read();
     await page.waitForTimeout(1900);
     const b=await read();
-    assert(a.character.animation.includes('legend-character-breathe'));
-    assert(a.dragon.animation.includes('legend-dragon-breathe'));
+    assert(a.character.animation.includes('legend-character-pulse'));
+    assert(a.dragon.animation.includes('legend-dragon-pulse'));
     assert.notEqual(a.character.transform,b.character.transform,'character independent motion');
     assert.notEqual(a.dragon.transform,b.dragon.transform,'dragon independent motion');
     assert.equal(b.logo.animation,'none','logo must remain still');
     assert.equal(b.logo.transform,'none','logo must have no transform');
-    await page.screenshot({path:'qa-artifacts/legend-splash-motion/'+browserType.name()+'-moving.png'});
+    if(process.env.LEGEND_CAPTURE_SCREENSHOTS==='1')await page.screenshot({path:'qa-artifacts/legend-splash-motion/'+browserType.name()+'-moving.png'});
     await page.evaluate(()=>document.getElementById('bootSplash').classList.add('enter-pressed'));
     const pressed=await read();
     assert.notEqual(pressed.button.transform,b.button.transform,'ENTER scales down');
