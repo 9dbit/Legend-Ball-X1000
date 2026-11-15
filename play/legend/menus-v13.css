@@ -1,0 +1,487 @@
+/* LEGEND BALL X1000 / V13 interactive codex
+ * Artwork-based menus, aligned to the approved settings/autoplay/rules concepts.
+ * Presentation only: never touches outcomes, bets, wallet, or random state.
+ */
+:root{
+  --legend13-gold:#ffd36c;
+  --legend13-cream:#fff1c9;
+  --legend13-ink:#140525;
+  --legend13-plate:url('/play/assets/legend-v12/bonus-frame.webp');
+}
+body dialog:is(#menuDialog,#autoDialog,#modal){
+  box-sizing:border-box!important;
+  width:min(calc(100vw - 14px),520px)!important;
+  max-width:520px!important;
+  --legend13-safe-top:var(--legend-test-safe-top,env(safe-area-inset-top,0px));
+  --legend13-safe-bottom:var(--legend-test-safe-bottom,env(safe-area-inset-bottom,0px));
+  max-height:calc(100dvh - var(--legend13-safe-top) - var(--legend13-safe-bottom) - 16px)!important;
+  min-height:0!important;
+  padding:0!important;
+  margin:auto!important;
+  transform:translateY(calc((var(--legend13-safe-top) - var(--legend13-safe-bottom))/2))!important;
+  border:3px solid #d99a2a!important;
+  border-radius:clamp(18px,5vw,32px)!important;
+  background:
+     linear-gradient(180deg,#1b073bed 0%,#1b0738f5 47%,#1c072df5 84%,#13061af8),
+     url('/play/assets/legend-v10/background.webp') center/cover no-repeat!important;
+  color:var(--legend13-cream)!important;
+  box-shadow:0 0 0 2px #5e290b,0 0 0 4px #f5b84f8c,
+     inset 0 0 0 2px #f7b65078,inset 0 0 26px #d553a944,
+     0 18px 60px #000e,0 0 30px #e196243d!important;
+  overflow-x:hidden!important;overflow-y:auto!important;
+  overscroll-behavior:contain;
+  scrollbar-color:#ffbf50 #220933;
+  scrollbar-width:thin;
+  isolation:isolate;
+}
+body dialog:is(#menuDialog,#autoDialog,#modal)::backdrop{
+  background:#030317ca!important;
+  backdrop-filter:blur(4px) brightness(.68)!important;
+}
+body dialog:is(#menuDialog,#autoDialog,#modal) .dialog-head{
+  position:sticky!important;top:0!important;z-index:20!important;
+  box-sizing:border-box;
+  height:clamp(172px,42vw,210px)!important;
+  min-height:clamp(172px,42vw,210px)!important;
+  padding:clamp(116px,30vw,160px) 52px 13px 16px!important;
+  display:flex!important;align-items:flex-end!important;justify-content:center!important;
+  border-bottom:3px solid #eda744!important;
+  border-radius:clamp(14px,4vw,28px) clamp(14px,4vw,28px) 3px 3px!important;
+  background:linear-gradient(0deg,#3b0a4a 0%,#170b42ba 42%,#0a19559c 100%)!important;
+  box-shadow:inset 0 -4px 0 #3a1309,0 3px 18px #ff921b9c!important;
+  overflow:hidden;
+}
+body dialog:is(#menuDialog,#autoDialog,#modal) .dialog-head::before{
+  content:"";position:absolute;inset:-9px 0 13px;pointer-events:none;z-index:0;
+  background-image:
+    url('/play/assets/legend-v10/logo.webp'),
+    url('/play/assets/legend-v10/hero-poster.webp'),
+    url('/play/assets/legend-v10/dragon.webp'),
+    radial-gradient(ellipse at 54% 24%,#1648c8c7,transparent 55%);
+  background-size:55% auto,35% auto,41% auto,100% 100%;
+  background-position:50% 6%, -3% -12%,103% -10%,center;
+  background-repeat:no-repeat;
+  filter:drop-shadow(0 0 4px #ffb7398c);
+}
+body dialog:is(#menuDialog,#autoDialog,#modal) .dialog-head::after{
+  content:"◆";position:absolute;left:50%;bottom:-11px;z-index:3;transform:translateX(-50%);
+  font:900 20px/1 Georgia,serif;color:#ffe49c;
+  text-shadow:0 0 8px #ffc039,0 0 16px #ec8c12;
+}
+body dialog:is(#menuDialog,#autoDialog,#modal) .dialog-head h2{
+  position:relative;z-index:1;
+  font:900 clamp(20px,5.4vw,31px)/1.08 Georgia,serif!important;
+  text-transform:uppercase;letter-spacing:.022em!important;
+  color:#ffe9ac!important;white-space:nowrap;
+  background:none!important;background-clip:border-box!important;
+  -webkit-background-clip:border-box!important;-webkit-text-fill-color:#ffe19d!important;
+  color:#ffe19d!important;text-shadow:0 1px 0 #6e250b,0 2px 4px #200b18,0 0 9px #ffc45d!important;
+  filter:drop-shadow(0 2px 3px #14031e);
+  text-align:center;margin:0 auto!important;
+}
+body dialog:is(#menuDialog,#autoDialog,#modal) .dialog-head h2::before{
+  content:"LEGEND BALL X1000"!important;
+  display:block!important;margin-bottom:4px!important;
+  color:#f2c8fb!important;
+  -webkit-text-fill-color:#f2c8fb!important;
+  font:700 clamp(8px,2.2vw,11px)/1.3 system-ui,sans-serif!important;
+  letter-spacing:.27em!important;text-shadow:0 1px 3px #080318!important;
+}
+body dialog:is(#menuDialog,#autoDialog,#modal) .dialog-head .close{
+  position:absolute;right:10px;top:clamp(78px,20vw,116px);z-index:4;
+  display:grid!important;place-items:center!important;
+  width:clamp(42px,12vw,55px)!important;height:clamp(42px,12vw,55px)!important;
+  min-width:42px!important;min-height:42px!important;
+  padding:0!important;border-radius:50%!important;
+  border:2px solid #f4bf62!important;
+  background:radial-gradient(circle at 38% 30%,#3b2c2e,#0e071b 73%)!important;
+  color:#ffe393!important;font:700 30px/1 system-ui!important;
+  box-shadow:0 0 0 3px #1369ca,0 0 13px #03a9ff,
+     inset 0 0 0 3px #4a220f,inset 0 1px 9px #f5bd5880!important;
+  -webkit-tap-highlight-color:transparent;
+}
+body dialog:is(#menuDialog,#autoDialog,#modal) .dialog-head .close:active{
+  transform:translateY(2px) scale(.94);
+  filter:brightness(1.22);
+}
+body dialog:is(#menuDialog,#autoDialog,#modal) .dialog-body{
+  box-sizing:border-box;padding:13px clamp(12px,3.7vw,22px) 24px!important;
+  color:#f3e8fc;
+}
+body dialog:is(#menuDialog,#autoDialog,#modal) .dialog-body h3{
+  display:flex;align-items:center;justify-content:center;
+  margin:8px 0 6px!important;padding:0 0 2px;
+  color:#ffe3a1!important;font:800 clamp(16px,4.4vw,23px)/1.2 Georgia,serif!important;
+  text-align:center;text-shadow:0 2px 2px #29000b,0 0 8px #ff940d;
+  letter-spacing:.012em;
+}
+body dialog:is(#menuDialog,#autoDialog,#modal) .dialog-body h3::before,
+body dialog:is(#menuDialog,#autoDialog,#modal) .dialog-body h3::after{
+  content:"";display:block;flex:1 1 auto;min-width:8px;height:2px;margin:0 9px;
+  background:linear-gradient(to right,transparent,#ffb738);
+  box-shadow:0 0 5px #e77916;
+}
+body dialog:is(#menuDialog,#autoDialog,#modal) .dialog-body h3::after{
+  transform:rotate(180deg);
+}
+body dialog:is(#menuDialog,#autoDialog,#modal) .dialog-body button:focus-visible,
+body dialog:is(#menuDialog,#autoDialog,#modal) input:focus-visible,
+body dialog:is(#menuDialog,#autoDialog,#modal) summary:focus-visible{
+  outline:3px solid #44c9ff!important;outline-offset:2px!important;
+}
+/* The authored gold/blue raster buttons are reused as real button skins. */
+body dialog#menuDialog .settings-links{
+  grid-template-columns:1fr 1fr!important;gap:7px!important;margin:4px 0 6px!important;
+}
+body dialog#menuDialog .settings-links button{
+  display:flex!important;align-items:center;justify-content:center;
+  min-width:0!important;min-height:clamp(41px,11vw,56px)!important;
+  margin:0!important;padding:7px 9px!important;
+  border:0!important;border-radius:0!important;outline:0!important;
+  background:var(--legend13-plate) center/100% 100% no-repeat!important;
+  box-shadow:none!important;color:#fff4b8!important;
+  font:900 clamp(11px,3.05vw,16px)/1.2 Georgia,serif!important;
+  white-space:nowrap!important;text-shadow:0 2px 3px #000!important;
+}
+body dialog#menuDialog .settings-links button:active,
+body dialog#menuDialog .menu-actions button:active,
+body dialog#autoDialog #autoStart:active{
+  transform:scale(.965);filter:brightness(1.2);
+}
+body dialog#menuDialog .setting-row{
+  box-sizing:border-box!important;
+  display:grid!important;grid-template-columns:25px minmax(0,1fr) 58px!important;
+  align-items:center!important;gap:9px!important;
+  min-height:clamp(48px,12vw,61px)!important;
+  margin:6px 0!important;padding:8px 10px!important;
+  border:1px solid #db9d44!important;border-radius:12px!important;
+  background:linear-gradient(110deg,#08172bd9,#170824f5 72%)!important;
+  box-shadow:inset 0 0 0 1px #f9d28026,inset 0 1px 10px #3283e12b,0 0 5px #ffab4742!important;
+}
+body dialog#menuDialog .legend-setting-glyph{
+  display:block;align-self:center;text-align:center;color:#ffd566;
+  font:700 21px/1 Georgia,serif;text-shadow:0 0 5px #f4a52c;
+}
+body dialog#menuDialog .setting-row span{
+  min-width:0!important;font:850 clamp(12px,3.45vw,16px)/1.1 system-ui!important;
+  letter-spacing:.012em!important;color:#fff3d0!important;
+}
+body dialog#menuDialog .setting-row small{
+  display:block!important;margin-top:3px!important;
+  font:450 clamp(9px,2.5vw,12px)/1.2 system-ui!important;
+  color:#f2e5f6!important;letter-spacing:0!important;
+}
+body dialog#menuDialog .setting-row input{
+  box-sizing:border-box!important;
+  appearance:none!important;-webkit-appearance:none!important;
+  cursor:pointer!important;width:56px!important;height:30px!important;
+  min-height:30px!important;min-width:56px!important;
+  margin:0!important;padding:0!important;flex:none!important;
+  border:1px solid #8fa2be!important;border-radius:100px!important;
+  background:linear-gradient(#273345,#111b2a)!important;
+  box-shadow:inset 0 1px 5px #000a!important;
+}
+body dialog#menuDialog .setting-row input::before{
+  content:"";position:absolute;top:2px;left:2px;
+  width:24px;height:24px;border-radius:50%;
+  background:linear-gradient(#eef3f9,#8798ad)!important;
+  box-shadow:0 1px 4px #0009!important;
+  transition:transform .16s ease-out;
+}
+body dialog#menuDialog .setting-row input:checked{
+  border-color:#ffe298!important;
+  background:linear-gradient(#fdbb27,#d47106)!important;
+  box-shadow:inset 0 0 4px #ffefb1,0 0 7px #ffc82b90!important;
+}
+body dialog#menuDialog .setting-row input:checked::before{
+  transform:translateX(26px)!important;
+  background:linear-gradient(#fffde4,#ffe08c)!important;
+}
+body dialog#menuDialog .legend-volume-control{
+  border:2px solid #efb85b!important;border-radius:14px!important;
+  background:radial-gradient(ellipse at 5% 110%,#6c0c94aa,transparent 63%),
+    linear-gradient(130deg,#150826,#2d0850,#0b174b)!important;
+  padding:8px 14px 6px!important;margin:6px 0!important;
+  box-shadow:inset 0 0 0 2px #6224b877,0 0 12px #246ffbb0,0 0 11px #fa9c16a6!important;
+}
+body dialog#menuDialog .legend-volume-header{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+body dialog#menuDialog .legend-volume-header label{
+  font:900 clamp(14px,3.8vw,18px)/1 Georgia,serif;
+  color:#fff0bb;text-shadow:0 1px 4px #ffb738;
+}
+body dialog#menuDialog .legend-volume-header label::before{
+  content:"▮▥";font:700 16px Georgia,serif;margin-right:10px;color:#ffc55b;
+}
+body dialog#menuDialog #volumeValue{
+  color:#57d8ff;font:bold clamp(19px,5.5vw,26px)/1 Georgia,serif;
+  text-shadow:0 0 7px #2476fe;
+}
+body dialog#menuDialog .legend-volume-help{
+  display:block;text-align:center;color:#efe4ef;font:450 clamp(10px,2.4vw,12px)/1.3 system-ui;
+}
+body dialog:is(#menuDialog,#autoDialog) input[type=range]{
+  appearance:none;-webkit-appearance:none!important;
+  display:block!important;width:100%!important;height:30px!important;
+  min-height:27px!important;padding:0!important;margin:4px 0 3px!important;
+  border:0!important;border-radius:0!important;background:transparent!important;
+  box-shadow:none!important;cursor:pointer!important;
+}
+body dialog:is(#menuDialog,#autoDialog) input[type=range]::-webkit-slider-runnable-track{
+  height:10px;border-radius:20px;border:1px solid #fdb843;
+  background:linear-gradient(90deg,#f29911 0%,#ffdd54 var(--legend-range-fill,70%),#120c2b var(--legend-range-fill,70%),#050819 100%);
+  box-shadow:inset 0 1px 2px #290d15,0 0 8px #ffac35;
+}
+body dialog:is(#menuDialog,#autoDialog) input[type=range]::-webkit-slider-thumb{
+  appearance:none;-webkit-appearance:none;
+  width:25px;height:25px;margin-top:-8px;
+  border:2px solid #f5bd64;border-radius:11px;background:#fff9e8;
+  box-shadow:0 0 7px #ffebc9,0 1px 3px #0006;
+}
+body dialog:is(#menuDialog,#autoDialog) input[type=range]::-moz-range-track{
+  height:10px;border:1px solid #f3a43f;border-radius:20px;
+  background:linear-gradient(90deg,#ffbd30 0%,#ffde6e var(--legend-range-fill,70%),#180d30 var(--legend-range-fill,70%));
+}
+body dialog:is(#menuDialog,#autoDialog) input[type=range]::-moz-range-thumb{
+  width:23px;height:23px;border:2px solid #ffca69;border-radius:9px;background:#fff9e9;
+}
+body dialog#menuDialog .stepper{
+  grid-template-columns:clamp(42px,13vw,58px) minmax(0,1fr) clamp(42px,13vw,58px)!important;
+  gap:8px!important;margin:7px 0 10px!important;
+}
+body dialog#menuDialog .dialog-body .stepper button,
+body dialog#menuDialog .dialog-body .stepper button:first-child{
+  width:100%!important;height:clamp(43px,12vw,58px)!important;min-height:0!important;
+  font:900 clamp(28px,7vw,38px)/1 Georgia!important;
+  border-radius:11px!important;border:2px solid #f2ac3e!important;
+  background:linear-gradient(135deg,#1566b1,#050c2d)!important;color:#ffe095!important;
+  box-shadow:inset 0 0 0 2px #122d6f,0 0 8px #0976e97c!important;
+}
+body dialog#menuDialog .stepper output{
+  min-height:clamp(43px,12vw,58px)!important;
+  padding:2px!important;border:2px solid #ffc04f!important;border-radius:13px!important;
+  background:radial-gradient(ellipse at top,#3d0b4f,#1a082b 83%)!important;
+  box-shadow:inset 0 0 10px #e11c9399,0 0 9px #fd973b8a!important;
+  font:900 clamp(24px,6.6vw,32px)/1 Georgia,serif!important;color:#ffebaf!important;
+}
+body dialog#menuDialog .menu-actions{
+  grid-template-columns:1fr 1fr!important;gap:7px!important;margin:10px 0 5px!important;
+}
+body dialog#menuDialog .dialog-body .menu-actions button{
+  box-sizing:border-box!important;
+  padding:7px!important;min-height:clamp(48px,12vw,60px)!important;
+  font:800 clamp(10px,3vw,14px)/1.22 Georgia,serif!important;
+  border:0!important;border-radius:0!important;
+  color:#ffedae!important;text-shadow:0 2px 3px #020412!important;
+  background:var(--legend13-plate) center/100% 100% no-repeat!important;
+  box-shadow:none!important;
+}
+body dialog#menuDialog .dialog-body .menu-actions button:disabled{
+  opacity:.38!important;filter:grayscale(.8);
+}
+body dialog#menuDialog .menu-actions #replay,
+body dialog#menuDialog .menu-actions #export{
+  min-height:34px!important;font:650 11px/1.2 system-ui!important;
+}
+body dialog#menuDialog .session-stats{
+  gap:4px!important;margin:6px 0!important;padding:8px 4px!important;
+  border-top:1px solid #ffbe5a47;border-bottom:1px solid #ffbe5a47;
+}
+body dialog#menuDialog .session-stats span{
+  font-size:10px;color:#e2bce9;
+}
+body dialog#menuDialog .session-stats b{font-size:13px;color:#ffe4a2}
+body dialog#menuDialog details{
+  border:1px solid #f5c26948;border-radius:10px;padding:5px 9px;
+  background:#160c26ab;
+}
+body dialog#menuDialog summary{
+  font-size:12px;font-weight:700;color:#ffd88e;
+}
+body dialog#menuDialog #menuStatus{
+  font-size:11px;line-height:1.3;color:#ffd69a;
+  margin:5px 0;
+}
+body dialog#menuDialog #releaseInfo{
+  text-align:center;font-size:9px;margin:5px 0 0;
+}
+/* AUTOPLAY: three selectable rows, molten range, dominant real CTA. */
+body dialog#autoDialog .dialog-body{
+  min-height:clamp(385px,77vw,510px)!important;
+  display:flex;flex-direction:column;
+  padding-top:22px!important;padding-bottom:22px!important;
+}
+body dialog#autoDialog .auto-options{
+  display:grid!important;grid-template-columns:1fr!important;
+  gap:10px!important;margin:0 0 22px!important;
+}
+body dialog#autoDialog .auto-options label{
+  box-sizing:border-box!important;
+  display:flex!important;align-items:center!important;
+  max-width:100%!important;min-height:clamp(54px,14vw,75px)!important;
+  padding:7px 17px!important;gap:17px!important;
+  color:#fff1c9!important;
+  background:linear-gradient(115deg,#08162df2,#191041ee)!important;
+  border:2px solid #f4ac48!important;border-radius:15px!important;
+  box-shadow:inset 0 0 6px #9e2be03e,0 0 7px #ef7c346e!important;
+  font:800 clamp(16px,4.4vw,22px)/1.1 Georgia,serif!important;
+  letter-spacing:.025em;
+}
+body dialog#autoDialog .auto-options input{
+  width:34px!important;height:34px!important;min-width:34px!important;
+  flex:0 0 34px!important;appearance:none;-webkit-appearance:none;
+  position:relative;margin:0;padding:0;
+  border:2px solid #ffd67c!important;border-radius:9px!important;
+  background:#090e1d!important;box-shadow:inset 0 0 8px #000a;
+}
+body dialog#autoDialog .auto-options input:checked{
+  background:linear-gradient(140deg,#fff1aa,#f39e0b 78%)!important;
+  box-shadow:0 0 10px #ffb52dd8,inset 0 0 3px #fff!important;
+}
+body dialog#autoDialog .auto-options input:checked::after{
+  content:"✓";position:absolute;inset:0;
+  display:grid;place-items:center;color:white;
+  font:900 27px/1 system-ui;text-shadow:0 1px 3px #a45c00;
+}
+body dialog#autoDialog .autospin-label{
+  display:block!important;text-align:center!important;
+  margin:14px 0 8px!important;
+  color:#ffe097!important;
+  font:900 clamp(15px,4.25vw,22px)/1.2 Georgia,serif!important;
+  text-shadow:0 2px 3px #2b092e,0 0 7px #fda21b;
+}
+body dialog#autoDialog .range-row{
+  margin:8px 0 23px!important;padding:8px 10px!important;
+  border:1px solid #db9e4b66;border-radius:13px;
+  background:linear-gradient(125deg,#15082add,#071a3bdb)!important;
+  gap:12px!important;
+}
+body dialog#autoDialog .range-row output{
+  flex:0 0 66px;min-width:0!important;text-align:right;
+  color:#ffe8a9!important;font:800 clamp(23px,6vw,33px)/1 Georgia,serif!important;
+  text-shadow:0 0 7px #fba029;
+}
+body dialog#autoDialog .dialog-body #autoStart{
+  display:block;width:100%;min-height:clamp(61px,18vw,87px)!important;
+  margin:auto 0 0!important;padding:15px 8px!important;
+  border:0!important;border-radius:0!important;
+  background:var(--legend13-plate) center/100% 100% no-repeat!important;
+  box-shadow:none!important;color:#fff2b1!important;
+  font:900 clamp(16px,4.6vw,24px)/1.15 Georgia,serif!important;
+  text-shadow:0 2px 3px #000,0 0 7px #d98122!important;
+}
+/* Rules: readable game codex; all engine-generated rule text remains intact. */
+body dialog#modal .dialog-body{padding-top:15px!important;padding-bottom:26px!important;}
+body dialog#modal .dialog-body > p:first-child{
+  padding:11px 12px 11px 42px!important;
+  border:2px solid #5bc5ff!important;border-radius:13px;
+  background:linear-gradient(100deg,#063f6cee,#160b41ed)!important;
+  box-shadow:inset 0 0 9px #1a7dff6e,0 0 7px #078bff7b!important;
+  position:relative;
+  font:550 clamp(12px,3.45vw,15px)/1.4 system-ui!important;color:#fff0ce!important;
+}
+body dialog#modal .dialog-body > p:first-child::before{
+  content:"◉";position:absolute;left:12px;top:50%;
+  transform:translateY(-50%);
+  font-size:25px;color:#ffdb5a;text-shadow:0 0 8px #ff990d;
+}
+body dialog#modal .dialog-body section{margin-bottom:17px!important;}
+body dialog#modal .dialog-body h3{
+  padding:10px 13px!important;margin:14px 0 10px!important;
+  background:var(--legend13-plate) center/100% 100% no-repeat!important;
+  font-size:clamp(15px,4.1vw,22px)!important;
+  text-transform:uppercase;
+}
+body dialog#modal .dialog-body h3::before,
+body dialog#modal .dialog-body h3::after{display:none!important;}
+body dialog#modal .dialog-body p{
+  color:#f7e9fa!important;font:450 clamp(12px,3.4vw,14px)/1.5 system-ui!important;
+  margin:8px 2px!important;
+  overflow-wrap:anywhere;
+}
+body dialog#modal #orbRules{
+  padding:11px 12px 11px 44px!important;
+  position:relative;background:#041d46dc;border:1px solid #47baff;
+  border-radius:13px;color:#ffe8a8!important;
+}
+body dialog#modal #orbRules::before{
+  content:"✦";position:absolute;left:13px;top:50%;transform:translateY(-50%);
+  color:#ffc351;font-size:24px;text-shadow:0 0 7px #40afff;
+}
+body dialog#modal .legend-pay-details{
+  margin:8px 0;padding:3px 9px 12px;
+  border:1px solid #edaf5e;border-radius:13px;
+  background:#071a3de8;box-shadow:0 0 9px #136ce88f;
+}
+body dialog#modal .legend-pay-details summary{
+  cursor:pointer;min-height:49px;display:flex;align-items:center;
+  color:#fff0be;font:700 13px/1.35 system-ui;padding:10px 8px;
+}
+body dialog#modal .legend-pay-details summary::before{
+  content:"★";flex:0 0 30px;margin-right:8px;
+  font-size:23px;color:#ffd66b;text-shadow:0 0 6px #ffad1a;
+}
+body dialog#modal .paytable-wrap{
+  overflow-x:auto;overscroll-behavior-x:contain;
+  scrollbar-width:thin;padding:3px 1px;
+}
+body dialog#modal .paytable-wrap table{
+  width:100%;table-layout:auto;border-collapse:collapse;
+  color:#fff0d5;font:550 11px/1.3 system-ui;
+}
+body dialog#modal .paytable-wrap th,
+body dialog#modal .paytable-wrap td{padding:6px 3px;border-color:#b9814680;}
+body dialog#modal .paytable-wrap td:first-child{min-width:85px;font-size:11px;}
+/* A speed announcement uses a standalone reel-frame raster instead of an HTML screenshot. */
+.game #winToast[data-kind="speed"]{
+  left:12%!important;right:12%!important;top:34%!important;
+  min-height:0!important;padding:13% 7% 9%!important;
+  border:0!important;border-radius:0!important;
+  background:url('/play/assets/legend-v12/reel-frame.webp') center/100% 100% no-repeat!important;
+  box-shadow:0 12px 34px #000b,0 0 26px #f9a1158c!important;
+  text-align:center;animation:legend13-popup .22s ease-out!important;
+}
+.game #winToast[data-kind="speed"]::before{
+  content:"ϟ";position:absolute;z-index:2;left:50%;top:-10%;
+  width:23%;aspect-ratio:1/1;transform:translateX(-50%);
+  display:grid;place-items:center;border-radius:50%;
+  border:2px solid #ffce69;background:radial-gradient(circle,#31223b,#07051c);
+  color:#ffe79c;font:bold clamp(22px,8cqw,43px)/1 Georgia,serif;
+  box-shadow:0 0 0 4px #097bff,0 0 12px #3dd8ff,inset 0 0 7px #f6bb72;
+}
+.game #winToast[data-kind="speed"] #toastTitle{
+  display:block;padding:8% 4% 3%;
+  background:var(--legend13-plate) center/100% 100% no-repeat;
+  color:#ffe59d;font:900 clamp(13px,4cqw,21px)/1.2 Georgia,serif;
+  letter-spacing:.08em;text-shadow:0 2px 3px #000;
+}
+.game #winToast[data-kind="speed"] #toastAmount{
+  display:block!important;margin:5% 0 3%!important;
+  font:900 clamp(23px,8cqw,49px)/1.05 Georgia,serif!important;
+  letter-spacing:.03em;
+  color:#ffe6a4;text-shadow:0 2px 3px #63270e,0 0 9px #f7800f;
+}
+@keyframes legend13-popup{
+  from{opacity:0;transform:scale(.91) translateY(3px)}
+  to{opacity:1;transform:scale(1) translateY(0)}
+}
+@media(max-width:360px){
+ body dialog:is(#menuDialog,#autoDialog,#modal) .dialog-body{padding-left:10px!important;padding-right:10px!important;}
+ body dialog#menuDialog .setting-row{gap:6px!important;padding:7px!important;grid-template-columns:22px minmax(0,1fr) 53px!important;}
+ body dialog#menuDialog .setting-row input{width:52px!important;min-width:52px!important}
+ body dialog#menuDialog .setting-row input:checked::before{transform:translateX(22px)!important}
+ body dialog#menuDialog .settings-links button{font-size:10px!important}
+}
+@media(max-height:620px), (orientation:landscape){
+ body dialog:is(#menuDialog,#autoDialog,#modal) .dialog-head{
+   height:135px!important;min-height:135px!important;
+   padding-top:88px!important;
+ }
+ body dialog:is(#menuDialog,#autoDialog,#modal) .dialog-head .close{top:65px!important;}
+ body dialog#autoDialog .dialog-body{min-height:0!important;}
+}
+@media(prefers-reduced-motion:reduce){
+ .game #winToast[data-kind="speed"]{animation:none!important;}
+ body dialog:is(#menuDialog,#autoDialog,#modal) .setting-row input::before{transition:none!important;}
+}

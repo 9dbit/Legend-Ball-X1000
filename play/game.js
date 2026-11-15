@@ -266,7 +266,7 @@ function startSkygate() {
   }
   function setBet(next){if(locked()||!next)return;state.level=next.level;state.coin=next.coin;state.bet=Settings.total(next.level,next.coin);refresh();}
   function changeTotal(direction){setBet(Settings.step(state.bet,direction,state.ante));}
-  function setSpeed(next){state.speed=next;preferences.speed=next;savePreferences();refresh();status(next.toUpperCase()+' SPINS ENABLED');celebrate(next.toUpperCase()+' SPINS','ENABLED','speed');}
+  function setSpeed(next){state.speed=next;preferences.speed=next;savePreferences();refresh();status(next.toUpperCase()+' SPINS ENABLED');celebrate(next.toUpperCase()+' SPIN',next==='normal'?'NORMAL':'ENABLED','speed');}
   async function featureScreen(title,amount,description,manual=false){
     // A canceled round stays suppressed through settlement; idle Home can reopen on return.
     if(document.hidden||(suspended&&state.busy))return;

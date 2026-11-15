@@ -34,6 +34,7 @@ jobs:
           python3 scripts/tests/check-splash-fidelity.py
           node scripts/tests/legend-splash-motion-browser.mjs
           node scripts/tests/legend-safe-area-browser.mjs
+          node scripts/tests/legend-menu-v13-browser.mjs
         env:
           # The visible WebGL canvas uses a transparent inline decoder. WebKitGTK's
           # offscreen-media suspension is Linux-specific; WebKit's own GLib
@@ -48,4 +49,5 @@ jobs:
             qa-artifacts/legend-layered-splash/
             qa-artifacts/legend-splash-motion/
             qa-artifacts/legend-safe-area/
+            qa-artifacts/legend-menus-v13/
           retention-days: 14
