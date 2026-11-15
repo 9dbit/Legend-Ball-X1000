@@ -58,8 +58,10 @@
    if(pending||!allowed()||contextLost)return;
    pending=true;const ticket=generation;
    video.play().then(()=>{
-    if(ticket!==generation)return;
-    pending=false;if(!allowed()||contextLost)return;
+    // WebKit may fulfill an old play promise after pagehide. Never let that
+    // late fulfillment restart a hidden/offscreen decoder.
+    if(ticket!==generation){if(!allowed()||contextLost)video.pause();return;}
+    pending=false;if(!allowed()||contextLost){video.pause();return;}
     needsGesture=false;queueFrame();
    }).catch(error=>{
     if(ticket!==generation)return;
@@ -89,9 +91,16 @@
   }
   canvas.addEventListener('webglcontextlost',e=>{e.preventDefault();contextLost=true;stop();});
   canvas.addEventListener('webglcontextrestored',()=>{
-   try{initGraphics();contextLost=false;restores++;lastMediaTime=-1;start();}catch{canvas.classList.remove('ready');}
+   try{
+    initGraphics();contextLost=false;restores++;lastMediaTime=-1;
+    // Restoring GPU state must not revive playback while the page is locked.
+    if(!allowed())stop();else start();
+   }catch{canvas.classList.remove('ready');}
   });
-  video.addEventListener('playing',queueFrame);
+  video.addEventListener('playing',()=>{
+   if(!allowed()||contextLost){video.pause();canvas.classList.remove('ready');return;}
+   queueFrame();
+  });
   video.addEventListener('pause',()=>{cancelFrame();canvas.classList.remove('ready');armWatchdog();});
   video.addEventListener('error',()=>{canvas.classList.remove('ready');armWatchdog();});
   try{initGraphics();}catch{return;}

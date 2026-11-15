@@ -31,6 +31,9 @@ for (const engine of (process.env.LEGEND_BROWSER==='webkit'?[webkit]:process.env
    await page.goto(base+'/play/',{waitUntil:'domcontentloaded'});
    await page.addStyleTag({content:':root{--legend-test-safe-top:'+safeTop+'px;--legend-test-safe-bottom:'+safeBottom+'px;}'});
    await page.locator('#bootPlay:not(:disabled)').waitFor({timeout:30000});
+   // Live image decode may finish after ENTER enables. Assert the final layered
+   // geometry rather than the transient 9:16 fallback frame.
+   await page.waitForFunction(()=>document.getElementById('bootSplash')?.classList.contains('layered-ready'),null,{timeout:30000});
    const splash = await page.evaluate(()=>{
      const outer=document.querySelector('#bootSplash'),frame=outer.querySelector('.splash-footer'),hit=outer.querySelector('#bootPlay');
      const f=frame.getBoundingClientRect(),b=hit.getBoundingClientRect(),v=outer.getBoundingClientRect(),art=getComputedStyle(outer,'::before');
