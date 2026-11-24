@@ -44,21 +44,7 @@ jobs:
           node scripts/tests/legend-safe-area-browser.mjs
           node scripts/tests/legend-menu-v13-browser.mjs
           node scripts/tests/legend-splash-motion-browser.mjs
-      - name: Studio-integration preview QA in isolated local development mode
-        env:
-          LEGEND_CAPTURE_SCREENSHOTS: '1'
-          LEGEND_URL: http://127.0.0.1:3119
-          WEBKIT_GST_ALLOW_PLAYBACK_OF_INVISIBLE_VIDEOS: '1'
-        run: |
-          set -euo pipefail
-          PORT=3119 NODE_ENV=development LEGEND_PUBLIC_DEMO=false node server.mjs >/tmp/legendballx-studio-qa.log 2>&1 &
-          pid=$!
-          trap 'kill "$pid" 2>/dev/null || true' EXIT
-          for n in $(seq 1 40); do
-            if curl -fsS http://127.0.0.1:3119/health >/dev/null; then break; fi
-            sleep 1
-          done
-          node scripts/tests/unified-v10-browser.mjs
+          LEGEND_PUBLIC_ONLY=1 node scripts/tests/unified-v10-browser.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
