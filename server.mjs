@@ -21,7 +21,8 @@ function isAllowedDemoHost(req) {
   if(!publicDemo)return true;
   const host=(req.headers.host||'').toLowerCase().replace(/:\d{1,5}$/,'');
   const railway=(process.env.RAILWAY_PUBLIC_DOMAIN||'').toLowerCase();
-  return !!host && (host===allowedDemoHost || host===railway);
+  const fallback=(process.env.LEGEND_FALLBACK_HOST||'').toLowerCase();
+  return !!host && (host===allowedDemoHost || (railway&&host===railway) || (fallback&&host===fallback));
 }
 const playDocumentHeaders=()=>{
   const headers={...base};
