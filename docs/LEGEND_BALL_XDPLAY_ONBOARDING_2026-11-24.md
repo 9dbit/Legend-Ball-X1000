@@ -39,3 +39,15 @@
 - Baseline game CI: V13 workflow run `43740807380` SUCCESS.
 - Staging DNS: `staging-legend-ball.xd-play.com` VERIFIED with valid TLS and CNAME `8ew8vcia.up.railway.app`.
 - Production and portal domain/CI/live browser gate: pending evidence; do not report as PASS until measured.
+
+## 2026-11-24 verification addendum
+- Production service's first build completed SUCCESS at Railway deployment `aa7ac898-a9ea-4f0a-a0b5-65a9096c73b2`, but live fallback-host QA exposed HTTP 421. A narrowly scoped explicit fallback host allowlist was added, without a wildcard or cross-domain trust.
+- Corrected production build `452810f8-eee5-4717-97fb-93f4793d2aac` is SUCCESS with source commit `3aa6c1e0e31bf6fdd5cb66461f6ebca05c9fd69b`; `LEGEND_FALLBACK_HOST=legendballx-demo-web-production.up.railway.app` configured. No changes to game math or approved assets.
+- Production game route unit tests: 127 checks passed in CI. Production-mode Playwright safe-area 20/20, menus 4/4, splash Chromium/WebKit passed; generic Studio iframe QA was separated because a public demo intentionally does not offer an unauthenticated Studio iframe. The public-only lifecycle suite is part of current CI.
+- Exact fallback HTTPS verification run `45375550357` was re-run **after** the corrected Railway deployment; see workflow result before marking live host PASS.
+- Corrected public demo CI workflow latest source: `security/legendballx-demo-production-20261124`; parent approved V13 `f50948e47a9ffd46ef42bb6386dfbf827696554e`; source pin is explicit and not the shared staging branch.
+- Production game custom domain DNS last checked as **not verified**; TLS `CERTIFICATE_STATUS_TYPE_VALIDATING_OWNERSHIP`. DNS provider writes not performed. Actual CNAME/TXT values above remain unchanged.
+- Portal PR: `https://github.com/9dbit/Soft-Tech/pull/15`, canonical rename only, release still `staging_only`; all Skygate, Mahjong, UNO and portal-specific LegendBallX CI passed at `49129e3d06c9ecbe9a7f47be1ea300623257f667`.
+- XDPLAY production shared service has an unrelated pending 24-change Railway patch. It was **not accepted/deployed**. The current public launcher must remain closed until DNS and portal production safe-deploy gates pass.
+- Studio credentials are distinct and configured on production only. Rotate on first use. No credential values in Git, logs, or this checkpoint.
+- Blocking steps: create/verify Cloudflare CNAME and TXT, wait for Railway SSL VALID; rerun live custom-host HTTP and in-portal iframe mobile/desktop input, audio, fullscreen and resume; deploy only the scoped portal release after reconciling its unrelated staged patch.
