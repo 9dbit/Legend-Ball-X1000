@@ -14,9 +14,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      - name: Verify isolated production headers and runtime assets
+      - name: Verify fallback headers and runtime assets
         env:
           LEGEND_LIVE_ORIGIN: https://legendballx-demo-web-production.up.railway.app
+        run: node scripts/tests/legendballx-live-demo-qa.mjs
+      - name: Verify canonical HTTPS, frame policy and runtime assets
+        env:
+          LEGEND_LIVE_ORIGIN: https://legendballx.xd-play.com
         run: node scripts/tests/legendballx-live-demo-qa.mjs
       - name: Install browser engines
         run: |
@@ -24,11 +28,13 @@ jobs:
           npx playwright install --with-deps chromium chrome webkit
       - name: Live responsive/PWA and modal smoke (read-only game account, synthetic credit)
         env:
-          LEGEND_URL: https://legendballx-demo-web-production.up.railway.app
+          LEGEND_URL: https://legendballx.xd-play.com
           WEBKIT_GST_ALLOW_PLAYBACK_OF_INVISIBLE_VIDEOS: '1'
         run: |
           node scripts/tests/legend-safe-area-browser.mjs
           node scripts/tests/legend-menu-v13-browser.mjs
+          node scripts/tests/legend-splash-motion-browser.mjs
+          LEGEND_PUBLIC_ONLY=1 node scripts/tests/unified-v10-browser.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -36,4 +42,6 @@ jobs:
           path: |
             qa-artifacts/legend-safe-area/
             qa-artifacts/legend-menus-v13/
+            qa-artifacts/legend-splash-motion/
+            qa-artifacts/unified-v12/
           retention-days: 14
