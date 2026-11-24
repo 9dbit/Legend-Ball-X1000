@@ -28,11 +28,11 @@ for (const [name, engine, viewport] of [
     await button('ENTER LEGEND BALL X1000').click();
     await button('Menu permainan').click();
     const sound = game.getByRole('switch', { name: /SOUND/ });
-    const initialSound = await sound.getAttribute('aria-checked');
+    const initialSound = await sound.isChecked();
     await sound.click();
-    assert.notEqual(await sound.getAttribute('aria-checked'), initialSound);
+    assert.notEqual(await sound.isChecked(), initialSound);
     await sound.click();
-    assert.equal(await sound.getAttribute('aria-checked'), initialSound);
+    assert.equal(await sound.isChecked(), initialSound);
     let fullscreen = 'not exercised on emulated mobile';
     if (engine === chromium) {
       await button('Layar penuh').click();
