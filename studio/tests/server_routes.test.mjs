@@ -37,10 +37,10 @@ async function start(t, overrides = {}) {
 }
 
 // Raw HTTP preserves encoded dot segments instead of normalizing them in a client.
-function get(port, path, { method = 'GET', auth } = {}) {
+function get(port, path, { method = 'GET', auth, headers = {} } = {}) {
   return new Promise((resolve, reject) => {
     const req = request({ hostname: '127.0.0.1', port, path, method,
-      headers: auth ? { authorization: auth } : {}, timeout: 4000 }, res => {
+      headers: { ...headers, ...(auth ? { authorization: auth } : {}) }, timeout: 4000 }, res => {
       const chunks = [];
       res.on('data', data => chunks.push(data));
       res.on('end', () => resolve({ status: res.statusCode, headers: res.headers,
@@ -171,4 +171,38 @@ test('explicit public Studio testing opens editor and drafts while retaining req
   const protectedPort = await start(t, { SKYGATE_STUDIO_PUBLIC_TESTING: 'false' });
   assert.equal((await get(protectedPort, '/studio/')).status, 401);
   assert.equal((await get(protectedPort, '/studio/api/releases')).status, 401);
+});
+
+
+test('isolated production demo exposes only /play/ to XDPLAY framing, never Studio', async t => {
+  const port=await start(t,{LEGEND_PUBLIC_DEMO:'true',LEGEND_PUBLIC_HOST:'127.0.0.1',
+    SKYGATE_STUDIO_PASSWORD:'',SKYGATE_STUDIO_PUBLIC_TESTING:'true'});
+  const root=await get(port,'/');
+  assert.equal(root.status,308);
+  assert.equal(root.headers.location,'/play/');
+  const game=await get(port,'/play/');
+  assert.equal(game.status,200);
+  assert.match(game.headers['content-security-policy'],/frame-ancestors https:\/\/xd-play\.com(?:;|$)/);
+  assert.equal(game.headers['x-frame-options'],undefined,'XFO must not block portal iframe');
+  assert.equal(game.headers['set-cookie'],undefined,'demo never creates cross-site cookies');
+  for(const path of ['/studio/','/studio/api/releases','/studio/editor-preview/','/play/..%2fstudio/']) {
+    const denied=await get(port,path);
+    assert.equal(denied.status,503,path);
+    assert.match(denied.headers['content-security-policy'],/frame-ancestors 'none'/);
+    assert.equal(denied.headers['x-frame-options'],'SAMEORIGIN');
+  }
+  assert.equal((await get(port,'/health')).status,200);
+  assert.equal((await get(port,'/play/',{headers:{host:'evil.example'}})).status,421);
+  assert.equal((await get(port,'/studio/api/publish',{method:'POST'})).status,405);
+});
+
+test('production Studio remains password protected even with public demo flag',async t=>{
+  const port=await start(t,{LEGEND_PUBLIC_DEMO:'true',LEGEND_PUBLIC_HOST:'127.0.0.1',
+    SKYGATE_STUDIO_PUBLIC_TESTING:'true'});
+  assert.equal((await get(port,'/studio/')).status,401);
+  const authorized=await get(port,'/studio/',{auth:authorization});
+  assert.equal(authorized.status,200);
+  assert.match(authorized.headers['content-security-policy'],/frame-ancestors 'none'/);
+  assert.equal(authorized.headers['x-robots-tag'],'noindex, nofollow, noarchive');
+  assert.equal((await get(port,'/studio/api/publish',{method:'POST',auth:authorization})).status,403);
 });
