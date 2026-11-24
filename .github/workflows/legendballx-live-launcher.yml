@@ -1,0 +1,30 @@
+name: LegendBallX live XDPLAY launcher
+on:
+  workflow_dispatch:
+  push:
+    branches: [security/legendballx-demo-production-20261124]
+    paths:
+      - scripts/tests/legendballx-live-launcher.mjs
+      - .github/workflows/legendballx-live-launcher.yml
+permissions:
+  contents: read
+jobs:
+  launcher:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm install --no-save --package-lock=false playwright@1.65.0
+      - run: npx playwright install --with-deps chromium webkit
+      - run: node scripts/tests/legendballx-live-launcher.mjs
+        env:
+          WEBKIT_GST_ALLOW_PLAYBACK_OF_INVISIBLE_VIDEOS: '1'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: legendballx-live-launcher
+          path: qa-artifacts/legendballx-live-launcher/
+          retention-days: 14
