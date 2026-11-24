@@ -193,7 +193,7 @@ test('isolated production demo exposes only /play/ to XDPLAY framing, never Stud
   }
   assert.equal((await get(port,'/health')).status,200);
   assert.equal((await get(port,'/play/',{headers:{host:'evil.example'}})).status,421);
-  assert.equal((await get(port,'/studio/api/publish',{method:'POST'})).status,405);
+  assert.equal((await get(port,'/studio/api/publish',{method:'POST'})).status,503);
 });
 
 test('production Studio remains password protected even with public demo flag',async t=>{
