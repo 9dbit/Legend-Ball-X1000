@@ -4,6 +4,28 @@
 **Requested canonical runtime:** `https://legendballx.xd-play.com`  
 **XDPLAY launcher:** `https://xd-play.com/games/legend-ball-x1000/play`  
 **Mode:** isolated virtual-credit demonstration. No money wallet, payment gateway, deposits, or withdrawals.
+## Production release
+
+The XDPLAY launcher now serves a virtual-credit game iframe at `https://legendballx.xd-play.com/play/`. The separate game runtime and production volume remain pinned to the qualified game build.
+
+| Component | Release evidence |
+| --- | --- |
+| DNS and TLS | Cloudflare CNAME to `rtchmvzp.up.railway.app`, DNS only, and ownership TXT published. Railway reports ownership verified, CNAME propagated and certificate valid. |
+| Game runtime | Railway deployment `452810f8-eee5-4717-97fb-93f4793d2aac` at `3aa6c1e0e31bf6fdd5cb66461f6ebca05c9fd69b` |
+| Portal | [PR 15](https://github.com/9dbit/Soft-Tech/pull/15), production commit `21b794107404297428fe5041bb2168a00d53d058`, Railway deployment `8efd0401-2c1f-4df7-97fe-6b7c9bf501b0` |
+| Game acceptance | [Canonical HTTP, Chromium and WebKit](https://github.com/9dbit/Legend-Ball-X1000/actions/runs/45379886486). Twenty safe-area cases, four menu cases, splash and simulated lifecycle recovery passed. |
+| Portal acceptance | [Pending and verified fixture modes on the merged release](https://github.com/9dbit/Soft-Tech/actions/runs/45380830193). Merge tree matched the qualified candidate. |
+| Live launcher | Desktop Chrome and 390 × 844 Chrome viewport opened the game inside the canonical production iframe. ENTER, settings, rules, bet controls and sound switch were exercised. [Post-release iframe acceptance](https://github.com/9dbit/Legend-Ball-X1000/actions/runs/45381783035) passed in Chromium at 1440 × 900 and WebKit at 390 × 844, including refresh and re-entry on both. Desktop Chromium entered and exited native fullscreen. |
+
+The earlier DNS-pending notes below are historical. The first external CI request reached an edge while its certificate still covered the Railway hostname. Re-running after issuance passed with default certificate validation. Live mobile automation uses browser viewports and WebKit emulation. A physical iPhone lock/unlock, installed PWA and speaker output were not measured on hardware.
+
+The portal release pinned only `soft-tech-web`. Pending configuration for the Mahjong, Skygate and UNO engine services remained staged. The staging game service still runs `f50948e47a9ffd46ef42bb6386dfbf827696554e`. The game's integration PR targets the branch that automatically deploys staging. Production uses its independently pinned commit.
+
+### Release rollback
+
+To close only this game, revert its admission in the portal registry and corresponding regression fixtures, then redeploy the tested portal service. For an immediate rollback of this specific release, the previous portal commit is `740a08320611c6483b31024fd9e46bcbffb721b6`, deployment `8ff8162a-6f8e-4ed3-b237-410af0029d01`. Verify the current production pin before using that whole-release rollback after any subsequent release. Preserve the isolated game volume.
+
+## Pre-release history
 
 ## Source of truth
 - Game repo: `9dbit/Legend-Ball-X1000`
