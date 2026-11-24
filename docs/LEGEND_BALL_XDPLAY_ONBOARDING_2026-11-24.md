@@ -51,3 +51,9 @@
 - XDPLAY production shared service has an unrelated pending 24-change Railway patch. It was **not accepted/deployed**. The current public launcher must remain closed until DNS and portal production safe-deploy gates pass.
 - Studio credentials are distinct and configured on production only. Rotate on first use. No credential values in Git, logs, or this checkpoint.
 - Blocking steps: create/verify Cloudflare CNAME and TXT, wait for Railway SSL VALID; rerun live custom-host HTTP and in-portal iframe mobile/desktop input, audio, fullscreen and resume; deploy only the scoped portal release after reconciling its unrelated staged patch.
+
+## Verified production live QA
+- **SUCCESS** GitHub Actions run `https://github.com/9dbit/Legend-Ball-X1000/actions/runs/45375703868`, job `138381308804`. Both steps succeeded: (1) HTTPS routes, ownership-independent Railway origin, Studio/CSRF security response, CSP-only gameplay framing and assets; (2) **actual live** Chromium/WebKit responsive/PWA and System/Autoplay/Turbo/Rules interactive smoke. See the run's `legendballx-live-smoke` artifact for screenshots.
+- Production Railway running commit `3aa6c1e0e31bf6fdd5cb66461f6ebca05c9fd69b`, deployment `452810f8-eee5-4717-97fb-93f4793d2aac` SUCCESS. The live acceptance source adds only QA/workflow changes beyond the running app.
+- Railway HTTP logs for production show 200 on tested HTML, CSS, JS, WebP and MP3 assets.
+- The remaining **hard release blocker** is Cloudflare CNAME/TXT. Railway currently reports `verified=false`, certificate `CERTIFICATE_STATUS_TYPE_VALIDATING_OWNERSHIP`. Neither custom-domain live browser QA nor actual XDPLAY iframe can pass before that ownership gate. Portal launcher remains `staging_only`.
