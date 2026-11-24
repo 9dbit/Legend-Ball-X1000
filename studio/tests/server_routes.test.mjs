@@ -193,6 +193,9 @@ test('isolated production demo exposes only /play/ to XDPLAY framing, never Stud
   }
   assert.equal((await get(port,'/health')).status,200);
   assert.equal((await get(port,'/play/',{headers:{host:'evil.example'}})).status,421);
+  const explicitPort=await start(t,{LEGEND_PUBLIC_DEMO:'true',LEGEND_PUBLIC_HOST:'legendballx.xd-play.com',LEGEND_FALLBACK_HOST:'localhost'});
+  assert.equal((await get(explicitPort,'/play/',{headers:{host:'localhost'}})).status,200);
+  assert.equal((await get(explicitPort,'/play/',{headers:{host:'unrelated.up.railway.app'}})).status,421);
   assert.equal((await get(port,'/studio/api/publish',{method:'POST'})).status,503);
 });
 
