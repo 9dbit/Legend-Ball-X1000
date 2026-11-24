@@ -1,0 +1,42 @@
+import assert from 'node:assert/strict';
+const origin=process.env.LEGEND_LIVE_ORIGIN||'https://legendballx-demo-web-production.up.railway.app';
+const url=new URL(origin);
+assert(url.protocol==='https:','Live QA requires HTTPS');
+assert(url.origin===origin,'Live origin must not include credentials/path');
+assert(['legendballx.xd-play.com','legendballx-demo-web-production.up.railway.app'].includes(url.hostname),'Unapproved runtime host');
+const observations=[];
+async function probe(path,{method='GET',expected,headers={},body}={}){
+ const res=await fetch(origin+path,{method,headers,body,redirect:'manual',signal:AbortSignal.timeout(20000)});
+ const data=method==='HEAD'?'':await res.text();
+ observations.push({method,path,status:res.status,location:res.headers.get('location'),frame:res.headers.get('content-security-policy'),
+   xfo:res.headers.get('x-frame-options'),cookies:res.headers.get('set-cookie')?'present':'absent'});
+ assert.equal(res.status,expected,method+' '+path+' expected '+expected+' actual '+res.status);
+ return {res,data};
+}
+const health=await probe('/health',{expected:200});
+assert.equal(JSON.parse(health.data).ok,true);
+const root=await probe('/',{expected:308});
+assert.equal(root.res.headers.get('location'),'/play/','Demo root must never redirect to Studio');
+const game=await probe('/play/',{expected:200});
+assert.match(game.data,/LEGEND BALL X1000/i);
+assert.match(game.res.headers.get('content-security-policy')||'',/frame-ancestors https:\/\/xd-play\.com(?:;|$)/);
+assert.equal(game.res.headers.get('x-frame-options'),null,'Portal iframe must not be denied by XFO');
+assert.equal(game.res.headers.get('set-cookie'),null,'Demo gameplay should have no cross-site session cookies');
+assert.equal(game.res.headers.get('access-control-allow-origin'),null);
+const studio=await probe('/studio/',{expected:401});
+assert.match(studio.res.headers.get('content-security-policy')||'',/frame-ancestors 'none'/);
+assert.match(studio.res.headers.get('www-authenticate')||'',/Basic /);
+assert.equal(studio.res.headers.get('x-frame-options'),'SAMEORIGIN');
+await probe('/studio/api/releases',{expected:401});
+await probe('/studio/editor-preview/',{expected:401});
+await probe('/studio/api/publish',{method:'POST',expected:401,headers:{Origin:'https://xd-play.com','Content-Type':'application/json'},body:'{}'});
+await probe('/play/game.js',{method:'HEAD',expected:200});
+await probe('/play/legend/menus-v13.css',{method:'HEAD',expected:200});
+await probe('/play/assets/legend-v12/reel-frame.webp',{method:'HEAD',expected:200});
+await probe('/play/assets/legend-splash/sources/background.webp',{method:'HEAD',expected:200});
+await probe('/play/assets/legend-v10/dragon-720.mp4',{method:'HEAD',expected:200});
+await probe('/play/manifest.webmanifest',{method:'HEAD',expected:200});
+await probe('/package.json',{expected:404});
+const ui=await probe('/play/ui-version.json',{expected:200});
+assert.equal(JSON.parse(ui.data).ui,'unified-v12');
+console.log(JSON.stringify({status:'PASS',origin,checks:observations},null,2));

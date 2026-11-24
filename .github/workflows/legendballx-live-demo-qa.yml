@@ -1,0 +1,47 @@
+name: LegendBallX live production demo acceptance
+on:
+  push:
+    branches: [security/legendballx-demo-production-20261124]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify-live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Verify fallback headers and runtime assets
+        env:
+          LEGEND_LIVE_ORIGIN: https://legendballx-demo-web-production.up.railway.app
+        run: node scripts/tests/legendballx-live-demo-qa.mjs
+      - name: Verify canonical HTTPS, frame policy and runtime assets
+        env:
+          LEGEND_LIVE_ORIGIN: https://legendballx.xd-play.com
+        run: node scripts/tests/legendballx-live-demo-qa.mjs
+      - name: Install browser engines
+        run: |
+          npm install --no-save --package-lock=false playwright@1.65.0
+          npx playwright install --with-deps chromium chrome webkit
+      - name: Live responsive/PWA and modal smoke (read-only game account, synthetic credit)
+        env:
+          LEGEND_URL: https://legendballx.xd-play.com
+          WEBKIT_GST_ALLOW_PLAYBACK_OF_INVISIBLE_VIDEOS: '1'
+        run: |
+          node scripts/tests/legend-safe-area-browser.mjs
+          node scripts/tests/legend-menu-v13-browser.mjs
+          node scripts/tests/legend-splash-motion-browser.mjs
+          LEGEND_PUBLIC_ONLY=1 node scripts/tests/unified-v10-browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: legendballx-live-smoke
+          path: |
+            qa-artifacts/legend-safe-area/
+            qa-artifacts/legend-menus-v13/
+            qa-artifacts/legend-splash-motion/
+            qa-artifacts/unified-v12/
+          retention-days: 14

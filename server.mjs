@@ -12,12 +12,30 @@ const {version}=JSON.parse(await readFile(resolve(root,'package.json'),'utf8'));
 const LEGEND_UI_BUILD='unified-v12';
 const port=Number(process.env.PORT || 3000);
 const types={'.mp4':'video/mp4','.webmanifest':'application/manifest+json; charset=utf-8','.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.js':'text/javascript; charset=utf-8','.json':'application/json; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.webp':'image/webp','.jpg':'image/jpeg','.jpeg':'image/jpeg','.ogg':'audio/ogg','.mp3':'audio/mpeg','.m4a':'audio/mp4','.wav':'audio/wav','.md':'text/markdown; charset=utf-8'};
-const base={'X-Content-Type-Options':'nosniff','Referrer-Policy':'same-origin','X-Frame-Options':'SAMEORIGIN'};
+const base={'X-Content-Type-Options':'nosniff','Referrer-Policy':'same-origin','X-Frame-Options':'SAMEORIGIN',
+  'Content-Security-Policy':"frame-ancestors 'none'; object-src 'none'; base-uri 'self'",
+  'Permissions-Policy':'payment=(), geolocation=(), camera=(), microphone=()'};
+const publicDemo=process.env.LEGEND_PUBLIC_DEMO==='true';
+const allowedDemoHost=(process.env.LEGEND_PUBLIC_HOST||'').toLowerCase();
+function isAllowedDemoHost(req) {
+  if(!publicDemo)return true;
+  const host=(req.headers.host||'').toLowerCase().replace(/:\d{1,5}$/,'');
+  const railway=(process.env.RAILWAY_PUBLIC_DOMAIN||'').toLowerCase();
+  const fallback=(process.env.LEGEND_FALLBACK_HOST||'').toLowerCase();
+  return !!host && (host===allowedDemoHost || (railway&&host===railway) || (fallback&&host===fallback));
+}
+const playDocumentHeaders=()=>{
+  const headers={...base};
+  delete headers['X-Frame-Options']; // XFO cannot express a single cross-origin frame parent.
+  headers['Content-Security-Policy']="frame-ancestors https://xd-play.com; object-src 'none'; base-uri 'self'; form-action 'none'";
+  headers['Cross-Origin-Resource-Policy']='cross-origin';
+  return headers;
+};
 const authUser=process.env.SKYGATE_STUDIO_USER || 'studio';
 const authPassword=process.env.SKYGATE_STUDIO_PASSWORD || '';
 // Explicit, reversible opt-in for the owner's password-free Studio testing.
 // Keep NODE_ENV, stored credentials, durable storage and request validation intact.
-const publicStudioTesting=process.env.SKYGATE_STUDIO_PUBLIC_TESTING==='true';
+const publicStudioTesting=!publicDemo&&process.env.SKYGATE_STUDIO_PUBLIC_TESTING==='true';
 const releases=createReleaseStore(process.env.SKYGATE_RELEASE_DIR || process.env.RAILWAY_VOLUME_MOUNT_PATH || (process.env.NODE_ENV==='production'?null:resolve(root,'.local-data')));
 const csrf=randomBytes(32).toString('hex');
 const json=(res,status,value)=>{res.writeHead(status,{...base,'Content-Type':'application/json','Cache-Control':'no-store'});res.end(JSON.stringify(value));};
@@ -55,11 +73,12 @@ createServer(async(req,res)=>{
     res.writeHead(200,{...base,'Content-Type':'application/json; charset=utf-8','Content-Length':Buffer.byteLength(payload),'Cache-Control':'no-store, no-cache, must-revalidate','Pragma':'no-cache','Expires':'0','X-Legend-UI-Version':LEGEND_UI_BUILD});
     res.end(req.method==='HEAD'?'':payload);return;
   }
+  if(raw!=='/health'&&!isAllowedDemoHost(req)){res.writeHead(421,{...base,'Cache-Control':'no-store'});res.end('Unrecognized demo host');return;}
   // Only the two app directories are web roots; repository files are not routes.
   if(raw!=='/'&&raw!=='/studio'&&!raw.startsWith('/studio/')&&raw!=='/play'&&!raw.startsWith('/play/')){res.writeHead(404,base);res.end('Not Found');return;}
   if(raw.split('/').some(part=>part.startsWith('.'))){res.writeHead(404,base);res.end('Not Found');return;}
-  const privateRoute=needsAuth(raw);
-  if(privateRoute&&!publicStudioTesting&&process.env.NODE_ENV==='production'&&(api||(raw.startsWith('/studio/preview')||raw.startsWith('/studio/editor-preview'))||authPassword||process.env.SKYGATE_STUDIO_REQUIRE_AUTH==='true')){
+  const privateRoute=needsAuth(raw)&&!(publicDemo&&raw==='/');
+  if(privateRoute&&!publicStudioTesting&&process.env.NODE_ENV==='production'&&(publicDemo||api||(raw.startsWith('/studio/preview')||raw.startsWith('/studio/editor-preview'))||authPassword||process.env.SKYGATE_STUDIO_REQUIRE_AUTH==='true')){
     const privateHeaders={...base,'X-Robots-Tag':'noindex, nofollow, noarchive','Cache-Control':'no-store'};
     if(!authPassword){res.writeHead(503,privateHeaders);res.end('Studio access is not configured');return;}
     if(!isAuthed(req)){res.writeHead(401,{...privateHeaders,'WWW-Authenticate':'Basic realm="SKYGATE Studio", charset="UTF-8"'});res.end('Private studio: authentication required');return;}
@@ -90,7 +109,7 @@ createServer(async(req,res)=>{
     const html=(await readFile(resolve(root,'play/index.html'),'utf8')).replace('<head>','<head><base href="/play/">');
     res.writeHead(200,{...base,'Content-Type':'text/html; charset=utf-8','Cache-Control':'private, no-store','X-Robots-Tag':'noindex, nofollow, noarchive'});res.end(req.method==='HEAD'?'':html);return;
   }
-  if(raw==='/'){res.writeHead(308,{...base,Location:'/studio/','Cache-Control':'no-store'});res.end();return;}
+  if(raw==='/'){res.writeHead(308,{...base,Location:publicDemo?'/play/':'/studio/','Cache-Control':'no-store'});res.end();return;}
   if(raw==='/studio'||raw==='/play'){
     const query=new URL(req.url||'/', 'http://localhost').search;
     res.writeHead(308,{...base,Location:raw+'/'+query,'Cache-Control':'no-store'});res.end();return;
@@ -113,7 +132,8 @@ createServer(async(req,res)=>{
     end=Math.min(end,info.size-1);res.writeHead(206,{...base,'Content-Type':type,'Content-Length':end-start+1,'Content-Range':`bytes ${start}-${end}/${info.size}`,'Accept-Ranges':'bytes','Cache-Control':policy});
     if(req.method==='HEAD'){res.end();return;}createReadStream(target,{start,end}).on('error',()=>res.destroy()).pipe(res);return;
   }
-  res.writeHead(200,{...base,...(type==='video/mp4'?{'Accept-Ranges':'bytes'}:{}),...(privateRoute?{'X-Robots-Tag':'noindex, nofollow, noarchive'}:{}),
+  const responseBase=publicDemo&&type.startsWith('text/html')&&raw.startsWith('/play/')?playDocumentHeaders():base;
+  res.writeHead(200,{...responseBase,...(type==='video/mp4'?{'Accept-Ranges':'bytes'}:{}),...(privateRoute?{'X-Robots-Tag':'noindex, nofollow, noarchive'}:{}),
     'Content-Type':type,'Content-Length':info.size,'Cache-Control':policy,
     ...(freshPublicUI?{'Pragma':'no-cache','Expires':'0','X-Legend-UI-Version':LEGEND_UI_BUILD}:{})});
   if(req.method==='HEAD'){res.end();return;}createReadStream(target).on('error',()=>res.destroy()).pipe(res);
